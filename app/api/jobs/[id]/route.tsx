@@ -14,14 +14,7 @@ export async function GET(
       where: { id },
     });
 
-    if (!job) {
-      return NextResponse.json(
-        { message: "Job not found" },
-        { status: 404 }
-      );
-    }
-
-    if (job.isClosed) {
+    if (!job || job.isClosed) {
       return NextResponse.json(
         { message: "Job not found" },
         { status: 404 }
