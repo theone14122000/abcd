@@ -43,34 +43,35 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      
-      // Validate file type
-      const validTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ];
-      
-      if (validTypes.includes(file.type) || file.name.endsWith(".pdf") || file.name.endsWith(".doc") || file.name.endsWith(".docx")) {
-        if (file.size > 5 * 1024 * 1024) {
-          setError("File size must be less than 5MB");
-          return;
-        }
-        setResume(file);
-        setError("");
-      } else {
-        setError("Please upload a PDF or Word document");
-      }
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    const file = e.target.files[0];
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    const validExtensions = [".pdf", ".doc", ".docx"];
+    const hasValidType = validTypes.includes(file.type);
+    const hasValidExt = validExtensions.some((ext) =>
+      file.name.toLowerCase().endsWith(ext)
+    );
+
+    if (!hasValidType && !hasValidExt) {
+      setError("Please upload a PDF or Word document");
+      return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      setError("File size must be less than 5MB");
+      return;
+    }
+
+    setResume(file);
+    setError("");
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -84,46 +85,37 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
     console.log("User ID:", user.id);
 
     try {
-      // Create FormData object (NOT JSON)
+      // Always use FormData — avoids any JSON parsing issues on the server
       const formData = new FormData();
-
-      // Append all required fields
       formData.append("jobId", job.id);
       formData.append("userId", user.id);
       formData.append("fullName", form.fullName);
       formData.append("email", form.email);
-      formData.append("currentCTC", form.currentCTC || "");
-      formData.append("expectedCTC", form.expectedCTC || "");
-      formData.append("preferredLocation", form.preferredLocation || "");
-      formData.append("noticePeriod", form.noticePeriod || "");
-      formData.append("skills", form.skills || "");
+      formData.append("currentCTC", form.currentCTC);
+      formData.append("expectedCTC", form.expectedCTC);
+      formData.append("preferredLocation", form.preferredLocation);
+      formData.append("noticePeriod", form.noticePeriod);
+      formData.append("skills", form.skills);
 
-      // Append resume file if exists
       if (resume) {
         formData.append("resume", resume);
         console.log("Resume attached:", resume.name, resume.size, "bytes");
       }
 
-      console.log("Sending FormData to /api/applications...");
-      console.log("Content-Type will be set automatically by browser");
-
-      // IMPORTANT: Do NOT set Content-Type header manually
-      // The browser sets it automatically with the correct boundary for FormData
+      // Do NOT set Content-Type manually — the browser sets the correct
+      // multipart boundary automatically when body is FormData.
       const res = await fetch("/api/applications", {
         method: "POST",
         body: formData,
-        // NO headers: { "Content-Type": ... } ← This is critical!
       });
 
       console.log("Response status:", res.status);
 
-      // Parse response
-      let data;
+      let data: { message?: string } = {};
       try {
         data = await res.json();
-      } catch (parseErr) {
-        console.error("Failed to parse response as JSON");
-        throw new Error("Server returned invalid response");
+      } catch {
+        throw new Error("Server returned an invalid response");
       }
 
       console.log("Response data:", data);
@@ -138,9 +130,9 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
       setTimeout(() => {
         router.push("/jobs");
       }, 2500);
-
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to submit application";
+      const msg =
+        err instanceof Error ? err.message : "Failed to submit application";
       setError(msg);
       setLoading(false);
       console.error("Apply form error:", err);
@@ -176,8 +168,10 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         {job.company} • {job.location} • {job.type}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
-        
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "18px" }}
+      >
         {/* Full Name */}
         <div>
           <label htmlFor="fullName" style={labelStyle}>
@@ -213,7 +207,9 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         </div>
 
         {/* CTC Fields */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}
+        >
           <div>
             <label htmlFor="currentCTC" style={labelStyle}>
               Current CTC
@@ -245,7 +241,9 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         </div>
 
         {/* Location & Notice */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}
+        >
           <div>
             <label htmlFor="preferredLocation" style={labelStyle}>
               Preferred Location
@@ -279,7 +277,7 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         {/* Skills */}
         <div>
           <label htmlFor="skills" style={labelStyle}>
-            Skills & Expertise
+            Skills &amp; Expertise
           </label>
           <textarea
             id="skills"
@@ -295,17 +293,19 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         {/* Resume Upload */}
         <div>
           <label htmlFor="resume" style={labelStyle}>
-            Upload Resume (PDF/Word) *
+            Upload Resume (PDF/Word)
           </label>
           <div
             style={{
-              border: resume 
-                ? "2px solid #0e7a70" 
+              border: resume
+                ? "2px solid #0e7a70"
                 : "2px dashed rgba(46,196,182,0.3)",
               borderRadius: "12px",
               padding: "20px",
               textAlign: "center",
-              background: resume ? "rgba(14,122,112,0.05)" : "rgba(248,250,252,0.5)",
+              background: resume
+                ? "rgba(14,122,112,0.05)"
+                : "rgba(248,250,252,0.5)",
               transition: "all 0.2s",
             }}
           >
@@ -316,7 +316,7 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
               onChange={handleFileChange}
               style={{ display: "none" }}
             />
-            
+
             {!resume ? (
               <>
                 <div style={{ fontSize: "2.5rem", marginBottom: "10px" }}>📄</div>
@@ -335,7 +335,13 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
                 >
                   Click to upload resume
                 </button>
-                <p style={{ fontSize: "0.75rem", color: "#9ca3af", marginTop: "6px" }}>
+                <p
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#9ca3af",
+                    marginTop: "6px",
+                  }}
+                >
                   Max size: 5MB • PDF or Word only
                 </p>
               </>
@@ -351,13 +357,28 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
                   border: "1px solid rgba(46,196,182,0.2)",
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "10px" }}
+                >
                   <span style={{ fontSize: "1.5rem" }}>📎</span>
                   <div style={{ textAlign: "left" }}>
-                    <p style={{ fontWeight: 600, color: "#0d2b28", fontSize: "0.9rem", margin: 0 }}>
+                    <p
+                      style={{
+                        fontWeight: 600,
+                        color: "#0d2b28",
+                        fontSize: "0.9rem",
+                        margin: 0,
+                      }}
+                    >
                       {resume.name}
                     </p>
-                    <p style={{ color: "#6b9e97", fontSize: "0.75rem", margin: 0 }}>
+                    <p
+                      style={{
+                        color: "#6b9e97",
+                        fontSize: "0.75rem",
+                        margin: 0,
+                      }}
+                    >
                       {(resume.size / 1024).toFixed(2)} KB
                     </p>
                   </div>
@@ -439,9 +460,7 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
             cursor: loading ? "not-allowed" : "pointer",
             transition: "all 0.3s ease",
             transform: loading ? "scale(0.98)" : "scale(1)",
-            boxShadow: loading
-              ? "none"
-              : "0 4px 12px rgba(14, 122, 112, 0.3)",
+            boxShadow: loading ? "none" : "0 4px 12px rgba(14, 122, 112, 0.3)",
           }}
         >
           {loading ? (
