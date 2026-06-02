@@ -60,7 +60,7 @@ export default function ContactHero() {
         .contact-build-card {
           background:
             radial-gradient(circle at 15% 20%, rgba(46,196,182,0.18), transparent 32%),
-            linear-gradient(120deg, #3cf3d8, #82e082, #e7d82e, #62f762, #2fe2c7);
+            linear-gradient(120deg, #3cf3d8, #aef3ae, #f7ec75, #98f398, #2fe2c7);
           background-size: 180% 180%;
           animation:
             contactHeroIn 0.75s ease both,

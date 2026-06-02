@@ -1,22 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-export async function POST(req: Request) {
-  try {
-    const { name, email, password, password_confirmation } =
-      await req.json();
+export const runtime = "nodejs";
 
-    if (!name || !email || !password || !password_confirmation) {
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, email, password } = body;
+
+    if (!name || !email || !password) {
       return NextResponse.json(
         { message: "All fields are required" },
-        { status: 400 }
-      );
-    }
-
-    if (password !== password_confirmation) {
-      return NextResponse.json(
-        { message: "Passwords do not match" },
         { status: 400 }
       );
     }
@@ -32,7 +27,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await prisma.user.create({
       data: {
@@ -43,16 +38,19 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    });
-  } catch (error) {
-    console.error(error);
     return NextResponse.json(
-      { message: "Something went wrong" },
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Register error:", error);
+    return NextResponse.json(
+      { message: "Registration failed" },
       { status: 500 }
     );
   }

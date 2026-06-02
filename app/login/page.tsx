@@ -1,24 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { User } from "@/context/AuthContext";
 
 export default function LoginPage() {
-  const router = useRouter();
   const { login } = useAuth();
+  const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [apiError, setApiError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setApiError("");
+    setError("");
+    setLoading(true);
 
     try {
       const res = await fetch("/api/login", {
@@ -28,274 +28,285 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
 
-      localStorage.setItem("user", JSON.stringify(data));
-      login(data);
+      if (!res.ok) {
+        setError(data.error || "Login failed.");
+        return;
+      }
 
-      router.push(
-        data.role === "ADMIN"
-          ? "/admin"
-          : "/jobs/private"
-      );
-    } catch (err: any) {
-      setApiError(err.message);
+      // Use your existing AuthContext login
+      login(data as User);
+
+      // Redirect based on role
+      if (data.role === "ADMIN") {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="page">
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="card-wrapper"
+    <div
+      style={{
+        minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, #f4f1e8 0%, #e8e4d4 50%, #dcd8c8 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 460,
+        }}
       >
-        <div className="card">
-          <div className="shimmer" />
+        {/* Logo */}
+        <div
+          style={{
+            textAlign: "center",
+            marginBottom: 36,
+          }}
+        >
+          <Link
+            href="/"
+            style={{
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #0e7a70, #0d2b28)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: "1.1rem",
+              }}
+            >
+              E
+            </div>
+            <span
+              style={{
+                fontWeight: 700,
+                fontSize: "1.2rem",
+                color: "#0d2b28",
+              }}
+            >
+              E Choices
+            </span>
+          </Link>
+        </div>
 
-          <h1 className="title">Welcome Back</h1>
+        {/* Card */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.8)",
+            backdropFilter: "blur(20px)",
+            border: "1px solid rgba(13,43,40,0.08)",
+            borderRadius: 24,
+            padding: "44px 40px",
+            boxShadow: "0 20px 60px rgba(13,43,40,0.08)",
+          }}
+        >
+          {/* Title */}
+          <h1
+            style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "1.8rem",
+              fontWeight: 700,
+              color: "#0d2b28",
+              marginBottom: 8,
+            }}
+          >
+            Welcome back 👋
+          </h1>
 
-          {apiError && <div className="error">{apiError}</div>}
+          <p
+            style={{
+              fontSize: "0.9rem",
+              color: "#6b9e97",
+              marginBottom: 32,
+            }}
+          >
+            Log in to your E Choices account
+          </p>
+
+          {/* Error */}
+          {error && (
+            <div
+              style={{
+                background: "rgba(220,38,38,0.08)",
+                border: "1px solid rgba(220,38,38,0.2)",
+                borderRadius: 12,
+                padding: "12px 16px",
+                marginBottom: 24,
+                fontSize: "0.85rem",
+                color: "#dc2626",
+                fontWeight: 500,
+              }}
+            >
+              ⚠️ {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
-            <input
-              type="email"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input"
-            />
+            {/* Email */}
+            <div style={{ marginBottom: 20 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.82rem",
+                  fontWeight: 700,
+                  color: "#0d2b28",
+                  marginBottom: 8,
+                }}
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+                  padding: "14px 16px",
+                  borderRadius: 12,
+                  border: "1px solid rgba(13,43,40,0.12)",
+                  background: "#fff",
+                  fontSize: "0.9rem",
+                  color: "#0d2b28",
+                  outline: "none",
+                  boxSizing: "border-box",
+                  transition: "border-color 0.3s, box-shadow 0.3s",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#0e7a70";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 0 3px rgba(14,122,112,0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor =
+                    "rgba(13,43,40,0.12)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
 
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input"
-            />
+            {/* Password */}
+            <div style={{ marginBottom: 28 }}>
+              <label
+                style={{
+                  display: "block",
+                  fontSize: "0.82rem",
+                  fontWeight: 700,
+                  color: "#0d2b28",
+                  marginBottom: 8,
+                }}
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+                  padding: "14px 16px",
+                  borderRadius: 12,
+                  border: "1px solid rgba(13,43,40,0.12)",
+                  background: "#fff",
+                  fontSize: "0.9rem",
+                  color: "#0d2b28",
+                  outline: "none",
+                  boxSizing: "border-box",
+                  transition: "border-color 0.3s, box-shadow 0.3s",
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "#0e7a70";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 0 3px rgba(14,122,112,0.1)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor =
+                    "rgba(13,43,40,0.12)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+            </div>
 
-            <motion.button
+            {/* Submit */}
+            <button
               type="submit"
-              whileHover={{ scale: 1.06 }}
-              whileTap={{ scale: 0.96 }}
-              className="btn"
+              disabled={loading}
+              style={{
+                width: "100%",
+                padding: "15px",
+                borderRadius: 50,
+                background: loading
+                  ? "#aaa"
+                  : "linear-gradient(135deg, #0e7a70, #0d2b28)",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: "0.95rem",
+                border: "none",
+                cursor: loading ? "not-allowed" : "pointer",
+                transition: "opacity 0.3s",
+                letterSpacing: "0.02em",
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) e.currentTarget.style.opacity = "0.88";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = "1";
+              }}
             >
-              <span className="btn-text">
-                {isLoading ? "Signing in..." : "Login"}
-              </span>
-            </motion.button>
+              {loading ? "Logging in..." : "Login →"}
+            </button>
           </form>
 
-          <p className="switch">
-            Don’t have an account?{" "}
-            <Link href="/register">Register</Link>
+          {/* Footer */}
+          <p
+            style={{
+              textAlign: "center",
+              marginTop: 24,
+              fontSize: "0.85rem",
+              color: "#6b9e97",
+            }}
+          >
+            Don't have an account?{" "}
+            <Link
+              href="/register"
+              style={{
+                color: "#0e7a70",
+                fontWeight: 700,
+                textDecoration: "none",
+              }}
+            >
+              Register here
+            </Link>
           </p>
         </div>
-      </motion.div>
-
-      <style jsx>{`
-        .page {
-          min-height: 100vh;
-          background: linear-gradient(
-            135deg,
-            #d4e8d4 0%,
-            #f8f7f1 50%,
-            #f5f0c8 100%
-          );
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 80px 16px;
-        }
-
-        .card-wrapper {
-          padding: 2px;
-          border-radius: 28px;
-          background: linear-gradient(
-            120deg,
-            #2ec4b6,
-            #d4c742,
-            #1e8f84,
-            #2ec4b6
-          );
-          background-size: 300% 300%;
-          animation: borderMove 8s ease infinite;
-          max-width: 440px;
-          width: 100%;
-        }
-
-        @keyframes borderMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .card {
-          position: relative;
-          border-radius: 26px;
-          padding: 42px;
-          background: linear-gradient(
-            120deg,
-            #c7efe7,
-            #f2ecb0,
-            #c3f4ea,
-            #f5e89a,
-            #c7efe7
-          );
-          background-size: 250% 250%;
-          animation: cardMove 10s ease infinite;
-          box-shadow: 0 35px 80px rgba(13, 43, 40, 0.18);
-          overflow: hidden;
-        }
-
-        @keyframes cardMove {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .shimmer {
-          position: absolute;
-          top: 0;
-          left: -100%;
-          width: 60%;
-          height: 100%;
-          background: linear-gradient(
-            120deg,
-            transparent,
-            rgba(255, 255, 255, 0.35),
-            transparent
-          );
-          transform: skewX(-20deg);
-          animation: shimmerMove 6s infinite;
-        }
-
-        @keyframes shimmerMove {
-          0% { left: -100%; }
-          100% { left: 200%; }
-        }
-
-        .title {
-          text-align: center;
-          font-size: 28px;
-          font-weight: 700;
-          margin-bottom: 30px;
-          color: #0d2b28;
-          position: relative;
-          z-index: 2;
-        }
-
-        .input {
-          width: 100%;
-          padding: 14px;
-          margin-bottom: 18px;
-          border-radius: 12px;
-          border: none;
-          background: rgba(255, 255, 255, 0.95);
-          outline: none;
-          position: relative;
-          z-index: 2;
-        }
-
-        .input:focus {
-          box-shadow: 0 0 0 3px rgba(46, 196, 182, 0.25);
-        }
-
-        /* ✅ Solid Teal Pill Button */
-        .btn {
-          width: 100%;
-          padding: 14px;
-          border-radius: 50px;
-          border: none;
-          cursor: pointer;
-          font-weight: 600;
-          font-size: 15px;
-          color: white;
-          background: #2aa899;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.35s ease;
-          box-shadow: 0 8px 20px rgba(42, 168, 153, 0.25);
-          animation: pulseGlow 3s ease-in-out infinite;
-          z-index: 2;
-        }
-
-        /* ✅ Breathing Glow Animation */
-        @keyframes pulseGlow {
-          0% {
-            box-shadow: 0 8px 20px rgba(42, 168, 153, 0.25);
-          }
-          50% {
-            box-shadow: 0 15px 35px rgba(42, 168, 153, 0.45);
-          }
-          100% {
-            box-shadow: 0 8px 20px rgba(42, 168, 153, 0.25);
-          }
-        }
-
-        .btn:hover {
-          transform: translateY(-3px);
-          background: #239e90;
-          box-shadow:
-            0 20px 45px rgba(42, 168, 153, 0.6),
-            0 0 15px rgba(42, 168, 153, 0.4);
-          animation: none;
-        }
-
-        .btn:active {
-          transform: translateY(0px);
-          box-shadow: 0 6px 15px rgba(42, 168, 153, 0.3);
-        }
-
-        /* ✅ Shimmer Sweep */
-        .btn::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: -120%;
-          width: 60%;
-          height: 100%;
-          background: linear-gradient(
-            120deg,
-            transparent,
-            rgba(255,255,255,0.5),
-            transparent
-          );
-          transform: skewX(-20deg);
-          transition: all 0.6s ease;
-        }
-
-        .btn:hover::before {
-          left: 200%;
-        }
-
-        .btn-text {
-          position: relative;
-          z-index: 2;
-        }
-
-        .error {
-          background: #fff1f1;
-          border: 1px solid #fca5a5;
-          padding: 10px;
-          border-radius: 10px;
-          margin-bottom: 20px;
-          text-align: center;
-          color: #dc2626;
-          position: relative;
-          z-index: 2;
-        }
-
-        .switch {
-          text-align: center;
-          margin-top: 20px;
-          position: relative;
-          z-index: 2;
-        }
-      `}</style>
+      </div>
     </div>
   );
 }

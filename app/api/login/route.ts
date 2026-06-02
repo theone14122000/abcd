@@ -1,14 +1,17 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
-export async function POST(req: Request) {
+export const runtime = "nodejs";
+
+export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await req.json();
+    const body = await req.json();
+    const { email, password } = body;
 
     if (!email || !password) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { message: "Email and password are required" },
         { status: 400 }
       );
     }
@@ -19,16 +22,16 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json(
-        { error: "User not found" },
+        { message: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isValid) {
+    if (!isPasswordValid) {
       return NextResponse.json(
-        { error: "Invalid credentials" },
+        { message: "Invalid credentials" },
         { status: 401 }
       );
     }
@@ -39,12 +42,10 @@ export async function POST(req: Request) {
       email: user.email,
       role: user.role,
     });
-
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
-
+    console.error("Login error:", error);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { message: "Login failed" },
       { status: 500 }
     );
   }

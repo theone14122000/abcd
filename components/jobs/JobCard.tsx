@@ -19,7 +19,18 @@ interface Props {
   isLoggedIn: boolean;
 }
 
+const SECTOR_ID_TO_SLUG: Record<string, string> = {
+  IT: "it-technologies",
+  BPO: "bpo",
+  FINANCE: "finance",
+  MANUFACTURING: "manufacturing",
+  SALES: "sale",
+  HEALTH: "health",
+};
+
 export default function JobCard({ job, isLoggedIn }: Props) {
+  const sectorSlug = SECTOR_ID_TO_SLUG[job.sector] || job.sector.toLowerCase();
+
   return (
     <div
       className="job-card-animate"
@@ -99,7 +110,7 @@ export default function JobCard({ job, isLoggedIn }: Props) {
         {job.title}
       </h3>
 
-      {/* Company Labeled */}
+      {/* Company */}
       <p
         style={{
           fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -123,7 +134,7 @@ export default function JobCard({ job, isLoggedIn }: Props) {
         }}
       />
 
-      {/* Meta with Labels */}
+      {/* Meta */}
       <div
         style={{
           display: "flex",
@@ -197,7 +208,8 @@ export default function JobCard({ job, isLoggedIn }: Props) {
         </span>
 
         {isLoggedIn ? (
-          <button
+          <Link
+            href={`/jobs/${sectorSlug}/${job.id}/apply`}
             style={{
               padding: "9px 22px",
               borderRadius: 50,
@@ -209,12 +221,12 @@ export default function JobCard({ job, isLoggedIn }: Props) {
               border: "none",
               cursor: "pointer",
               transition: "opacity 0.3s",
+              textDecoration: "none",
+              display: "inline-block",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
             Apply Now
-          </button>
+          </Link>
         ) : (
           <Link
             href="/login"

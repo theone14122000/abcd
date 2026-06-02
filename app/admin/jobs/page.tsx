@@ -14,6 +14,7 @@ interface JobItem {
   sector: string;
   description: string;
   createdAt: string;
+  hasHiredCandidate?: boolean;
 }
 
 const inputStyle: React.CSSProperties = {
@@ -54,9 +55,16 @@ export default function AdminJobsPage() {
   });
 
   const fetchJobs = async () => {
-    const res = await fetch("/api/jobs");
-    const data = await res.json();
-    setJobs(Array.isArray(data) ? data : []);
+    try {
+      const res = await fetch("/api/admin/jobs", {
+        cache: "no-store",
+      });
+      const data = await res.json();
+      setJobs(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to fetch admin jobs:", error);
+      setJobs([]);
+    }
   };
 
   useEffect(() => {
@@ -77,28 +85,42 @@ export default function AdminJobsPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    await fetch("/api/jobs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("/api/admin/jobs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    setForm({
-      title: "",
-      company: "",
-      location: "",
-      salary: "",
-      type: "Full Time",
-      sector: "IT",
-      description: "",
-    });
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ message: "Unknown error" }));
+        console.error("Create job failed:", res.status, errorData);
+        alert("Failed to create job: " + errorData.message);
+        setLoading(false);
+        return;
+      }
 
-    await fetchJobs();
-    setLoading(false);
+      setForm({
+        title: "",
+        company: "",
+        location: "",
+        salary: "",
+        type: "Full Time",
+        sector: "IT",
+        description: "",
+      });
+
+      await fetchJobs();
+    } catch (error) {
+      console.error("Failed to create job:", error);
+      alert("Network error while creating job");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user || user.role !== "ADMIN") return null;
@@ -242,7 +264,6 @@ export default function AdminJobsPage() {
               </div>
             </div>
 
-            {/* SECTOR */}
             <div>
               <label htmlFor="sector" style={labelStyle}>
                 Sector (Category)
@@ -309,6 +330,7 @@ export default function AdminJobsPage() {
           <h2 style={{ marginBottom: "24px", color: "#0d2b28" }}>
             Recent Listings ({jobs.length})
           </h2>
+
           <div
             style={{
               display: "flex",
@@ -322,6 +344,7 @@ export default function AdminJobsPage() {
             {jobs.length === 0 && (
               <p style={{ color: "#6b9e97" }}>No jobs created yet.</p>
             )}
+
             {jobs.map((job) => (
               <div
                 key={job.id}
@@ -333,6 +356,7 @@ export default function AdminJobsPage() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  gap: "16px",
                 }}
               >
                 <div>
@@ -342,20 +366,41 @@ export default function AdminJobsPage() {
                   <p style={{ fontSize: "0.85rem", color: "#6b9e97" }}>
                     {job.company} • {job.sector}
                   </p>
+
+                  {job.hasHiredCandidate && (
+                    <p
+                      style={{
+                        marginTop: "8px",
+                        fontSize: "0.75rem",
+                        color: "#059669",
+                        background: "#ecfdf5",
+                        border: "1px solid #a7f3d0",
+                        display: "inline-block",
+                        padding: "4px 10px",
+                        borderRadius: "999px",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Filled / Hidden from public jobs
+                    </p>
+                  )}
                 </div>
-                <span
-                  style={{
-                    fontSize: "0.7rem",
-                    background: "#f0fdf9",
-                    color: "#0e7a70",
-                    padding: "4px 12px",
-                    borderRadius: "20px",
-                    border: "1px solid #ccfbf1",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {job.type}
-                </span>
+
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span
+                    style={{
+                      fontSize: "0.7rem",
+                      background: "#f0fdf9",
+                      color: "#0e7a70",
+                      padding: "4px 12px",
+                      borderRadius: "20px",
+                      border: "1px solid #ccfbf1",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {job.type}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
