@@ -32,7 +32,7 @@ function LoadingScreen() {
   );
 }
 
-// ── Public Page (not logged in) ───────────────────────────────────────────────
+// ── Public Page ───────────────────────────────────────────────────────────────
 function PublicCareersPage() {
   return (
     <div
@@ -93,7 +93,6 @@ function PublicCareersPage() {
               fontWeight: "700",
               color: "#0d2b28",
               lineHeight: 1.2,
-              marginBottom: "20px",
               margin: "0 0 20px 0",
             }}
           >
@@ -146,12 +145,12 @@ function PublicCareersPage() {
                   borderRadius: "16px",
                   cursor: "pointer",
                   boxShadow: "0 8px 24px rgba(79,131,93,0.25)",
-                  textDecoration: "none",
                 }}
               >
                 Register
               </motion.span>
             </Link>
+
             <Link href="/login" style={{ textDecoration: "none" }}>
               <motion.span
                 whileHover={{ scale: 1.04 }}
@@ -166,7 +165,6 @@ function PublicCareersPage() {
                   borderRadius: "16px",
                   cursor: "pointer",
                   border: "2px solid rgba(13,43,40,0.15)",
-                  textDecoration: "none",
                 }}
               >
                 Login
@@ -174,7 +172,7 @@ function PublicCareersPage() {
             </Link>
           </motion.div>
 
-          {/* Hero Image Placeholder */}
+          {/* Hero Section */}
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -199,7 +197,7 @@ function PublicCareersPage() {
                   "linear-gradient(180deg, transparent 50%, rgba(13,43,40,0.2) 100%)",
               }}
             />
-            {/* Animated silhouettes */}
+
             <div
               style={{
                 display: "flex",
@@ -233,7 +231,7 @@ function PublicCareersPage() {
           </motion.div>
         </motion.div>
 
-        {/* Why Join Cards */}
+        {/* Feature Cards */}
         <div
           style={{
             display: "grid",
@@ -278,17 +276,18 @@ function PublicCareersPage() {
               <div style={{ fontSize: "36px", marginBottom: "12px" }}>
                 {card.icon}
               </div>
+
               <h3
                 style={{
                   fontWeight: "700",
                   color: "#0d2b28",
-                  marginBottom: "8px",
-                  fontSize: "16px",
                   margin: "0 0 8px 0",
+                  fontSize: "16px",
                 }}
               >
                 {card.title}
               </h3>
+
               <p
                 style={{
                   color: "rgba(13,43,40,0.55)",
@@ -302,51 +301,17 @@ function PublicCareersPage() {
             </motion.div>
           ))}
         </div>
-
-        {/* Login Prompt */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-          style={{ textAlign: "center", marginTop: "40px" }}
-        >
-          <p
-            style={{
-              color: "rgba(13,43,40,0.55)",
-              marginBottom: "16px",
-              fontSize: "15px",
-            }}
-          >
-            Ready to explore opportunities?
-          </p>
-          <Link href="/login" style={{ textDecoration: "none" }}>
-            <motion.span
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                display: "inline-block",
-                background: "#0d2b28",
-                color: "white",
-                fontWeight: "600",
-                fontSize: "15px",
-                padding: "14px 32px",
-                borderRadius: "16px",
-                cursor: "pointer",
-                boxShadow: "0 8px 24px rgba(13,43,40,0.2)",
-                textDecoration: "none",
-              }}
-            >
-              Login to View Jobs →
-            </motion.span>
-          </Link>
-        </motion.div>
       </div>
     </div>
   );
 }
 
 // ── Authenticated Dashboard ───────────────────────────────────────────────────
-function AuthenticatedCareersPage({ userName }: { userName: string }) {
+function AuthenticatedCareersPage({
+  userName,
+}: {
+  userName: string;
+}) {
   const { logout } = useAuth();
   const router = useRouter();
 
@@ -387,12 +352,12 @@ function AuthenticatedCareersPage({ userName }: { userName: string }) {
               style={{
                 color: "rgba(255,255,255,0.7)",
                 fontSize: "14px",
-                marginBottom: "4px",
                 margin: "0 0 4px 0",
               }}
             >
               Welcome back 👋
             </p>
+
             <h1
               style={{
                 color: "white",
@@ -403,10 +368,18 @@ function AuthenticatedCareersPage({ userName }: { userName: string }) {
             >
               {userName}
             </h1>
-            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "14px", margin: 0 }}>
+
+            <p
+              style={{
+                color: "rgba(255,255,255,0.75)",
+                fontSize: "14px",
+                margin: 0,
+              }}
+            >
               Your career dashboard is ready
             </p>
           </div>
+
           <motion.button
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.96 }}
@@ -428,58 +401,7 @@ function AuthenticatedCareersPage({ userName }: { userName: string }) {
           </motion.button>
         </motion.div>
 
-        {/* Stats Row */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.6 }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          {[
-            { label: "Open Positions", value: "12+", color: "#4f835d" },
-            { label: "Departments", value: "6", color: "#2ec4b6" },
-            { label: "Countries", value: "8", color: "#f5e642" },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              style={{
-                background: "rgba(255,255,255,0.8)",
-                borderRadius: "20px",
-                padding: "24px",
-                textAlign: "center",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.04)",
-                border: "1px solid rgba(255,255,255,0.6)",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "32px",
-                  fontWeight: "800",
-                  color: stat.color === "#f5e642" ? "#b8a800" : stat.color,
-                  marginBottom: "4px",
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontSize: "13px",
-                  color: "rgba(13,43,40,0.55)",
-                  fontWeight: "500",
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Coming Soon Card */}
+        {/* Coming Soon */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -494,18 +416,21 @@ function AuthenticatedCareersPage({ userName }: { userName: string }) {
             border: "1px solid rgba(255,255,255,0.6)",
           }}
         >
-          <div style={{ fontSize: "64px", marginBottom: "20px" }}>🚧</div>
+          <div style={{ fontSize: "64px", marginBottom: "20px" }}>
+            🚧
+          </div>
+
           <h2
             style={{
               fontSize: "28px",
               fontWeight: "700",
               color: "#0d2b28",
-              marginBottom: "12px",
               margin: "0 0 12px 0",
             }}
           >
             Job Listings Coming Soon
           </h2>
+
           <p
             style={{
               color: "rgba(13,43,40,0.55)",
@@ -527,10 +452,19 @@ function AuthenticatedCareersPage({ userName }: { userName: string }) {
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function CareersPage() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isLoading, user } = useAuth();
 
-  if (isLoading) return <LoadingScreen />;
-  if (isAuthenticated && user)
-    return <AuthenticatedCareersPage userName={user.name} />;
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (user) {
+    return (
+      <AuthenticatedCareersPage
+        userName={user.name || "User"}
+      />
+    );
+  }
+
   return <PublicCareersPage />;
 }
