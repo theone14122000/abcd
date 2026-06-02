@@ -91,7 +91,6 @@ export default function SectorJobsPage() {
       <main style={{ background: "#f4f1e8" }}>
         <JobsFeatured
           jobs={filteredJobs}
-          isLoggedIn={!!user}
           sectionTitle={sectionTitle}
         />
       </main>
