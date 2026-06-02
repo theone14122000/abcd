@@ -9,30 +9,12 @@ import JobsCTA from "@/components/jobs/JobsCTA";
 import { Job } from "@/components/jobs/JobCard";
 
 const SECTORS = [
-  {
-    id: "HEALTH",
-    label: "Health",
-  },
-  {
-    id: "SALES",
-    label: "Sales",
-  },
-  {
-    id: "MANUFACTURING",
-    label: "Manufacturing",
-  },
-  {
-    id: "IT",
-    label: "IT & Technologies",
-  },
-  {
-    id: "BPO",
-    label: "BPO",
-  },
-  {
-    id: "FINANCE",
-    label: "Finance",
-  },
+  { id: "HEALTH", label: "Health" },
+  { id: "SALES", label: "Sales" },
+  { id: "MANUFACTURING", label: "Manufacturing" },
+  { id: "IT", label: "IT & Technologies" },
+  { id: "BPO", label: "BPO" },
+  { id: "FINANCE", label: "Finance" },
 ];
 
 export default function PrivateJobsPage() {
@@ -42,50 +24,45 @@ export default function PrivateJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [search, setSearch] = useState("");
 
-  // Protect this page - redirect if not logged in
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
-    }
+    if (!user) router.push("/login");
   }, [user, router]);
 
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/jobs", {
-          cache: "no-store",
-        });
-
+        const res = await fetch("/api/jobs", { cache: "no-store" });
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setJobs(data);
-        } else {
-          setJobs([]);
-        }
+        setJobs(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
         setJobs([]);
       }
     };
-
     fetchJobs();
   }, []);
 
+  // SAFE FILTERING
   const filteredJobs = jobs.filter((job) => {
     const query = search.toLowerCase();
+    
+    const title = job.title?.toLowerCase() || "";
+    const company = job.company?.toLowerCase() || "";
+    const location = job.location?.toLowerCase() || "";
+    const type = job.type?.toLowerCase() || "";
+    const description = job.description?.toLowerCase() || "";
+    const sector = job.sector?.toLowerCase() || "";
 
     return (
-      job.title.toLowerCase().includes(query) ||
-      job.company.toLowerCase().includes(query) ||
-      job.location.toLowerCase().includes(query) ||
-      job.type.toLowerCase().includes(query) ||
-      job.description.toLowerCase().includes(query) ||
-      job.sector.toLowerCase().includes(query)
+      title.includes(query) ||
+      company.includes(query) ||
+      location.includes(query) ||
+      type.includes(query) ||
+      description.includes(query) ||
+      sector.includes(query)
     );
   });
 
-  // Show nothing while checking auth (prevents flash of content)
   if (!user) return null;
 
   return (
@@ -94,19 +71,15 @@ export default function PrivateJobsPage() {
 
       <main style={{ background: "#f4f1e8" }}>
         {SECTORS.map((sector) => {
+          // CASE-INSENSITIVE MATCHING
           const sectorJobs = filteredJobs.filter(
-            (job) => job.sector === sector.id
+            (job) => job.sector?.toUpperCase() === sector.id
           );
-
-          if (sectorJobs.length === 0) return null;
 
           return (
             <JobsFeatured
               key={sector.id}
               jobs={sectorJobs}
-              // REMOVED: isLoggedIn={true}
-              // JobCard now detects auth automatically via useAuth()
-              // Since this page is protected, user will always be logged in here
               sectionTitle={sector.label}
             />
           );

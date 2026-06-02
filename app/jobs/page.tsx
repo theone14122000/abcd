@@ -7,30 +7,12 @@ import JobsCTA from "@/components/jobs/JobsCTA";
 import { Job } from "@/components/jobs/JobCard";
 
 const SECTORS = [
-  {
-    id: "HEALTH",
-    label: "Health",
-  },
-  {
-    id: "SALES",
-    label: "Sales",
-  },
-  {
-    id: "MANUFACTURING",
-    label: "Manufacturing",
-  },
-  {
-    id: "IT",
-    label: "IT & Technologies",
-  },
-  {
-    id: "BPO",
-    label: "BPO",
-  },
-  {
-    id: "FINANCE",
-    label: "Finance",
-  },
+  { id: "HEALTH", label: "Health" },
+  { id: "SALES", label: "Sales" },
+  { id: "MANUFACTURING", label: "Manufacturing" },
+  { id: "IT", label: "IT & Technologies" },
+  { id: "BPO", label: "BPO" },
+  { id: "FINANCE", label: "Finance" },
 ];
 
 export default function PublicJobsPage() {
@@ -40,36 +22,35 @@ export default function PublicJobsPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/jobs", {
-          cache: "no-store",
-        });
-
+        const res = await fetch("/api/jobs", { cache: "no-store" });
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setJobs(data);
-        } else {
-          setJobs([]);
-        }
+        setJobs(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch jobs:", error);
         setJobs([]);
       }
     };
-
     fetchJobs();
   }, []);
 
+  // SAFE FILTERING: Prevents crashes if a job field is missing
   const filteredJobs = jobs.filter((job) => {
     const query = search.toLowerCase();
+    
+    const title = job.title?.toLowerCase() || "";
+    const company = job.company?.toLowerCase() || "";
+    const location = job.location?.toLowerCase() || "";
+    const type = job.type?.toLowerCase() || "";
+    const description = job.description?.toLowerCase() || "";
+    const sector = job.sector?.toLowerCase() || "";
 
     return (
-      job.title.toLowerCase().includes(query) ||
-      job.company.toLowerCase().includes(query) ||
-      job.location.toLowerCase().includes(query) ||
-      job.type.toLowerCase().includes(query) ||
-      job.description.toLowerCase().includes(query) ||
-      job.sector.toLowerCase().includes(query)
+      title.includes(query) ||
+      company.includes(query) ||
+      location.includes(query) ||
+      type.includes(query) ||
+      description.includes(query) ||
+      sector.includes(query)
     );
   });
 
@@ -79,19 +60,15 @@ export default function PublicJobsPage() {
 
       <main style={{ background: "#f4f1e8" }}>
         {SECTORS.map((sector) => {
+          // CASE-INSENSITIVE MATCHING: Matches "IT", "it", "It", etc.
           const sectorJobs = filteredJobs.filter(
-            (job) => job.sector === sector.id
+            (job) => job.sector?.toUpperCase() === sector.id
           );
-
-          // Don't render empty sections if no jobs match
-          if (sectorJobs.length === 0) return null;
 
           return (
             <JobsFeatured
               key={sector.id}
               jobs={sectorJobs}
-              // REMOVED: isLoggedIn={false} 
-              // JobCard now detects auth automatically via useAuth()
               sectionTitle={sector.label}
             />
           );

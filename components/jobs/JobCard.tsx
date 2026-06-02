@@ -31,7 +31,16 @@ const SECTOR_ID_TO_SLUG: Record<string, string> = {
 export default function JobCard({ job }: Props) {
   const { user, loading } = useAuth();
 
-  const sectorSlug = SECTOR_ID_TO_SLUG[job.sector] || job.sector.toLowerCase();
+  // Safe sector slug generation (prevents crash if sector is missing)
+  const sectorKey = job.sector?.toUpperCase() || "";
+  const sectorSlug =
+    SECTOR_ID_TO_SLUG[sectorKey] ||
+    (job.sector || "jobs").toLowerCase().replace(/\s+/g, "-");
+
+  // Safe date formatting
+  const formattedDate = job.createdAt
+    ? new Date(job.createdAt).toLocaleDateString()
+    : "";
 
   return (
     <div
@@ -94,7 +103,7 @@ export default function JobCard({ job }: Props) {
             padding: "5px 14px",
           }}
         >
-          {job.type}
+          {job.type || "Full Time"}
         </span>
       </div>
 
@@ -109,7 +118,7 @@ export default function JobCard({ job }: Props) {
           marginBottom: 12,
         }}
       >
-        {job.title}
+        {job.title || "Untitled Position"}
       </h3>
 
       {/* Company */}
@@ -123,7 +132,7 @@ export default function JobCard({ job }: Props) {
         }}
       >
         <span style={{ opacity: 0.65, fontWeight: 400 }}>Company: </span>
-        {job.company}
+        {job.company || "—"}
       </p>
 
       {/* Divider */}
@@ -152,7 +161,7 @@ export default function JobCard({ job }: Props) {
             color: "#3a7a6f",
           }}
         >
-          <strong>📍 Location:</strong> {job.location}
+          <strong>📍 Location:</strong> {job.location || "—"}
         </span>
         <span
           style={{
@@ -161,7 +170,7 @@ export default function JobCard({ job }: Props) {
             color: "#3a7a6f",
           }}
         >
-          <strong>💰 Salary:</strong> ₹{job.salary}
+          <strong>💰 Salary:</strong> ₹{job.salary || "—"}
         </span>
         <span
           style={{
@@ -170,7 +179,7 @@ export default function JobCard({ job }: Props) {
             color: "#3a7a6f",
           }}
         >
-          <strong>🏢 Sector:</strong> {job.sector}
+          <strong>🏢 Sector:</strong> {job.sector || "—"}
         </span>
       </div>
 
@@ -188,7 +197,7 @@ export default function JobCard({ job }: Props) {
           overflow: "hidden",
         }}
       >
-        {job.description}
+        {job.description || "No description provided."}
       </p>
 
       {/* Footer */}
@@ -206,7 +215,7 @@ export default function JobCard({ job }: Props) {
             color: "#6b9e97",
           }}
         >
-          {new Date(job.createdAt).toLocaleDateString()}
+          {formattedDate}
         </span>
 
         {loading ? (
