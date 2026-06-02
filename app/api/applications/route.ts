@@ -28,20 +28,21 @@ export async function POST(req: NextRequest) {
     let skills: string | null = null;
     let resumeUrl: string | null = null;
 
-    // 1. DATA EXTRACTION
+    // ─── 1. DATA EXTRACTION ──────────────────────────────────────────────────
+
     if (contentType.includes("multipart/form-data")) {
       console.log("Status: Parsing Multipart Form Data");
       const formData = await req.formData();
 
-      jobId = getString(formData, "jobId");
-      userId = getString(formData, "userId");
-      fullName = getString(formData, "fullName");
-      email = getString(formData, "email");
-      currentCTC = getString(formData, "currentCTC") || null;
-      expectedCTC = getString(formData, "expectedCTC") || null;
+      jobId             = getString(formData, "jobId");
+      userId            = getString(formData, "userId");
+      fullName          = getString(formData, "fullName");
+      email             = getString(formData, "email");
+      currentCTC        = getString(formData, "currentCTC")        || null;
+      expectedCTC       = getString(formData, "expectedCTC")       || null;
       preferredLocation = getString(formData, "preferredLocation") || null;
-      noticePeriod = getString(formData, "noticePeriod") || null;
-      skills = getString(formData, "skills") || null;
+      noticePeriod      = getString(formData, "noticePeriod")      || null;
+      skills            = getString(formData, "skills")            || null;
 
       const resumeFile = formData.get("resume");
       if (resumeFile instanceof File && resumeFile.size > 0) {
@@ -57,23 +58,27 @@ export async function POST(req: NextRequest) {
           console.log("Local Dev: Skipping blob upload (no BLOB_READ_WRITE_TOKEN)");
         }
       }
-    } else if (contentType.includes("application/json")) {
-      console.log("Status: Attempting JSON Parse");
 
-      // Guard: read raw text first to catch empty / malformed bodies
-      // before calling req.json(), which throws on bad input.
-      let rawText = "";
+    } else {
+      // ── JSON branch ──────────────────────────────────────────────────────
+      // CRITICAL FIX: read as raw text FIRST, then parse manually.
+      // req.json() can throw synchronously in Next.js App Router before
+      // your try-catch has a chance to handle it (e.g. body starting with "-").
+      console.log("Status: Reading body as text before JSON parse");
+
+      let rawText: string;
       try {
         rawText = await req.text();
-      } catch {
+      } catch (readErr) {
+        console.error("Failed to read request body:", readErr);
         return NextResponse.json(
-          { message: "Failed to read request body" },
+          { message: "Could not read request body" },
           { status: 400 }
         );
       }
 
       if (!rawText || rawText.trim() === "") {
-        console.error("JSON body is empty");
+        console.error("Request body is empty");
         return NextResponse.json(
           { message: "Request body is empty" },
           { status: 400 }
@@ -84,48 +89,51 @@ export async function POST(req: NextRequest) {
       try {
         body = JSON.parse(rawText);
       } catch (jsonErr) {
-        console.error("JSON Parsing failed:", jsonErr);
+        console.error("JSON parse failed. Raw body was:", JSON.stringify(rawText), jsonErr);
         return NextResponse.json(
-          { message: "Invalid JSON body" },
+          { message: "Invalid JSON in request body" },
           { status: 400 }
         );
       }
 
-      jobId = (body.jobId as string) || "";
-      userId = (body.userId as string) || "";
-      fullName = (body.fullName as string) || "";
-      email = (body.email as string) || "";
-      currentCTC = (body.currentCTC as string) || null;
-      expectedCTC = (body.expectedCTC as string) || null;
-      preferredLocation = (body.preferredLocation as string) || null;
-      noticePeriod = (body.noticePeriod as string) || null;
-      skills = (body.skills as string) || null;
-      resumeUrl = (body.resumeUrl as string) || null;
-    } else {
-      // Unsupported content type
-      console.error("Unsupported Content-Type:", contentType);
-      return NextResponse.json(
-        { message: "Unsupported Content-Type. Use multipart/form-data or application/json." },
-        { status: 415 }
-      );
+      jobId             = (body.jobId             as string) || "";
+      userId            = (body.userId             as string) || "";
+      fullName          = (body.fullName           as string) || "";
+      email             = (body.email              as string) || "";
+      currentCTC        = (body.currentCTC         as string) || null;
+      expectedCTC       = (body.expectedCTC        as string) || null;
+      preferredLocation = (body.preferredLocation  as string) || null;
+      noticePeriod      = (body.noticePeriod       as string) || null;
+      skills            = (body.skills             as string) || null;
+      resumeUrl         = (body.resumeUrl          as string) || null;
     }
 
-    // 2. VALIDATION
+    // ─── 2. VALIDATION ───────────────────────────────────────────────────────
+
     if (!jobId || !userId || !fullName || !email) {
-      console.error("Validation Failed: Missing required fields", { jobId, userId, fullName, email });
+      console.error("Validation Failed: Missing required fields", {
+        jobId, userId, fullName, email,
+      });
       return NextResponse.json(
         { message: "Job ID, User ID, Name, and Email are required" },
         { status: 400 }
       );
     }
 
-    // 3. DATABASE OPERATIONS
+    // ─── 3. DATABASE OPERATIONS ──────────────────────────────────────────────
+
     const job = await prisma.job.findUnique({ where: { id: jobId } });
-    if (!job) return NextResponse.json({ message: "Job not found" }, { status: 404 });
-    if (job.isClosed) return NextResponse.json({ message: "Job is closed" }, { status: 400 });
+    if (!job) {
+      return NextResponse.json({ message: "Job not found" }, { status: 404 });
+    }
+    if (job.isClosed) {
+      return NextResponse.json({ message: "Job is closed" }, { status: 400 });
+    }
 
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
 
     const application = await prisma.application.create({
       data: {
