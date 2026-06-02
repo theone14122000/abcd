@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export interface Job {
   id: string;
@@ -16,7 +17,6 @@ export interface Job {
 
 interface Props {
   job: Job;
-  isLoggedIn: boolean;
 }
 
 const SECTOR_ID_TO_SLUG: Record<string, string> = {
@@ -28,7 +28,9 @@ const SECTOR_ID_TO_SLUG: Record<string, string> = {
   HEALTH: "health",
 };
 
-export default function JobCard({ job, isLoggedIn }: Props) {
+export default function JobCard({ job }: Props) {
+  const { user, loading } = useAuth();
+
   const sectorSlug = SECTOR_ID_TO_SLUG[job.sector] || job.sector.toLowerCase();
 
   return (
@@ -207,7 +209,21 @@ export default function JobCard({ job, isLoggedIn }: Props) {
           {new Date(job.createdAt).toLocaleDateString()}
         </span>
 
-        {isLoggedIn ? (
+        {loading ? (
+          <span
+            style={{
+              padding: "9px 22px",
+              borderRadius: 50,
+              background: "#e2e8f0",
+              color: "#94a3b8",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "0.78rem",
+              fontWeight: 600,
+            }}
+          >
+            Checking...
+          </span>
+        ) : user ? (
           <Link
             href={`/jobs/${sectorSlug}/${job.id}/apply`}
             style={{
@@ -251,7 +267,7 @@ export default function JobCard({ job, isLoggedIn }: Props) {
       <style>{`
         .job-card-animate {
           background: radial-gradient(circle at 15% 20%, rgba(46,196,182,0.12), transparent 32%),
-            linear-gradient(120deg, #37f3da, #d4f5b8, #e7e093, #69e969f6, #73f0dd);
+            linear-gradient(120deg, #c8ede8, #d4f5b8, #f7eb6c, #c8f0c8, #b8f5ec);
           background-size: 200% 200%;
           animation: jobCardFlow 8s ease-in-out infinite;
         }
