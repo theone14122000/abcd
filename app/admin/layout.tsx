@@ -30,7 +30,6 @@ export default function AdminLayout({
 
         <nav>
           <Link href="/admin">Dashboard</Link>
-          <Link href="/admin/users">Users</Link>
           <Link href="/admin/jobs">Jobs</Link>
           <Link href="/admin/applications">Applications</Link>
         </nav>
