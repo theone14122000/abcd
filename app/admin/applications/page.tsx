@@ -214,20 +214,25 @@ export default function AdminApplicationsPage() {
       silent ? setRefreshing(true) : setLoading(true);
       setError("");
 
-      const res = await fetch("/api/applications", {
+      const res = await fetch("/api/admin/applications", {
         method: "GET",
         cache: "no-store",
       });
 
+      const data = await res.json().catch(() => null);
+
       if (!res.ok) {
-        throw new Error("Failed to fetch applications");
+        throw new Error(data?.message || "Failed to fetch applications");
       }
 
-      const data = await res.json();
       setApplications(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
-      setError("Could not load applications right now.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not load applications right now."
+      );
     } finally {
       silent ? setRefreshing(false) : setLoading(false);
     }

@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-// GET - Fetch all applications for admin
+// GET - Fetch all applications for admin panel
 export async function GET() {
   try {
     const applications = await prisma.application.findMany({
