@@ -5,13 +5,11 @@ import JobCard, { Job } from "./JobCard";
 
 interface Props {
   jobs: Job[];
-  isLoggedIn: boolean;
   sectionTitle: string;
 }
 
 export default function JobsFeatured({
   jobs,
-  isLoggedIn,
   sectionTitle,
 }: Props) {
   const ref = useRef<HTMLElement>(null);
@@ -209,7 +207,7 @@ export default function JobsFeatured({
                   transition: `all 0.6s ease ${i * 0.08}s`,
                 }}
               >
-                <JobCard job={job} isLoggedIn={isLoggedIn} />
+                <JobCard job={job} />
               </div>
             ))}
           </div>

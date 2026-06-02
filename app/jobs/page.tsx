@@ -83,11 +83,15 @@ export default function PublicJobsPage() {
             (job) => job.sector === sector.id
           );
 
+          // Don't render empty sections if no jobs match
+          if (sectorJobs.length === 0) return null;
+
           return (
             <JobsFeatured
               key={sector.id}
               jobs={sectorJobs}
-              isLoggedIn={false}
+              // REMOVED: isLoggedIn={false} 
+              // JobCard now detects auth automatically via useAuth()
               sectionTitle={sector.label}
             />
           );

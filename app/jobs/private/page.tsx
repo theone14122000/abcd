@@ -42,6 +42,7 @@ export default function PrivateJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [search, setSearch] = useState("");
 
+  // Protect this page - redirect if not logged in
   useEffect(() => {
     if (!user) {
       router.push("/login");
@@ -84,6 +85,7 @@ export default function PrivateJobsPage() {
     );
   });
 
+  // Show nothing while checking auth (prevents flash of content)
   if (!user) return null;
 
   return (
@@ -96,11 +98,15 @@ export default function PrivateJobsPage() {
             (job) => job.sector === sector.id
           );
 
+          if (sectorJobs.length === 0) return null;
+
           return (
             <JobsFeatured
               key={sector.id}
               jobs={sectorJobs}
-              isLoggedIn={true}
+              // REMOVED: isLoggedIn={true}
+              // JobCard now detects auth automatically via useAuth()
+              // Since this page is protected, user will always be logged in here
               sectionTitle={sector.label}
             />
           );
