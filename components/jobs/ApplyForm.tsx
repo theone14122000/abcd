@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 
 interface ApplyFormProps {
@@ -41,7 +41,7 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
   const [error, setError] = useState("");
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({
       ...form,
@@ -49,40 +49,70 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      
+      // Validate file type
+      const validTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ];
+      
+      if (validTypes.includes(file.type) || file.name.endsWith(".pdf") || file.name.endsWith(".doc") || file.name.endsWith(".docx")) {
+        if (file.size > 5 * 1024 * 1024) {
+          setError("File size must be less than 5MB");
+          return;
+        }
+        setResume(file);
+        setError("");
+      } else {
+        setError("Please upload a PDF or Word document");
+      }
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setMessage("");
 
+    console.log("=== FORM SUBMISSION STARTED ===");
+    console.log("Job ID:", job.id);
+    console.log("User ID:", user.id);
+
     try {
-      // Create FormData object
+      // Create FormData object (NOT JSON)
       const formData = new FormData();
 
-      // Append all fields as strings
-      formData.append("jobId", String(job.id));
-      formData.append("userId", String(user.id));
-      formData.append("fullName", String(form.fullName));
-      formData.append("email", String(form.email));
-      formData.append("currentCTC", String(form.currentCTC || ""));
-      formData.append("expectedCTC", String(form.expectedCTC || ""));
-      formData.append("preferredLocation", String(form.preferredLocation || ""));
-      formData.append("noticePeriod", String(form.noticePeriod || ""));
-      formData.append("skills", String(form.skills || ""));
+      // Append all required fields
+      formData.append("jobId", job.id);
+      formData.append("userId", user.id);
+      formData.append("fullName", form.fullName);
+      formData.append("email", form.email);
+      formData.append("currentCTC", form.currentCTC || "");
+      formData.append("expectedCTC", form.expectedCTC || "");
+      formData.append("preferredLocation", form.preferredLocation || "");
+      formData.append("noticePeriod", form.noticePeriod || "");
+      formData.append("skills", form.skills || "");
 
       // Append resume file if exists
       if (resume) {
         formData.append("resume", resume);
+        console.log("Resume attached:", resume.name, resume.size, "bytes");
       }
 
-      console.log("Sending FormData to /api/applications");
-      console.log("Job ID:", job.id);
-      console.log("User ID:", user.id);
+      console.log("Sending FormData to /api/applications...");
+      console.log("Content-Type will be set automatically by browser");
 
-      // Send request - DO NOT set Content-Type header
+      // IMPORTANT: Do NOT set Content-Type header manually
+      // The browser sets it automatically with the correct boundary for FormData
       const res = await fetch("/api/applications", {
         method: "POST",
         body: formData,
+        // NO headers: { "Content-Type": ... } ← This is critical!
       });
 
       console.log("Response status:", res.status);
@@ -102,12 +132,13 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
         throw new Error(data?.message || "Failed to submit application");
       }
 
-      setMessage("Application submitted successfully!");
+      setMessage("Application submitted successfully! Redirecting...");
       setLoading(false);
 
       setTimeout(() => {
         router.push("/jobs");
-      }, 2000);
+      }, 2500);
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to submit application";
       setError(msg);
@@ -121,6 +152,7 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
       style={{
         background: "rgba(255,255,255,0.85)",
         backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
         border: "1px solid rgba(46,196,182,0.14)",
         borderRadius: "24px",
         padding: "32px",
@@ -134,23 +166,28 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
           fontSize: "1.5rem",
           color: "#0d2b28",
           marginBottom: "8px",
+          fontWeight: 700,
         }}
       >
-        Apply for this job
+        Apply for {job.title}
       </h2>
 
-      <p style={{ color: "#6b9e97", marginBottom: "24px" }}>
-        Fill in your details to submit your application.
+      <p style={{ color: "#6b9e97", marginBottom: "24px", fontSize: "0.9rem" }}>
+        {job.company} • {job.location} • {job.type}
       </p>
 
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+        
+        {/* Full Name */}
         <div>
-          <label htmlFor="fullName" style={{ display: "block", marginBottom: 6, color: "#6b9e97", fontSize: "0.85rem", fontWeight: 600 }}>
-            Full Name
+          <label htmlFor="fullName" style={labelStyle}>
+            Full Name *
           </label>
           <input
             id="fullName"
             name="fullName"
+            type="text"
+            placeholder="John Doe"
             value={form.fullName}
             onChange={handleChange}
             required
@@ -158,14 +195,16 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
           />
         </div>
 
+        {/* Email */}
         <div>
-          <label htmlFor="email" style={{ display: "block", marginBottom: 6, color: "#6b9e97", fontSize: "0.85rem", fontWeight: 600 }}>
-            Email
+          <label htmlFor="email" style={labelStyle}>
+            Email Address *
           </label>
           <input
             id="email"
             name="email"
             type="email"
+            placeholder="john@example.com"
             value={form.email}
             onChange={handleChange}
             required
@@ -173,67 +212,222 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
           />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {/* CTC Fields */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
           <div>
-            <label htmlFor="currentCTC" style={labelStyle}>Current CTC</label>
-            <input id="currentCTC" name="currentCTC" value={form.currentCTC} onChange={handleChange} style={inputStyle} />
+            <label htmlFor="currentCTC" style={labelStyle}>
+              Current CTC
+            </label>
+            <input
+              id="currentCTC"
+              name="currentCTC"
+              type="text"
+              placeholder="e.g. 5,00,000"
+              value={form.currentCTC}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
           <div>
-            <label htmlFor="expectedCTC" style={labelStyle}>Expected CTC</label>
-            <input id="expectedCTC" name="expectedCTC" value={form.expectedCTC} onChange={handleChange} style={inputStyle} />
+            <label htmlFor="expectedCTC" style={labelStyle}>
+              Expected CTC
+            </label>
+            <input
+              id="expectedCTC"
+              name="expectedCTC"
+              type="text"
+              placeholder="e.g. 8,00,000"
+              value={form.expectedCTC}
+              onChange={handleChange}
+              style={inputStyle}
+            />
           </div>
         </div>
 
-        <div>
-          <label htmlFor="preferredLocation" style={labelStyle}>Preferred Location</label>
-          <input id="preferredLocation" name="preferredLocation" value={form.preferredLocation} onChange={handleChange} style={inputStyle} />
+        {/* Location & Notice */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+          <div>
+            <label htmlFor="preferredLocation" style={labelStyle}>
+              Preferred Location
+            </label>
+            <input
+              id="preferredLocation"
+              name="preferredLocation"
+              type="text"
+              placeholder="e.g. Mumbai, Remote"
+              value={form.preferredLocation}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label htmlFor="noticePeriod" style={labelStyle}>
+              Notice Period
+            </label>
+            <input
+              id="noticePeriod"
+              name="noticePeriod"
+              type="text"
+              placeholder="e.g. 1 Month"
+              value={form.noticePeriod}
+              onChange={handleChange}
+              style={inputStyle}
+            />
+          </div>
         </div>
 
+        {/* Skills */}
         <div>
-          <label htmlFor="noticePeriod" style={labelStyle}>Notice Period</label>
-          <input id="noticePeriod" name="noticePeriod" value={form.noticePeriod} onChange={handleChange} style={inputStyle} />
-        </div>
-
-        <div>
-          <label htmlFor="skills" style={labelStyle}>Skills</label>
+          <label htmlFor="skills" style={labelStyle}>
+            Skills & Expertise
+          </label>
           <textarea
             id="skills"
             name="skills"
+            placeholder="List your key skills (e.g., React, Node.js, SQL)"
+            rows={4}
             value={form.skills}
             onChange={handleChange}
-            rows={4}
             style={{ ...inputStyle, resize: "none" }}
           />
         </div>
 
+        {/* Resume Upload */}
         <div>
-          <label htmlFor="resume" style={labelStyle}>Resume</label>
-          <input
-            id="resume"
-            type="file"
-            accept=".pdf,.doc,.docx"
-            onChange={(e) => setResume(e.target.files?.[0] || null)}
-            style={inputStyle}
-          />
+          <label htmlFor="resume" style={labelStyle}>
+            Upload Resume (PDF/Word) *
+          </label>
+          <div
+            style={{
+              border: resume 
+                ? "2px solid #0e7a70" 
+                : "2px dashed rgba(46,196,182,0.3)",
+              borderRadius: "12px",
+              padding: "20px",
+              textAlign: "center",
+              background: resume ? "rgba(14,122,112,0.05)" : "rgba(248,250,252,0.5)",
+              transition: "all 0.2s",
+            }}
+          >
+            <input
+              id="resume"
+              type="file"
+              accept=".pdf,.doc,.docx"
+              onChange={handleFileChange}
+              style={{ display: "none" }}
+            />
+            
+            {!resume ? (
+              <>
+                <div style={{ fontSize: "2.5rem", marginBottom: "10px" }}>📄</div>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById("resume")?.click()}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    color: "#0e7a70",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Click to upload resume
+                </button>
+                <p style={{ fontSize: "0.75rem", color: "#9ca3af", marginTop: "6px" }}>
+                  Max size: 5MB • PDF or Word only
+                </p>
+              </>
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "white",
+                  padding: "14px 18px",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(46,196,182,0.2)",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "1.5rem" }}>📎</span>
+                  <div style={{ textAlign: "left" }}>
+                    <p style={{ fontWeight: 600, color: "#0d2b28", fontSize: "0.9rem", margin: 0 }}>
+                      {resume.name}
+                    </p>
+                    <p style={{ color: "#6b9e97", fontSize: "0.75rem", margin: 0 }}>
+                      {(resume.size / 1024).toFixed(2)} KB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setResume(null)}
+                  style={{
+                    background: "#fef2f2",
+                    color: "#dc2626",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "6px 12px",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
+        {/* Error Message */}
         {error && (
-          <div style={{ padding: "12px 14px", borderRadius: "12px", background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca" }}>
-            {error}
+          <div
+            style={{
+              padding: "14px 16px",
+              borderRadius: "12px",
+              background: "#fef2f2",
+              color: "#dc2626",
+              border: "1px solid #fecaca",
+              fontSize: "0.9rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <span>⚠️</span> {error}
           </div>
         )}
 
+        {/* Success Message */}
         {message && (
-          <div style={{ padding: "12px 14px", borderRadius: "12px", background: "#ecfdf5", color: "#059669", border: "1px solid #a7f3d0" }}>
-            {message}
+          <div
+            style={{
+              padding: "14px 16px",
+              borderRadius: "12px",
+              background: "#ecfdf5",
+              color: "#047857",
+              border: "1px solid #a7f3d0",
+              fontSize: "0.9rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <span>✅</span> {message}
           </div>
         )}
 
+        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading}
           style={{
-            padding: "14px 18px",
+            marginTop: "10px",
+            padding: "16px 24px",
             borderRadius: "14px",
             border: "none",
             background: loading
@@ -241,16 +435,54 @@ export default function ApplyForm({ job, user }: ApplyFormProps) {
               : "linear-gradient(135deg, #0e7a70, #0d2b28)",
             color: "white",
             fontWeight: 700,
+            fontSize: "1rem",
             cursor: loading ? "not-allowed" : "pointer",
+            transition: "all 0.3s ease",
+            transform: loading ? "scale(0.98)" : "scale(1)",
+            boxShadow: loading
+              ? "none"
+              : "0 4px 12px rgba(14, 122, 112, 0.3)",
           }}
         >
-          {loading ? "Submitting..." : "Submit Application"}
+          {loading ? (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
+              }}
+            >
+              <span
+                style={{
+                  width: "20px",
+                  height: "20px",
+                  border: "2px solid white",
+                  borderTopColor: "transparent",
+                  borderRadius: "50%",
+                  animation: "spin 0.8s linear infinite",
+                }}
+              />
+              Submitting...
+            </span>
+          ) : (
+            "Submit Application"
+          )}
         </button>
       </form>
+
+      <style jsx>{`
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
     </div>
   );
 }
 
+// Reusable styles
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "12px 16px",
@@ -261,12 +493,14 @@ const inputStyle: React.CSSProperties = {
   fontSize: "0.92rem",
   color: "#0d2b28",
   fontFamily: "'Plus Jakarta Sans', sans-serif",
+  transition: "all 0.2s",
 };
 
 const labelStyle: React.CSSProperties = {
   display: "block",
-  marginBottom: 6,
+  marginBottom: "6px",
   color: "#6b9e97",
   fontSize: "0.85rem",
   fontWeight: 600,
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
 };
