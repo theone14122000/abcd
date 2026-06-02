@@ -43,8 +43,8 @@ model Application {
   expectedCTC       String?
   preferredLocation String?
   noticePeriod      String?
-  skills            String?
-  resumeUrl         String?
+  skills            String?  @db.Text   // Add @db.Text
+  resumeUrl         String?  @db.Text   // Add @db.Text
   status            String   @default("PENDING")
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
