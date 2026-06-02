@@ -251,7 +251,7 @@ export default function JobCard({ job, isLoggedIn }: Props) {
       <style>{`
         .job-card-animate {
           background: radial-gradient(circle at 15% 20%, rgba(46,196,182,0.12), transparent 32%),
-            linear-gradient(120deg, #c8ede8, #d4f5b8, #f7eb6c, #c8f0c8, #b8f5ec);
+            linear-gradient(120deg, #37f3da, #d4f5b8, #e7e093, #69e969f6, #73f0dd);
           background-size: 200% 200%;
           animation: jobCardFlow 8s ease-in-out infinite;
         }
