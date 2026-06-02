@@ -8,10 +8,7 @@ interface Props {
   sectionTitle: string;
 }
 
-export default function JobsFeatured({
-  jobs,
-  sectionTitle,
-}: Props) {
+export default function JobsFeatured({ jobs, sectionTitle }: Props) {
   const ref = useRef<HTMLElement>(null);
   const [vis, setVis] = useState(false);
 
@@ -45,6 +42,7 @@ export default function JobsFeatured({
       }}
     >
       <div
+        className="jobs-featured-container"
         style={{
           maxWidth: 1280,
           margin: "0 auto",
@@ -192,6 +190,7 @@ export default function JobsFeatured({
           </div>
         ) : (
           <div
+            className="jobs-featured-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
@@ -216,8 +215,12 @@ export default function JobsFeatured({
 
       <style>{`
         @media (max-width: 720px) {
-          section > div {
+          .jobs-featured-container {
             padding: 0 24px !important;
+          }
+
+          .jobs-featured-grid {
+            grid-template-columns: 1fr !important;
           }
         }
       `}</style>
