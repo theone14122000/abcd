@@ -3,28 +3,56 @@
 import { useEffect, useRef, useState } from "react";
 
 const pillars = [
-  { num: "01", title: "Global Network", desc: "Access to passive talent across 6 continents." },
-  { num: "02", title: "Deep Intel", desc: "Proprietary leadership competency mapping." },
-  { num: "03", title: "Success Fee", desc: "Performance-based models aligned with goals." },
+  {
+    num: "01",
+    title: "Global Network",
+    desc: "Access to passive talent across 6 continents.",
+  },
+  {
+    num: "02",
+    title: "Deep Intel",
+    desc: "Proprietary leadership competency mapping.",
+  },
+  {
+    num: "03",
+    title: "Success Fee",
+    desc: "Performance-based models aligned with goals.",
+  },
 ];
 
 export default function ExecutiveSearch() {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
   const [vis, setVis] = useState(false);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect(); } }, { threshold: 0.1 });
-    obs.observe(el);
-    return () => obs.disconnect();
+
+    let observer: IntersectionObserver | null = null;
+
+    observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVis(true);
+          observer?.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+
+    return () => observer?.disconnect();
   }, []);
 
   return (
-    <section id="executive-search"
+    <section
+      id="executive-search"
       ref={ref}
       style={{
         width: "100%",
-        background: "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(152,251,152,0.55) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
+        background:
+          "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(152,251,152,0.55) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
         padding: "96px 64px",
       }}
     >
@@ -46,17 +74,70 @@ export default function ExecutiveSearch() {
           }}
         >
           {/* bg decoration */}
-          <div style={{ position: "absolute", top: -60, right: -60, width: 280, height: 280, borderRadius: "50%", background: "rgba(46,196,182,0.05)", pointerEvents: "none" }} />
-          {/* Star / medal decoration top right */}
-          <div style={{ position: "absolute", top: 40, right: 60, fontSize: "5rem", opacity: 0.08, pointerEvents: "none", transform: "rotate(-10deg)" }}>🏅</div>
+          <div
+            style={{
+              position: "absolute",
+              top: -60,
+              right: -60,
+              width: 280,
+              height: 280,
+              borderRadius: "50%",
+              background: "rgba(46,196,182,0.05)",
+              pointerEvents: "none",
+            }}
+          />
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+          {/* Star / medal decoration top right */}
+          <div
+            style={{
+              position: "absolute",
+              top: 40,
+              right: 60,
+              fontSize: "5rem",
+              opacity: 0.08,
+              pointerEvents: "none",
+              transform: "rotate(-10deg)",
+            }}
+          >
+            🏅
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 64,
+              alignItems: "start",
+            }}
+          >
             {/* LEFT */}
             <div>
               {/* elite badge */}
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 14px", background: "rgba(46,196,182,0.1)", border: "1px solid rgba(46,196,182,0.2)", borderRadius: 50, marginBottom: 22 }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "5px 14px",
+                  background: "rgba(46,196,182,0.1)",
+                  border: "1px solid rgba(46,196,182,0.2)",
+                  borderRadius: 50,
+                  marginBottom: 22,
+                }}
+              >
                 <span style={{ fontSize: "0.9rem" }}>🌐</span>
-                <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.68rem", fontWeight: 800, letterSpacing: "0.14em", color: "#1a9e92", textTransform: "uppercase" }}>Elite Service</span>
+                <span
+                  style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    fontSize: "0.68rem",
+                    fontWeight: 800,
+                    letterSpacing: "0.14em",
+                    color: "#1a9e92",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Elite Service
+                </span>
               </div>
 
               <h2
@@ -64,7 +145,8 @@ export default function ExecutiveSearch() {
                   fontFamily: "'Clash Display', sans-serif",
                   fontSize: "2.4rem",
                   fontWeight: 700,
-                  background:"linear-gradient(135deg, #3ef13e 0%, #27bd3b 45%, #15ac10 100%)",
+                  background:
+                    "linear-gradient(135deg, #3ef13e 0%, #27bd3b 45%, #15ac10 100%)",
                   WebkitBackgroundClip: "text",
                   backgroundClip: "text",
                   color: "transparent",
@@ -74,13 +156,32 @@ export default function ExecutiveSearch() {
                 }}
               >
                 Executive{" "}
-                <span style={{ background: "linear-gradient(135deg, #0ec0ec 0%, #0ab5cc 45%, #0f7de4 100%)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", WebkitTextFillColor: "transparent" }}>
+                <span
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0ec0ec 0%, #0ab5cc 45%, #0f7de4 100%)",
+                    WebkitBackgroundClip: "text",
+                    backgroundClip: "text",
+                    color: "transparent",
+                    WebkitTextFillColor: "transparent",
+                  }}
+                >
                   Search
                 </span>
               </h2>
 
-              <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#6b9e97", fontSize: "0.95rem", lineHeight: 1.82, marginBottom: 36 }}>
-                Discreet, thorough, and highly personalized. We specialize in identifying transformative leadership talent for C-suite and senior-level roles across diverse global industries.
+              <p
+                style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  color: "#6b9e97",
+                  fontSize: "0.95rem",
+                  lineHeight: 1.82,
+                  marginBottom: 36,
+                }}
+              >
+                Discreet, thorough, and highly personalized. We specialize in
+                identifying transformative leadership talent for C-suite and
+                senior-level roles across diverse global industries.
               </p>
 
               <a
@@ -99,8 +200,16 @@ export default function ExecutiveSearch() {
                   boxShadow: "0 8px 24px rgba(46,196,182,0.35)",
                   transition: "all 0.25s ease",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 14px 32px rgba(46,196,182,0.45)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(46,196,182,0.35)"; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-3px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 14px 32px rgba(46,196,182,0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 24px rgba(46,196,182,0.35)";
+                }}
               >
                 Inquire for Details →
               </a>
@@ -133,9 +242,29 @@ export default function ExecutiveSearch() {
                   >
                     {p.num}
                   </div>
-                  <div style={{ flex: 1, paddingTop: 0, borderTop: "1px solid rgba(46,196,182,0.15)", paddingTop: "12px" }}>
-                    <div style={{ fontFamily: "'Clash Display', sans-serif", fontWeight: 700, fontSize: "1rem", color: "#0d2b28", marginBottom: 5 }}>{p.title}</div>
-                    <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.85rem", color: "#6b9e97", lineHeight: 1.65 }}>{p.desc}</div>
+
+                  <div style={{ flex: 1, borderTop: "1px solid rgba(46,196,182,0.15)", paddingTop: 12 }}>
+                    <div
+                      style={{
+                        fontFamily: "'Clash Display', sans-serif",
+                        fontWeight: 700,
+                        fontSize: "1rem",
+                        color: "#0d2b28",
+                        marginBottom: 5,
+                      }}
+                    >
+                      {p.title}
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        fontSize: "0.85rem",
+                        color: "#6b9e97",
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      {p.desc}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -1,470 +1,735 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
-// ── Loading Spinner ───────────────────────────────────────────────────────────
+interface JobItem {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  salary: string;
+  type: string;
+  sector: string;
+  description: string;
+  createdAt: string;
+}
+
+const sectorLabels: Record<string, string> = {
+  IT: "IT & Technologies",
+  BPO: "BPO & Customer Service",
+  FINANCE: "Finance & Banking",
+  SALES: "Sales & Marketing",
+  HEALTH: "Health & Medical",
+  MANUFACTURING: "Manufacturing & Operations",
+};
+
+const sectorIcons: Record<string, string> = {
+  IT: "💻",
+  BPO: "📞",
+  FINANCE: "🏦",
+  SALES: "📈",
+  HEALTH: "🏥",
+  MANUFACTURING: "🏭",
+};
+
 function LoadingScreen() {
   return (
     <div
       style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #d4e8d4 0%, #f8f7f1 100%)",
+        minHeight: "60vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
       }}
     >
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-        style={{
-          width: 40,
-          height: 40,
-          border: "3px solid #4f835d",
-          borderTopColor: "transparent",
-          borderRadius: "50%",
-        }}
-      />
-    </div>
-  );
-}
-
-// ── Public Page ───────────────────────────────────────────────────────────────
-function PublicCareersPage() {
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg, #eaf0e5 0%, #f8f7f1 100%)",
-        padding: "40px 16px 80px",
-      }}
-    >
-      <div style={{ maxWidth: "860px", margin: "0 auto" }}>
-        {/* Main Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          style={{
-            background: "rgba(255,255,255,0.75)",
-            backdropFilter: "blur(20px)",
-            borderRadius: "40px",
-            padding: "60px 40px",
-            boxShadow: "0 20px 80px rgba(0,0,0,0.06)",
-            border: "1px solid rgba(255,255,255,0.6)",
-            textAlign: "center",
-          }}
-        >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            style={{ marginBottom: "28px" }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                border: "1px solid rgba(79,131,93,0.35)",
-                color: "#4f835d",
-                fontSize: "11px",
-                fontWeight: "700",
-                letterSpacing: "3px",
-                textTransform: "uppercase",
-                padding: "8px 20px",
-                borderRadius: "100px",
-                background: "rgba(79,131,93,0.06)",
-              }}
-            >
-              Join The Evolution
-            </span>
-          </motion.div>
-
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            style={{
-              fontSize: "clamp(32px, 5vw, 54px)",
-              fontWeight: "700",
-              color: "#0d2b28",
-              lineHeight: 1.2,
-              margin: "0 0 20px 0",
-            }}
-          >
-            Make Your Future With Us at{" "}
-            <span style={{ color: "#4f835d" }}>E Choices</span>
-          </motion.h1>
-
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            style={{
-              color: "rgba(13,43,40,0.6)",
-              fontSize: "18px",
-              lineHeight: 1.7,
-              maxWidth: "560px",
-              margin: "0 auto 36px",
-            }}
-          >
-            We are building a more human-centric recruitment landscape. Join our
-            team of innovators and help us redefine how talent meets opportunity
-            across the globe.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            style={{
-              display: "flex",
-              gap: "16px",
-              justifyContent: "center",
-              flexWrap: "wrap",
-              marginBottom: "48px",
-            }}
-          >
-            <Link href="/register" style={{ textDecoration: "none" }}>
-              <motion.span
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  display: "inline-block",
-                  background: "#4f835d",
-                  color: "white",
-                  fontWeight: "600",
-                  fontSize: "16px",
-                  padding: "14px 32px",
-                  borderRadius: "16px",
-                  cursor: "pointer",
-                  boxShadow: "0 8px 24px rgba(79,131,93,0.25)",
-                }}
-              >
-                Register
-              </motion.span>
-            </Link>
-
-            <Link href="/login" style={{ textDecoration: "none" }}>
-              <motion.span
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                style={{
-                  display: "inline-block",
-                  background: "rgba(255,255,255,0.8)",
-                  color: "#0d2b28",
-                  fontWeight: "600",
-                  fontSize: "16px",
-                  padding: "14px 32px",
-                  borderRadius: "16px",
-                  cursor: "pointer",
-                  border: "2px solid rgba(13,43,40,0.15)",
-                }}
-              >
-                Login
-              </motion.span>
-            </Link>
-          </motion.div>
-
-          {/* Hero Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.7 }}
-            style={{
-              borderRadius: "24px",
-              overflow: "hidden",
-              height: "280px",
-              background:
-                "linear-gradient(135deg, rgba(46,196,182,0.25) 0%, rgba(79,131,93,0.35) 50%, rgba(13,43,40,0.45) 100%)",
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "center",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(180deg, transparent 50%, rgba(13,43,40,0.2) 100%)",
-              }}
-            />
-
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                gap: "32px",
-                paddingBottom: "32px",
-                position: "relative",
-                zIndex: 1,
-              }}
-            >
-              {[60, 80, 70, 65].map((h, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 2.5 + i * 0.4,
-                    delay: i * 0.3,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    width: "32px",
-                    height: `${h}px`,
-                    background: "rgba(255,255,255,0.25)",
-                    borderRadius: "16px 16px 4px 4px",
-                    backdropFilter: "blur(4px)",
-                  }}
-                />
-              ))}
-            </div>
-          </motion.div>
-        </motion.div>
-
-        {/* Feature Cards */}
+      <div style={{ textAlign: "center" }}>
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            gap: "20px",
-            marginTop: "32px",
+            width: "48px",
+            height: "48px",
+            border: "4px solid rgba(46,196,182,0.2)",
+            borderTop: "4px solid #0e7a70",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite",
+            margin: "0 auto 16px",
           }}
-        >
-          {[
-            {
-              icon: "🚀",
-              title: "Growth Focused",
-              desc: "Continuous learning and fast career advancement.",
-            },
-            {
-              icon: "🌍",
-              title: "Global Impact",
-              desc: "Connect talent with opportunity worldwide.",
-            },
-            {
-              icon: "🤝",
-              title: "Great Culture",
-              desc: "A passionate team that supports each other.",
-            },
-          ].map((card, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 + i * 0.1, duration: 0.5 }}
-              whileHover={{ y: -4 }}
-              style={{
-                background: "rgba(255,255,255,0.75)",
-                backdropFilter: "blur(12px)",
-                borderRadius: "20px",
-                padding: "28px 24px",
-                border: "1px solid rgba(255,255,255,0.6)",
-                boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: "36px", marginBottom: "12px" }}>
-                {card.icon}
-              </div>
-
-              <h3
-                style={{
-                  fontWeight: "700",
-                  color: "#0d2b28",
-                  margin: "0 0 8px 0",
-                  fontSize: "16px",
-                }}
-              >
-                {card.title}
-              </h3>
-
-              <p
-                style={{
-                  color: "rgba(13,43,40,0.55)",
-                  fontSize: "14px",
-                  lineHeight: 1.6,
-                  margin: 0,
-                }}
-              >
-                {card.desc}
-              </p>
-            </motion.div>
-          ))}
-        </div>
+        />
+        <p style={{ color: "#6b9e97", fontSize: "1rem" }}>
+          Loading careers...
+        </p>
+        <style jsx>{`
+          @keyframes spin {
+            0% {
+              transform: rotate(0deg);
+            }
+            100% {
+              transform: rotate(360deg);
+            }
+          }
+        `}</style>
       </div>
     </div>
   );
 }
 
-// ── Authenticated Dashboard ───────────────────────────────────────────────────
-function AuthenticatedCareersPage({
-  userName,
-}: {
-  userName: string;
-}) {
-  const { logout } = useAuth();
-  const router = useRouter();
+function formatDate(dateString: string) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  const handleLogout = async () => {
-    await logout();
-    router.push("/");
-  };
-
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg, #eaf0e5 0%, #f8f7f1 100%)",
-        padding: "40px 16px 80px",
-      }}
-    >
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-        {/* Welcome Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          style={{
-            background: "linear-gradient(135deg, #4f835d 0%, #2ec4b6 100%)",
-            borderRadius: "28px",
-            padding: "36px 40px",
-            marginBottom: "24px",
-            boxShadow: "0 16px 48px rgba(79,131,93,0.3)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: "16px",
-          }}
-        >
-          <div>
-            <p
-              style={{
-                color: "rgba(255,255,255,0.7)",
-                fontSize: "14px",
-                margin: "0 0 4px 0",
-              }}
-            >
-              Welcome back 👋
-            </p>
-
-            <h1
-              style={{
-                color: "white",
-                fontSize: "28px",
-                fontWeight: "700",
-                margin: "0 0 4px 0",
-              }}
-            >
-              {userName}
-            </h1>
-
-            <p
-              style={{
-                color: "rgba(255,255,255,0.75)",
-                fontSize: "14px",
-                margin: 0,
-              }}
-            >
-              Your career dashboard is ready
-            </p>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={handleLogout}
-            style={{
-              background: "rgba(255,255,255,0.2)",
-              border: "1px solid rgba(255,255,255,0.3)",
-              color: "white",
-              fontWeight: "600",
-              fontSize: "14px",
-              padding: "12px 24px",
-              borderRadius: "12px",
-              cursor: "pointer",
-              fontFamily: "inherit",
-              backdropFilter: "blur(8px)",
-            }}
-          >
-            Sign Out
-          </motion.button>
-        </motion.div>
-
-        {/* Coming Soon */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          style={{
-            background: "rgba(255,255,255,0.8)",
-            backdropFilter: "blur(20px)",
-            borderRadius: "28px",
-            padding: "60px 40px",
-            textAlign: "center",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.05)",
-            border: "1px solid rgba(255,255,255,0.6)",
-          }}
-        >
-          <div style={{ fontSize: "64px", marginBottom: "20px" }}>
-            🚧
-          </div>
-
-          <h2
-            style={{
-              fontSize: "28px",
-              fontWeight: "700",
-              color: "#0d2b28",
-              margin: "0 0 12px 0",
-            }}
-          >
-            Job Listings Coming Soon
-          </h2>
-
-          <p
-            style={{
-              color: "rgba(13,43,40,0.55)",
-              fontSize: "16px",
-              lineHeight: 1.7,
-              maxWidth: "480px",
-              margin: "0 auto",
-            }}
-          >
-            We&apos;re building something amazing. Our full career dashboard
-            with job listings, applications, and tracking will be available
-            shortly.
-          </p>
-        </motion.div>
-      </div>
-    </div>
-  );
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  return date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function CareersPage() {
-  const { isLoading, user } = useAuth();
+  const { loading, user } = useAuth();
 
-  if (isLoading) {
+  const [jobs, setJobs] = useState<JobItem[]>([]);
+  const [fetchingJobs, setFetchingJobs] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedSector, setSelectedSector] = useState("ALL");
+  const [selectedType, setSelectedType] = useState("ALL");
+
+  const sectors = ["IT", "BPO", "FINANCE", "SALES", "HEALTH", "MANUFACTURING"];
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        setFetchingJobs(true);
+        const res = await fetch("/api/jobs", { cache: "no-store" });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch jobs");
+        }
+
+        const data = await res.json();
+        setJobs(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+        setJobs([]);
+      } finally {
+        setFetchingJobs(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  const filteredJobs = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
+    return jobs.filter((job) => {
+      const matchesSearch =
+        !query ||
+        job.title.toLowerCase().includes(query) ||
+        job.company.toLowerCase().includes(query) ||
+        job.location.toLowerCase().includes(query) ||
+        job.sector.toLowerCase().includes(query);
+
+      const matchesSector =
+        selectedSector === "ALL" || job.sector === selectedSector;
+
+      const matchesType =
+        selectedType === "ALL" || job.type === selectedType;
+
+      return matchesSearch && matchesSector && matchesType;
+    });
+  }, [jobs, search, selectedSector, selectedType]);
+
+  const sectorCounts = useMemo(() => {
+    return sectors.map((sector) => ({
+      sector,
+      count: jobs.filter((job) => job.sector === sector).length,
+    }));
+  }, [jobs]);
+
+  if (loading) {
     return <LoadingScreen />;
   }
 
-  if (user) {
-    return (
-      <AuthenticatedCareersPage
-        userName={user.name || "User"}
-      />
-    );
-  }
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#f4f1e8",
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+      }}
+    >
+      {/* HERO */}
+      <div
+        style={{
+          background: "linear-gradient(135deg, #0d2b28 0%, #0e7a70 100%)",
+          padding: "80px 24px 60px",
+          textAlign: "center",
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: "'Clash Display', sans-serif",
+            fontSize: "3rem",
+            color: "white",
+            marginBottom: "16px",
+          }}
+        >
+          Find Your Dream Career
+        </h1>
+        <p
+          style={{
+            color: "rgba(255,255,255,0.75)",
+            fontSize: "1.1rem",
+            maxWidth: "600px",
+            margin: "0 auto 32px",
+            lineHeight: 1.7,
+          }}
+        >
+          Explore {jobs.length} open positions across {sectors.length} industries.
+          Your next opportunity is just a click away.
+        </p>
 
-  return <PublicCareersPage />;
+        {/* SEARCH BAR */}
+        <div
+          style={{
+            maxWidth: "650px",
+            margin: "0 auto",
+          }}
+        >
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by job title, company, or location..."
+            style={{
+              width: "100%",
+              padding: "16px 24px",
+              borderRadius: "16px",
+              border: "1px solid rgba(255,255,255,0.2)",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(12px)",
+              color: "white",
+              fontSize: "1rem",
+              outline: "none",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          />
+        </div>
+      </div>
+
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "40px 24px",
+        }}
+      >
+        {/* SECTOR CARDS */}
+        <div style={{ marginBottom: "32px" }}>
+          <h2
+            style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontSize: "1.5rem",
+              color: "#0d2b28",
+              marginBottom: "16px",
+            }}
+          >
+            Browse by Sector
+          </h2>
+
+          <div
+            className="sector-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
+              gap: "12px",
+            }}
+          >
+            <button
+              onClick={() => setSelectedSector("ALL")}
+              style={{
+                padding: "16px 12px",
+                borderRadius: "16px",
+                border:
+                  selectedSector === "ALL"
+                    ? "2px solid #0e7a70"
+                    : "1px solid rgba(46,196,182,0.15)",
+                background:
+                  selectedSector === "ALL"
+                    ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))"
+                    : "rgba(255,255,255,0.8)",
+                backdropFilter: "blur(12px)",
+                cursor: "pointer",
+                textAlign: "center",
+                transition: "0.25s",
+                outline: "none",
+              }}
+            >
+              <div style={{ fontSize: "1.3rem", marginBottom: "6px" }}>🌐</div>
+              <div
+                style={{
+                  fontSize: "0.82rem",
+                  color: "#0d2b28",
+                  fontWeight: 600,
+                }}
+              >
+                All
+              </div>
+              <div
+                style={{
+                  fontSize: "0.75rem",
+                  color: "#0e7a70",
+                  fontWeight: 600,
+                  marginTop: "2px",
+                }}
+              >
+                {jobs.length}
+              </div>
+            </button>
+
+            {sectorCounts.map((item) => (
+              <button
+                key={item.sector}
+                onClick={() => setSelectedSector(item.sector)}
+                style={{
+                  padding: "16px 12px",
+                  borderRadius: "16px",
+                  border:
+                    selectedSector === item.sector
+                      ? "2px solid #0e7a70"
+                      : "1px solid rgba(46,196,182,0.15)",
+                  background:
+                    selectedSector === item.sector
+                      ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))"
+                      : "rgba(255,255,255,0.8)",
+                  backdropFilter: "blur(12px)",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "0.25s",
+                  outline: "none",
+                }}
+              >
+                <div style={{ fontSize: "1.3rem", marginBottom: "6px" }}>
+                  {sectorIcons[item.sector]}
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.82rem",
+                    color: "#0d2b28",
+                    fontWeight: 600,
+                  }}
+                >
+                  {sectorLabels[item.sector]?.split(" ")[0] || item.sector}
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: "#0e7a70",
+                    fontWeight: 600,
+                    marginTop: "2px",
+                  }}
+                >
+                  {item.count}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* FILTER BAR */}
+        <div
+          style={{
+            background: "rgba(255,255,255,0.78)",
+            backdropFilter: "blur(18px)",
+            border: "1px solid rgba(46,196,182,0.16)",
+            borderRadius: "20px",
+            padding: "18px 22px",
+            marginBottom: "24px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                fontFamily: "'Clash Display', sans-serif",
+                color: "#0d2b28",
+                fontSize: "1.2rem",
+                marginBottom: "2px",
+              }}
+            >
+              {selectedSector === "ALL"
+                ? "All Open Positions"
+                : `${sectorLabels[selectedSector] || selectedSector} Positions`}
+            </h3>
+            <p style={{ color: "#6b9e97", fontSize: "0.88rem" }}>
+              {filteredJobs.length} job{filteredJobs.length !== 1 ? "s" : ""}{" "}
+              found
+            </p>
+          </div>
+
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            style={{
+              padding: "10px 16px",
+              borderRadius: "12px",
+              border: "1px solid rgba(46,196,182,0.18)",
+              background: "rgba(248,250,252,0.95)",
+              fontSize: "0.88rem",
+              outline: "none",
+              color: "#0d2b28",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              cursor: "pointer",
+            }}
+          >
+            <option value="ALL">All Types</option>
+            <option value="Full Time">Full Time</option>
+            <option value="Part Time">Part Time</option>
+            <option value="Contract">Contract</option>
+            <option value="Internship">Internship</option>
+          </select>
+        </div>
+
+        {/* JOBS LIST */}
+        {fetchingJobs ? (
+          <LoadingScreen />
+        ) : filteredJobs.length === 0 ? (
+          <div
+            style={{
+              background: "rgba(255,255,255,0.78)",
+              backdropFilter: "blur(18px)",
+              border: "1px solid rgba(46,196,182,0.16)",
+              borderRadius: "24px",
+              padding: "60px 20px",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔍</div>
+            <h3
+              style={{
+                color: "#0d2b28",
+                marginBottom: "8px",
+                fontFamily: "'Clash Display', sans-serif",
+              }}
+            >
+              No jobs found
+            </h3>
+            <p style={{ color: "#6b9e97" }}>
+              Try adjusting your search or filters.
+            </p>
+          </div>
+        ) : (
+          <div
+            className="jobs-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+              gap: "20px",
+            }}
+          >
+            {filteredJobs.map((job) => (
+              <div
+                key={job.id}
+                className="job-card"
+                style={{
+                  background: "rgba(255,255,255,0.85)",
+                  backdropFilter: "blur(18px)",
+                  border: "1px solid rgba(46,196,182,0.14)",
+                  borderRadius: "20px",
+                  padding: "24px",
+                  boxShadow: "0 10px 30px rgba(13,43,40,0.06)",
+                  transition: "0.3s",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  cursor: "pointer",
+                }}
+              >
+                {/* TOP */}
+                <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "start",
+                      marginBottom: "12px",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        background: "#f0fdf9",
+                        color: "#0e7a70",
+                        padding: "4px 10px",
+                        borderRadius: "999px",
+                        border: "1px solid #ccfbf1",
+                        fontWeight: 600,
+                      }}
+                    >
+                      {sectorLabels[job.sector]?.split(" ")[0] || job.sector}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "0.72rem",
+                        color: "#6b9e97",
+                      }}
+                    >
+                      {formatDate(job.createdAt)}
+                    </span>
+                  </div>
+
+                  <h3
+                    style={{
+                      color: "#0d2b28",
+                      fontSize: "1.1rem",
+                      marginBottom: "8px",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {job.title}
+                  </h3>
+
+                  <p
+                    style={{
+                      color: "#6b9e97",
+                      fontSize: "0.9rem",
+                      marginBottom: "6px",
+                    }}
+                  >
+                    {job.company}
+                  </p>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                      marginBottom: "12px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#3a7a6f",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      📍 {job.location}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: "0.8rem",
+                        color: "#3a7a6f",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                      }}
+                    >
+                      💰 ₹{job.salary}/month
+                    </span>
+                  </div>
+
+                  <span
+                    style={{
+                      display: "inline-block",
+                      fontSize: "0.72rem",
+                      background: "rgba(46,196,182,0.1)",
+                      color: "#0e7a70",
+                      padding: "4px 10px",
+                      borderRadius: "8px",
+                      fontWeight: 600,
+                      marginBottom: "16px",
+                    }}
+                  >
+                    {job.type}
+                  </span>
+
+                  <p
+                    style={{
+                      color: "#6b9e97",
+                      fontSize: "0.85rem",
+                      lineHeight: 1.6,
+                      marginBottom: "16px",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {job.description}
+                  </p>
+                </div>
+
+                {/* BOTTOM */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                  }}
+                >
+                  <Link
+                    href={`/jobs/${job.id}`}
+                    style={{
+                      flex: 1,
+                      padding: "11px",
+                      borderRadius: "12px",
+                      border: "1px solid rgba(46,196,182,0.3)",
+                      background: "transparent",
+                      color: "#0e7a70",
+                      fontWeight: 600,
+                      fontSize: "0.85rem",
+                      textDecoration: "none",
+                      textAlign: "center",
+                      transition: "0.2s",
+                    }}
+                  >
+                    View Details
+                  </Link>
+
+                  {user ? (
+                    <Link
+                      href={`/jobs/${job.id}/apply`}
+                      style={{
+                        flex: 1,
+                        padding: "11px",
+                        borderRadius: "12px",
+                        border: "none",
+                        background:
+                          "linear-gradient(135deg, #0e7a70, #0d2b28)",
+                        color: "white",
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        textDecoration: "none",
+                        textAlign: "center",
+                        transition: "0.2s",
+                      }}
+                    >
+                      Apply Now
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/login"
+                      style={{
+                        flex: 1,
+                        padding: "11px",
+                        borderRadius: "12px",
+                        border: "none",
+                        background:
+                          "linear-gradient(135deg, #2ec4b6, #0e7a70)",
+                        color: "white",
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        textDecoration: "none",
+                        textAlign: "center",
+                        transition: "0.2s",
+                      }}
+                    >
+                      Login to Apply
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CTA */}
+        {!user && jobs.length > 0 && (
+          <div
+            style={{
+              marginTop: "40px",
+              background:
+                "linear-gradient(135deg, #0d2b28 0%, #0e7a70 100%)",
+              borderRadius: "24px",
+              padding: "40px",
+              textAlign: "center",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: "'Clash Display', sans-serif",
+                color: "white",
+                fontSize: "1.8rem",
+                marginBottom: "12px",
+              }}
+            >
+              Ready to Start Your Career?
+            </h2>
+            <p
+              style={{
+                color: "rgba(255,255,255,0.7)",
+                marginBottom: "24px",
+                fontSize: "1rem",
+              }}
+            >
+              Create an account to apply for jobs and track your applications.
+            </p>
+            <Link
+              href="/register"
+              style={{
+                display: "inline-block",
+                padding: "14px 32px",
+                borderRadius: "14px",
+                background: "white",
+                color: "#0d2b28",
+                fontWeight: 700,
+                fontSize: "0.95rem",
+                textDecoration: "none",
+                transition: "0.2s",
+              }}
+            >
+              Register Now
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        .job-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 20px 50px rgba(13, 43, 40, 0.12);
+        }
+
+        @media (max-width: 1100px) {
+          .jobs-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+          .sector-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 700px) {
+          .jobs-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .sector-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .sector-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
 }

@@ -1,22 +1,28 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../lib/auth";
+"use client";
+
+import { useState, type FormEvent } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export function Register() {
-  const navigate = useNavigate();
-  const { register, loading } = useAuth();
+  const router = useRouter();
+  const { login, loading: authLoading } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [accept, setAccept] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+
     if (password !== confirm) {
       setError("Passwords do not match");
       return;
@@ -29,37 +35,61 @@ export function Register() {
       setError("Please accept the terms to continue");
       return;
     }
+
+    setSubmitting(true);
     try {
-      await register(name, email, password);
-      navigate("/careers", { replace: true });
-    } catch (err: unknown) {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.message || "Could not create account");
+      }
+
+      // AuthContext login() expects { id, name, email, role }
+      login(data);
+
+      router.replace("/careers");
+    } catch (err) {
       const msg = err instanceof Error ? err.message : "Could not create account";
       setError(msg);
+    } finally {
+      setSubmitting(false);
     }
   }
+
+  const loading = authLoading || submitting;
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[linear-gradient(135deg,#eaf6ea_0%,#f5fbf0_40%,#fdf8e6_100%)]">
       <header className="flex h-16 items-center justify-between px-6 sm:px-10">
-        <Link to="/" className="text-xl font-bold tracking-tight text-brand-800">
+        <Link href="/" className="text-xl font-bold tracking-tight text-brand-800">
           E Choices
         </Link>
+
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-700 md:flex">
-          <Link to="/" className="transition-colors hover:text-brand-700">Home</Link>
-          <Link to="/services" className="transition-colors hover:text-brand-700">Services</Link>
+          <Link href="/" className="transition-colors hover:text-brand-700">Home</Link>
+          <Link href="/services" className="transition-colors hover:text-brand-700">Services</Link>
+
           <Link
-            to="/login"
+            href="/login"
             className="rounded-full border border-brand-700 px-5 py-1.5 text-brand-800 transition-colors hover:bg-brand-50"
           >
             Login
           </Link>
+
           <Link
-            to="/register"
+            href="/register"
             className="rounded-full bg-brand-500 px-5 py-1.5 text-white shadow-sm transition-colors hover:bg-brand-600"
           >
             Register
           </Link>
         </nav>
+
         <button className="rounded-full border border-brand-700 px-4 py-1.5 text-sm font-medium text-brand-800 md:hidden">
           Login
         </button>
@@ -81,10 +111,12 @@ export function Register() {
               <label className="mb-1.5 block text-sm font-semibold text-slate-800">
                 Full Name
               </label>
+
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <UserIcon />
                 </span>
+
                 <input
                   type="text"
                   required
@@ -101,10 +133,12 @@ export function Register() {
               <label className="mb-1.5 block text-sm font-semibold text-slate-800">
                 Email Address
               </label>
+
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <EnvelopeIcon />
                 </span>
+
                 <input
                   type="email"
                   required
@@ -121,10 +155,12 @@ export function Register() {
               <label className="mb-1.5 block text-sm font-semibold text-slate-800">
                 Password
               </label>
+
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <LockIcon />
                 </span>
+
                 <input
                   type={showPassword ? "text" : "password"}
                   required
@@ -134,6 +170,7 @@ export function Register() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-11 pr-11 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600/20"
                 />
+
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
@@ -149,10 +186,12 @@ export function Register() {
               <label className="mb-1.5 block text-sm font-semibold text-slate-800">
                 Confirm Password
               </label>
+
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <LockIcon />
                 </span>
+
                 <input
                   type={showPassword ? "text" : "password"}
                   required
@@ -209,7 +248,7 @@ export function Register() {
           <p className="mt-8 text-center text-sm text-slate-600">
             Already have an account?{" "}
             <Link
-              to="/login"
+              href="/login"
               className="font-semibold text-brand-800 hover:text-brand-900"
             >
               Sign in

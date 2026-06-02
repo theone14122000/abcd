@@ -4,28 +4,34 @@ import { useEffect, useRef, useState } from "react";
 
 const industries = [
   {
-    label: "BPO & Contact Centers",
-    image: "/industries/bpo.jpeg",
-  },
-  {
-    label: "Information Technology",
+    label: "IT & Technologies",
     image: "/industries/it.png",
+    icon: "💻",
   },
   {
-    label: "Healthcare & Life Sciences",
-    image: "/industries/healthcare.jfif",
+    label: "BPO",
+    image: "/industries/bpo.jpeg",
+    icon: "📞",
   },
   {
-    label: "Advanced Manufacturing",
-    image: "/industries/manufacturing.jpg",
-  },
-  {
-    label: "Banking & Finance",
+    label: "Finance",
     image: "/industries/banking.jpg",
+    icon: "🏦",
   },
   {
-    label: "Sales & Marketing",
+    label: "Sales",
     image: "/industries/marketing.jpg",
+    icon: "📈",
+  },
+  {
+    label: "Health",
+    image: "/industries/healthcare.jfif",
+    icon: "🏥",
+  },
+  {
+    label: "Manufacturing",
+    image: "/industries/manufacturing.jpg",
+    icon: "🏭",
   },
 ];
 
