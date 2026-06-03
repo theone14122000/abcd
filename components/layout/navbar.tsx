@@ -5,35 +5,49 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
-  const [activeLink, setActiveLink] = useState("/");
   const [isJobsOpen, setIsJobsOpen] = useState(false);
   const [hoveredSector, setHoveredSector] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileJobsOpen, setMobileJobsOpen] = useState(false);
 
   useEffect(() => {
-    setActiveLink(window.location.pathname);
-  }, []);
+    setMobileOpen(false);
+    setMobileJobsOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+
+    return () => {
       document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
+    };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+        setMobileJobsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
 
   const handleLogout = () => {
     logout();
-    alert("Logged out successfully ✅");
+    alert("Logged out successfully");
     router.push("/");
     setMobileOpen(false);
+    setMobileJobsOpen(false);
   };
 
   const navLinks = [
@@ -54,119 +68,551 @@ export default function Navbar() {
     { label: "Health", href: "/jobs/health" },
   ];
 
+  const isActiveLink = (href: string) => {
+    if (href === "/") return pathname === "/";
+    if (href === "/jobs") return pathname.startsWith("/jobs");
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
+
   return (
-    <header style={{ position: "fixed", top: 0, width: "100%", background: "rgba(248,255,254,0.95)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(0,0,0,0.05)", zIndex: 100 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px", height: 68, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", color: "#111" }}>
-          <Image src="/logo/logo.jpg" alt="logo" width={44} height={44} style={{ borderRadius: "50%" }} />
-          <span style={{ marginLeft: 10, fontWeight: 700, fontSize: 18 }}>E Choices</span>
+    <header className="site-header">
+      <div className="nav-shell">
+        <Link href="/" className="brand-link" aria-label="E Choices home">
+          <Image
+            src="/logo/logo.jpg"
+            alt="E Choices logo"
+            width={44}
+            height={44}
+            className="brand-logo"
+            priority
+          />
+          <span className="brand-name">E Choices</span>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 18 }}>
+        <nav className="desktop-nav" aria-label="Main navigation">
           {navLinks.map((link) => {
-            const isActive = activeLink === link.href || (link.href === "/jobs" && activeLink.startsWith("/jobs"));
+            const isActive = isActiveLink(link.href);
+
             if (link.label === "Jobs") {
               return (
-                <div key={link.label} style={{ position: "relative" }} onMouseEnter={() => setIsJobsOpen(true)} onMouseLeave={() => setIsJobsOpen(false)}>
-                  <Link href={link.href} style={{ textDecoration: "none", fontWeight: isActive ? 700 : 500, color: isActive ? "#2e7d32" : "#333", transition: "0.3s", display: "flex", alignItems: "center", gap: "4px", fontSize: "0.9rem" }}>
-                    {link.label}<span style={{ fontSize: "10px" }}>▼</span>
+                <div
+                  key={link.label}
+                  className="desktop-dropdown"
+                  onMouseEnter={() => setIsJobsOpen(true)}
+                  onMouseLeave={() => setIsJobsOpen(false)}
+                >
+                  <Link
+                    href={link.href}
+                    className={`desktop-link ${isActive ? "active" : ""}`}
+                  >
+                    {link.label}
+                    <span className="chevron">▼</span>
                   </Link>
+
                   {isJobsOpen && (
-                    <div style={{ position: "absolute", top: "100%", left: 0, marginTop: "15px", background: "#fff", minWidth: "200px", boxShadow: "0 8px 24px rgba(0,0,0,0.12)", borderRadius: "8px", padding: "8px 0", zIndex: 200, border: "1px solid rgba(0,0,0,0.05)" }}>
+                    <div className="jobs-menu">
                       {jobSectors.map((sector) => (
-                        <Link key={sector.href} href={sector.href} style={{ display: "block", padding: "10px 16px", textDecoration: "none", color: hoveredSector === sector.href ? "#2e7d32" : "#333", background: hoveredSector === sector.href ? "rgba(46, 125, 50, 0.08)" : "transparent", fontWeight: 500, fontSize: "14px", transition: "0.2s" }}
+                        <Link
+                          key={sector.href}
+                          href={sector.href}
+                          className={`jobs-menu-link ${
+                            hoveredSector === sector.href ? "hovered" : ""
+                          }`}
                           onMouseEnter={() => setHoveredSector(sector.href)}
                           onMouseLeave={() => setHoveredSector(null)}
-                        >{sector.label}</Link>
+                        >
+                          {sector.label}
+                        </Link>
                       ))}
                     </div>
                   )}
                 </div>
               );
             }
+
             return (
-              <Link key={link.label} href={link.href} style={{ textDecoration: "none", fontWeight: isActive ? 700 : 500, color: isActive ? "#2e7d32" : "#333", transition: "0.3s", fontSize: "0.9rem" }}>{link.label}</Link>
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`desktop-link ${isActive ? "active" : ""}`}
+              >
+                {link.label}
+              </Link>
             );
           })}
         </nav>
 
-        {/* Desktop Auth */}
-        <div className="desktop-auth" style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="desktop-auth">
           {!user ? (
             <>
-              <Link href="/login"><AnimatedButton variant="primary">Login</AnimatedButton></Link>
-              <Link href="/register"><AnimatedButton variant="secondary">Register</AnimatedButton></Link>
+              <Link href="/login">
+                <AnimatedButton variant="primary">Login</AnimatedButton>
+              </Link>
+              <Link href="/register">
+                <AnimatedButton variant="secondary">Register</AnimatedButton>
+              </Link>
             </>
           ) : (
             <>
-              <span style={{ fontWeight: 600, color: "#2e7d32", fontSize: "0.88rem" }}>Hi, {user?.name || "User"}</span>
-              <AnimatedButton variant="primary" onClick={handleLogout}>Logout</AnimatedButton>
+              <span className="user-greeting">Hi, {user?.name || "User"}</span>
+              <AnimatedButton variant="primary" onClick={handleLogout}>
+                Logout
+              </AnimatedButton>
             </>
           )}
         </div>
 
-        {/* Mobile Hamburger */}
         <button
-          className="mobile-menu-btn"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: 8, zIndex: 110 }}
-          aria-label="Toggle menu"
+          className={`mobile-menu-btn ${mobileOpen ? "open" : ""}`}
+          onClick={() => setMobileOpen((open) => !open)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          type="button"
         >
-          <div style={{ width: 24, height: 2, background: mobileOpen ? "transparent" : "#0d2b28", transition: "0.3s", position: "relative" }}>
-            <div style={{ position: "absolute", width: 24, height: 2, background: "#0d2b28", top: mobileOpen ? 0 : -7, transform: mobileOpen ? "rotate(45deg)" : "none", transition: "0.3s" }} />
-            <div style={{ position: "absolute", width: 24, height: 2, background: "#0d2b28", top: mobileOpen ? 0 : 7, transform: mobileOpen ? "rotate(-45deg)" : "none", transition: "0.3s" }} />
-          </div>
+          <span />
+          <span />
+          <span />
         </button>
       </div>
 
-      {/* Mobile Overlay */}
-      {mobileOpen && (
-        <div className="mobile-overlay" style={{ position: "fixed", top: 68, left: 0, right: 0, bottom: 0, background: "rgba(248,255,254,0.98)", backdropFilter: "blur(16px)", zIndex: 99, padding: "24px 24px 40px", overflowY: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
+      <div className={`mobile-overlay ${mobileOpen ? "open" : ""}`}>
+        <nav className="mobile-panel" aria-label="Mobile navigation">
           {navLinks.map((link) => {
-            const isActive = activeLink === link.href;
-            return (
-              <div key={link.label}>
-                <Link href={link.href} onClick={() => setMobileOpen(false)} style={{ display: "block", padding: "14px 0", textDecoration: "none", fontWeight: isActive ? 700 : 500, color: isActive ? "#2e7d32" : "#333", fontSize: "1.1rem", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                  {link.label}
-                </Link>
-                {link.label === "Jobs" && (
-                  <div style={{ paddingLeft: 16 }}>
-                    {jobSectors.map((sector) => (
-                      <Link key={sector.href} href={sector.href} onClick={() => setMobileOpen(false)} style={{ display: "block", padding: "10px 0", textDecoration: "none", color: "#6b7280", fontSize: "0.95rem", borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
-                        {sector.label}
-                      </Link>
-                    ))}
+            const isActive = isActiveLink(link.href);
+
+            if (link.label === "Jobs") {
+              return (
+                <div key={link.label} className="mobile-group">
+                  <div className="mobile-jobs-row">
+                    <Link
+                      href={link.href}
+                      className={`mobile-link ${isActive ? "active" : ""}`}
+                    >
+                      Jobs
+                    </Link>
+
+                    <button
+                      type="button"
+                      className="mobile-jobs-toggle"
+                      onClick={() => setMobileJobsOpen((open) => !open)}
+                      aria-label="Toggle jobs categories"
+                      aria-expanded={mobileJobsOpen}
+                    >
+                      <span>{mobileJobsOpen ? "−" : "+"}</span>
+                    </button>
                   </div>
-                )}
-              </div>
+
+                  {mobileJobsOpen && (
+                    <div className="mobile-submenu">
+                      {jobSectors.map((sector) => (
+                        <Link
+                          key={sector.href}
+                          href={sector.href}
+                          className={`mobile-sub-link ${
+                            pathname === sector.href ? "active" : ""
+                          }`}
+                        >
+                          {sector.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                className={`mobile-link ${isActive ? "active" : ""}`}
+              >
+                {link.label}
+              </Link>
             );
           })}
-          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+
+          <div className="mobile-auth">
             {!user ? (
               <>
-                <Link href="/login" onClick={() => setMobileOpen(false)} style={{ display: "block", textAlign: "center", padding: "14px 0", borderRadius: 50, border: "1.5px solid #0e7a70", color: "#0e7a70", fontWeight: 700, fontSize: "0.95rem", textDecoration: "none" }}>Login</Link>
-                <Link href="/register" onClick={() => setMobileOpen(false)} style={{ display: "block", textAlign: "center", padding: "14px 0", borderRadius: 50, background: "linear-gradient(135deg, #0e7a70, #0d2b28)", color: "#fff", fontWeight: 700, fontSize: "0.95rem", textDecoration: "none" }}>Register</Link>
+                <Link href="/login" className="mobile-login">
+                  Login
+                </Link>
+                <Link href="/register" className="mobile-register">
+                  Register
+                </Link>
               </>
             ) : (
               <>
-                <span style={{ textAlign: "center", fontWeight: 600, color: "#2e7d32", fontSize: "0.95rem" }}>Hi, {user?.name || "User"}</span>
-                <button onClick={handleLogout} style={{ padding: "14px 0", borderRadius: 50, background: "linear-gradient(135deg, #0e7a70, #0d2b28)", color: "#fff", fontWeight: 700, fontSize: "0.95rem", border: "none", cursor: "pointer" }}>Logout</button>
+                <span className="mobile-user">Hi, {user?.name || "User"}</span>
+                <button type="button" onClick={handleLogout} className="mobile-logout">
+                  Logout
+                </button>
               </>
             )}
           </div>
-        </div>
-      )}
+        </nav>
+      </div>
 
       <style>{`
-        @media (max-width: 860px) {
-          .desktop-nav { display: none !important; }
-          .desktop-auth { display: none !important; }
-          .mobile-menu-btn { display: block !important; }
+        .site-header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          background: rgba(248, 255, 254, 0.95);
+          backdrop-filter: blur(14px);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          z-index: 1000;
         }
-        @media (min-width: 861px) {
-          .mobile-overlay { display: none !important; }
+
+        .nav-shell {
+          max-width: 1200px;
+          height: 68px;
+          margin: 0 auto;
+          padding: 0 20px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 18px;
+        }
+
+        .brand-link {
+          display: flex;
+          align-items: center;
+          min-width: max-content;
+          text-decoration: none;
+          color: #111;
+        }
+
+        .brand-logo {
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .brand-name {
+          margin-left: 10px;
+          font-weight: 700;
+          font-size: 18px;
+          color: #0d2b28;
+          white-space: nowrap;
+        }
+
+        .desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+        }
+
+        .desktop-link {
+          text-decoration: none;
+          font-weight: 500;
+          color: #333;
+          transition: color 0.25s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.9rem;
+          white-space: nowrap;
+        }
+
+        .desktop-link.active,
+        .desktop-link:hover {
+          color: #2e7d32;
+          font-weight: 700;
+        }
+
+        .chevron {
+          font-size: 10px;
+          transform: translateY(1px);
+        }
+
+        .desktop-dropdown {
+          position: relative;
+          padding: 24px 0;
+          margin: -24px 0;
+        }
+
+        .jobs-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 14px;
+          background: #fff;
+          min-width: 210px;
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          padding: 8px 0;
+          z-index: 200;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        }
+
+        .jobs-menu-link {
+          display: block;
+          padding: 11px 16px;
+          text-decoration: none;
+          color: #333;
+          font-weight: 500;
+          font-size: 14px;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .jobs-menu-link.hovered,
+        .jobs-menu-link:hover {
+          color: #2e7d32;
+          background: rgba(46, 125, 50, 0.08);
+        }
+
+        .desktop-auth {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: max-content;
+        }
+
+        .user-greeting {
+          font-weight: 600;
+          color: #2e7d32;
+          font-size: 0.88rem;
+          max-width: 140px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .mobile-menu-btn {
+          display: none;
+          width: 42px;
+          height: 42px;
+          border: none;
+          border-radius: 12px;
+          background: rgba(14, 122, 112, 0.08);
+          cursor: pointer;
+          padding: 0;
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .mobile-menu-btn span {
+          position: absolute;
+          left: 11px;
+          width: 20px;
+          height: 2px;
+          border-radius: 999px;
+          background: #0d2b28;
+          transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+        }
+
+        .mobile-menu-btn span:nth-child(1) {
+          top: 13px;
+        }
+
+        .mobile-menu-btn span:nth-child(2) {
+          top: 20px;
+        }
+
+        .mobile-menu-btn span:nth-child(3) {
+          top: 27px;
+        }
+
+        .mobile-menu-btn.open span:nth-child(1) {
+          top: 20px;
+          transform: rotate(45deg);
+        }
+
+        .mobile-menu-btn.open span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .mobile-menu-btn.open span:nth-child(3) {
+          top: 20px;
+          transform: rotate(-45deg);
+        }
+
+        .mobile-overlay {
+          display: none;
+        }
+
+        @media (max-width: 900px) {
+          .nav-shell {
+            height: 64px;
+            padding: 0 16px;
+          }
+
+          .brand-logo {
+            width: 40px;
+            height: 40px;
+          }
+
+          .brand-name {
+            font-size: 16px;
+          }
+
+          .desktop-nav,
+          .desktop-auth {
+            display: none;
+          }
+
+          .mobile-menu-btn {
+            display: block;
+          }
+
+          .mobile-overlay {
+            display: block;
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: calc(100dvh - 64px);
+            background: rgba(248, 255, 254, 0.98);
+            backdrop-filter: blur(18px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            overflow-y: auto;
+            z-index: 999;
+          }
+
+          .mobile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+          }
+
+          .mobile-panel {
+            width: min(100%, 520px);
+            margin: 0 auto;
+            padding: 18px 18px 34px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .mobile-link {
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            padding: 0 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #173b36;
+            font-size: 1rem;
+            font-weight: 650;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(46, 196, 182, 0.12);
+          }
+
+          .mobile-link.active {
+            color: #0e7a70;
+            background: rgba(46, 196, 182, 0.12);
+            border-color: rgba(46, 196, 182, 0.26);
+          }
+
+          .mobile-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .mobile-jobs-row {
+            display: grid;
+            grid-template-columns: 1fr 50px;
+            gap: 8px;
+          }
+
+          .mobile-jobs-toggle {
+            border: 1px solid rgba(46, 196, 182, 0.18);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #0e7a70;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+          }
+
+          .mobile-submenu {
+            display: grid;
+            gap: 6px;
+            padding: 4px 0 4px 14px;
+          }
+
+          .mobile-sub-link {
+            display: block;
+            padding: 11px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #526762;
+            font-size: 0.94rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.44);
+          }
+
+          .mobile-sub-link.active,
+          .mobile-sub-link:hover {
+            color: #0e7a70;
+            background: rgba(46, 196, 182, 0.1);
+          }
+
+          .mobile-auth {
+            margin-top: 14px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .mobile-login,
+          .mobile-register,
+          .mobile-logout {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 14px 18px;
+            border-radius: 999px;
+            font-weight: 750;
+            font-size: 0.95rem;
+            text-decoration: none;
+          }
+
+          .mobile-login {
+            border: 1.5px solid #0e7a70;
+            color: #0e7a70;
+            background: rgba(255, 255, 255, 0.62);
+          }
+
+          .mobile-register,
+          .mobile-logout {
+            border: none;
+            background: linear-gradient(135deg, #0e7a70, #0d2b28);
+            color: #fff;
+            cursor: pointer;
+          }
+
+          .mobile-user {
+            text-align: center;
+            font-weight: 700;
+            color: #2e7d32;
+            font-size: 0.95rem;
+            padding: 6px 0;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .brand-name {
+            font-size: 15px;
+          }
+
+          .nav-shell {
+            padding: 0 12px;
+          }
+
+          .mobile-panel {
+            padding-left: 12px;
+            padding-right: 12px;
+          }
         }
       `}</style>
     </header>
