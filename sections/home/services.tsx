@@ -81,7 +81,18 @@ export default function Services() {
             transition: "all 0.7s ease",
           }}
         >
-          <div className="eyebrow" style={{ justifyContent: "center", display: "flex", fontSize: "clamp(0.65rem, 2vw, 0.72rem)", letterSpacing: "0.14em", color: "#4a7c59", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>
+          <div
+            style={{
+              justifyContent: "center",
+              display: "flex",
+              fontSize: "clamp(0.65rem, 2vw, 0.72rem)",
+              letterSpacing: "0.14em",
+              color: "#4a7c59",
+              fontWeight: 700,
+              marginBottom: 12,
+              textTransform: "uppercase",
+            }}
+          >
             What We Do
           </div>
 
@@ -117,13 +128,7 @@ export default function Services() {
           </p>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(clamp(260px, 80vw, 380px), 1fr))",
-            gap: "clamp(20px, 4vw, 28px)",
-          }}
-        >
+        <div className="services-grid">
           {services.map((service, index) => (
             <div
               key={service.title}
@@ -155,7 +160,12 @@ export default function Services() {
                 }}
               />
 
-              <div style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", marginBottom: "clamp(16px, 3vw, 22px)" }}>
+              <div
+                style={{
+                  fontSize: "clamp(1.5rem, 4vw, 2rem)",
+                  marginBottom: "clamp(16px, 3vw, 22px)",
+                }}
+              >
                 {service.icon}
               </div>
 
@@ -210,13 +220,27 @@ export default function Services() {
       </div>
 
       <style>{`
-        .lift {
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .services-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(20px, 4vw, 28px);
         }
-        
+
+        @media (min-width: 700px) {
+          .services-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .services-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+        }
+
         .lift:hover {
-          transform: translateY(-8px);
-          box-shadow: 0 20px 40px rgba(46,196,182,0.15);
+          transform: translateY(-8px) !important;
+          box-shadow: 0 20px 40px rgba(46,196,182,0.15) !important;
         }
       `}</style>
     </section>

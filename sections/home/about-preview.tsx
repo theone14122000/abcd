@@ -57,13 +57,13 @@ export default function AboutPreview() {
       }}
     >
       <div
+        className="about-preview-grid"
         style={{
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
           padding: "0 clamp(20px, 4vw, 64px)",
           display: "grid",
-          gridTemplateColumns: "1fr",
           gap: "clamp(40px, 8vw, 80px)",
           alignItems: "center",
         }}
@@ -105,7 +105,6 @@ export default function AboutPreview() {
               }}
             />
 
-            {/* Bottom clickable mission badge */}
             <a
               href="/about#mission-vision"
               onMouseEnter={() => setMissionHover(true)}
@@ -177,7 +176,6 @@ export default function AboutPreview() {
               </div>
             </a>
 
-            {/* Top-right bubble */}
             <div
               style={{
                 position: "absolute",
@@ -225,7 +223,18 @@ export default function AboutPreview() {
             transition: "all 0.85s cubic-bezier(0.22,1,0.36,1) 0.12s",
           }}
         >
-          <div className="eyebrow" style={{ fontSize: "clamp(0.65rem, 2vw, 0.72rem)", letterSpacing: "0.14em", color: "#4a7c59", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Who We Are</div>
+          <div
+            style={{
+              fontSize: "clamp(0.65rem, 2vw, 0.72rem)",
+              letterSpacing: "0.14em",
+              color: "#4a7c59",
+              fontWeight: 700,
+              marginBottom: 12,
+              textTransform: "uppercase",
+            }}
+          >
+            Who We Are
+          </div>
 
           <h2
             style={{
@@ -271,7 +280,13 @@ export default function AboutPreview() {
             thriving organizations that stand the test of time.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "clamp(16px, 3vw, 24px)" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "clamp(16px, 3vw, 24px)",
+            }}
+          >
             {values.map((value, index) => (
               <div
                 key={value.title}
@@ -334,9 +349,13 @@ export default function AboutPreview() {
       </div>
 
       <style>{`
-        @media (min-width: 768px) {
-          section > div {
-            grid-template-columns: 1fr 1fr;
+        .about-preview-grid {
+          grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 900px) {
+          .about-preview-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
           }
         }
       `}</style>
