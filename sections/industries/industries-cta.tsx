@@ -23,7 +23,7 @@ export default function IndustriesCTA() {
         width: "100%",
         background:
           "radial-gradient(circle at 12% 18%, rgba(46,196,182,0.16) 0%, transparent 30%), radial-gradient(circle at 88% 12%, rgba(245,230,66,0.36) 0%, transparent 32%), linear-gradient(135deg, #eaffea 0%, #f3ffd8 45%, #fff9b8 100%)",
-        padding: "96px 64px",
+        padding: "64px 24px",
       }}
     >
       <div style={{ width: "100%", maxWidth: 1280, margin: "0 auto" }}>
@@ -32,7 +32,7 @@ export default function IndustriesCTA() {
           style={{
             background: "linear-gradient(135deg, #0d2b28 0%, #1a4a42 55%, #0e7a70 100%)",
             borderRadius: 28,
-            padding: "72px 64px",
+            padding: "56px 32px",
             textAlign: "center",
             position: "relative",
             overflow: "hidden",
@@ -61,15 +61,15 @@ export default function IndustriesCTA() {
           <div className="blob-drift" style={{ position: "absolute", bottom: -50, left: -50, width: 260, height: 260, borderRadius: "50%", background: "rgba(245,230,66,0.07)", filter: "blur(36px)", pointerEvents: "none", animationDelay: "-3s" }} />
 
           {/* Spinning rings */}
-          <div className="spin-slow" style={{ position: "absolute", top: 20, right: 40, width: 100, height: 100, borderRadius: "50%", border: "1px dashed rgba(245,230,66,0.2)", pointerEvents: "none" }} />
-          <div className="spin-slow" style={{ position: "absolute", bottom: 20, left: 40, width: 70, height: 70, borderRadius: "50%", border: "1px dashed rgba(46,196,182,0.2)", pointerEvents: "none", animationDirection: "reverse" }} />
+          <div className="spin-slow" style={{ position: "absolute", top: 20, right: 40, width: 100, height: 100, borderRadius: "50%", border: "1px dashed rgba(245,230,66,0.2)", pointerEvents: "none", display: "none" }} />
+          <div className="spin-slow" style={{ position: "absolute", bottom: 20, left: 40, width: 70, height: 70, borderRadius: "50%", border: "1px dashed rgba(46,196,182,0.2)", pointerEvents: "none", animationDirection: "reverse", display: "none" }} />
 
           <div style={{ position: "relative", zIndex: 1 }}>
             {/* Heading */}
             <h2
               style={{
                 fontFamily: "'Clash Display', sans-serif",
-                fontSize: "clamp(2rem, 3.8vw, 3.2rem)",
+                fontSize: "clamp(1.6rem, 3.8vw, 3.2rem)",
                 fontWeight: 700,
                 color: "#fff",
                 lineHeight: 1.2,
@@ -103,10 +103,11 @@ export default function IndustriesCTA() {
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
                 color: "rgba(168,230,225,0.82)",
-                fontSize: "1rem",
+                fontSize: "clamp(0.875rem, 1vw, 1rem)",
                 lineHeight: 1.82,
                 maxWidth: 480,
-                margin: "0 auto 44px",
+                margin: "0 auto 36px",
+                padding: "0 12px",
                 opacity: vis ? 1 : 0,
                 transform: vis ? "translateY(0)" : "translateY(18px)",
                 transition: "all 0.75s ease 0.3s",
@@ -132,15 +133,16 @@ export default function IndustriesCTA() {
                 href="/contact"
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  padding: "14px 36px",
+                  padding: "14px 32px",
                   background: "linear-gradient(135deg, #05fd05 0%, #05b61d 100%)",
                   color: "#0d2b28",
                   fontWeight: 800,
-                  fontSize: "0.9rem",
+                  fontSize: "0.85rem",
                   borderRadius: 50,
                   boxShadow: "0 8px 28px rgba(5,182,29,0.4)",
                   transition: "all 0.25s ease",
                   display: "inline-block",
+                  textDecoration: "none",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 18px 40px rgba(5,182,29,0.55)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(5,182,29,0.4)"; }}
@@ -151,15 +153,16 @@ export default function IndustriesCTA() {
                 href="/services"
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  padding: "14px 36px",
+                  padding: "14px 32px",
                   background: "transparent",
                   color: "#fff",
                   fontWeight: 700,
-                  fontSize: "0.9rem",
+                  fontSize: "0.85rem",
                   borderRadius: 50,
                   border: "1.5px solid rgba(255,255,255,0.3)",
                   transition: "all 0.25s ease",
                   display: "inline-block",
+                  textDecoration: "none",
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.65)"; e.currentTarget.style.transform = "translateY(-3px)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.transform = "translateY(0)"; }}
@@ -170,13 +173,6 @@ export default function IndustriesCTA() {
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes borderSlide {
-          0%   { background-position: 0% 50%; }
-          100% { background-position: 300% 50%; }
-        }
-      `}</style>
     </section>
   );
 }

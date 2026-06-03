@@ -12,13 +12,21 @@ export const metadata: Metadata = {
     "Strategic talent solutions for the modern workforce — permanent placement, contract staffing, executive search, recruitment consulting, and outplacement support.",
   openGraph: {
     title: "Our Services | E Choices Career Solutions",
-    description: "Precision-driven recruitment services connecting exceptional talent with forward-thinking organizations.",
+    description:
+      "Precision-driven recruitment services connecting exceptional talent with forward-thinking organizations.",
   },
 };
 
 export default function ServicesPage() {
   return (
-    <main style={{ width: "100%", overflowX: "hidden" }}>
+    <main
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <ServicesHero />
       <PermanentPlacement />
       <Staffing />

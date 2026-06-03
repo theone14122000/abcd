@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useState } from "react";
 
 export function Careers() {
-  const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const [user] = useState<{ name: string } | null>(null);
+  const loading = false;
+  const pathname = "/careers";
 
   if (loading) {
     return (
@@ -27,8 +26,9 @@ export function Careers() {
 
   return (
     <section
+      id="careers"
       style={{
-        padding: "80px 24px",
+        padding: "60px 24px",
         background: "#f4f1e8",
         minHeight: "100vh",
         fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -48,7 +48,7 @@ export function Careers() {
             border: "1px solid rgba(46, 196, 182, 0.16)",
             borderRadius: "24px",
             boxShadow: "0 20px 50px rgba(13, 43, 40, 0.08)",
-            padding: "40px",
+            padding: "32px 24px",
           }}
         >
           <p
@@ -67,7 +67,7 @@ export function Careers() {
           <h1
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "3rem",
+              fontSize: "clamp(1.8rem, 5vw, 3rem)",
               color: "#0d2b28",
               marginBottom: "16px",
               lineHeight: 1.1,
@@ -79,10 +79,10 @@ export function Careers() {
           <p
             style={{
               color: "#6b9e97",
-              fontSize: "1rem",
+              fontSize: "clamp(0.875rem, 1vw, 1rem)",
               lineHeight: 1.8,
               maxWidth: "760px",
-              marginBottom: "32px",
+              marginBottom: "28px",
             }}
           >
             Join our growing platform and explore meaningful opportunities across
@@ -94,11 +94,11 @@ export function Careers() {
             style={{
               display: "flex",
               flexWrap: "wrap",
-              gap: "16px",
-              marginBottom: "36px",
+              gap: "14px",
+              marginBottom: "32px",
             }}
           >
-            <Link
+            <a
               href="/jobs"
               style={{
                 display: "inline-flex",
@@ -109,16 +109,25 @@ export function Careers() {
                 textDecoration: "none",
                 color: "white",
                 fontWeight: 700,
+                fontSize: "0.9rem",
                 background: "linear-gradient(135deg, #0e7a70, #0d2b28)",
                 boxShadow: "0 12px 30px rgba(14,122,112,0.25)",
                 transition: "0.3s",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 16px 36px rgba(14,122,112,0.35)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 12px 30px rgba(14,122,112,0.25)";
+              }}
             >
               Explore Jobs
-            </Link>
+            </a>
 
             {!user ? (
-              <Link
+              <a
                 href="/login"
                 style={{
                   display: "inline-flex",
@@ -129,13 +138,22 @@ export function Careers() {
                   textDecoration: "none",
                   color: "#0d2b28",
                   fontWeight: 700,
+                  fontSize: "0.9rem",
                   background: "rgba(255,255,255,0.8)",
                   border: "1px solid rgba(46,196,182,0.2)",
                   transition: "0.3s",
                 }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(46,196,182,0.06)";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.8)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                }}
               >
                 Login to Apply
-              </Link>
+              </a>
             ) : (
               <div
                 style={{
@@ -146,6 +164,7 @@ export function Careers() {
                   borderRadius: "14px",
                   color: "#0e7a70",
                   fontWeight: 700,
+                  fontSize: "0.9rem",
                   background: "#f0fdf9",
                   border: "1px solid #ccfbf1",
                 }}
@@ -158,8 +177,8 @@ export function Careers() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "16px",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: "14px",
             }}
           >
             {[
@@ -175,7 +194,7 @@ export function Careers() {
                 style={{
                   background: "white",
                   borderRadius: "18px",
-                  padding: "20px",
+                  padding: "18px",
                   border: "1px solid rgba(46,196,182,0.14)",
                   boxShadow: "0 10px 25px rgba(13,43,40,0.04)",
                 }}
@@ -183,8 +202,10 @@ export function Careers() {
                 <h3
                   style={{
                     color: "#0d2b28",
-                    fontSize: "1rem",
-                    marginBottom: "8px",
+                    fontSize: "clamp(0.9rem, 1vw, 1rem)",
+                    marginBottom: "6px",
+                    fontFamily: "'Clash Display', sans-serif",
+                    fontWeight: 700,
                   }}
                 >
                   {sector}
@@ -192,7 +213,7 @@ export function Careers() {
                 <p
                   style={{
                     color: "#6b9e97",
-                    fontSize: "0.88rem",
+                    fontSize: "clamp(0.8rem, 0.88vw, 0.88rem)",
                     lineHeight: 1.6,
                   }}
                 >
@@ -205,8 +226,8 @@ export function Careers() {
 
           <div
             style={{
-              marginTop: "28px",
-              paddingTop: "20px",
+              marginTop: "24px",
+              paddingTop: "18px",
               borderTop: "1px solid rgba(13,43,40,0.08)",
               color: "#6b9e97",
               fontSize: "0.85rem",
@@ -216,6 +237,22 @@ export function Careers() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #careers > div > div > div:nth-child(5) {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 560px) {
+          #careers > div > div > div:nth-child(5) {
+            grid-template-columns: 1fr !important;
+          }
+          #careers > div > div {
+            padding: 24px 18px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

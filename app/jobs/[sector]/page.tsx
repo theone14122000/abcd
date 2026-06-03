@@ -30,11 +30,7 @@ export default function SectorJobsPage() {
   const { user } = useAuth();
   const params = useParams<{ sector: string }>();
   const sectorSlug = params?.sector;
-
-  const sectorId = useMemo(() => {
-    if (!sectorSlug) return null;
-    return SECTOR_SLUG_TO_ID[sectorSlug.toLowerCase()] ?? null;
-  }, [sectorSlug]);
+  const sectorId = useMemo(() => { if (!sectorSlug) return null; return SECTOR_SLUG_TO_ID[sectorSlug.toLowerCase()] ?? null; }, [sectorSlug]);
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [search, setSearch] = useState("");
@@ -42,60 +38,32 @@ export default function SectorJobsPage() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/jobs", {
-          cache: "no-store",
-        });
-
+        const res = await fetch("/api/jobs", { cache: "no-store" });
         const data = await res.json();
-
-        if (Array.isArray(data)) {
-          setJobs(data);
-        } else {
-          setJobs([]);
-        }
-      } catch (error) {
-        console.error("Failed to fetch jobs:", error);
-        setJobs([]);
-      }
+        if (Array.isArray(data)) setJobs(data); else setJobs([]);
+      } catch (error) { console.error("Failed to fetch jobs:", error); setJobs([]); }
     };
-
     fetchJobs();
   }, []);
 
   const filteredJobs = useMemo(() => {
     const query = search.toLowerCase();
-
     return jobs.filter((job) => {
-      const matchesQuery =
-        job.title.toLowerCase().includes(query) ||
-        job.company.toLowerCase().includes(query) ||
-        job.location.toLowerCase().includes(query) ||
-        job.type.toLowerCase().includes(query) ||
-        job.description.toLowerCase().includes(query) ||
-        job.sector.toLowerCase().includes(query);
-
+      const matchesQuery = job.title.toLowerCase().includes(query) || job.company.toLowerCase().includes(query) || job.location.toLowerCase().includes(query) || job.type.toLowerCase().includes(query) || job.description.toLowerCase().includes(query) || job.sector.toLowerCase().includes(query);
       const matchesSector = sectorId ? job.sector === sectorId : true;
-
       return matchesQuery && matchesSector;
     });
   }, [jobs, search, sectorId]);
 
-  const sectionTitle = sectorId
-    ? SECTOR_ID_TO_LABEL[sectorId] ?? "Jobs"
-    : "Jobs";
+  const sectionTitle = sectorId ? SECTOR_ID_TO_LABEL[sectorId] ?? "Jobs" : "Jobs";
 
   return (
-    <>
+    <div style={{ width: "100%", maxWidth: "100vw", overflowX: "hidden" }}>
       <JobsHero search={search} setSearch={setSearch} />
-
-      <main style={{ background: "#f4f1e8" }}>
-        <JobsFeatured
-          jobs={filteredJobs}
-          sectionTitle={sectionTitle}
-        />
+      <main style={{ background: "#f4f1e8", width: "100%", overflowX: "hidden" }}>
+        <JobsFeatured jobs={filteredJobs} sectionTitle={sectionTitle} />
       </main>
-
       <JobsCTA />
-    </>
+    </div>
   );
 }

@@ -21,14 +21,13 @@ export default function MissionVision() {
 
   return (
     <section
-    id="mission-vision"
+      id="mission-vision"
       ref={ref}
       style={{
         width: "100%",
-          background:
-    "radial-gradient(circle at 85% 20%, rgba(46,196,182,0.2) 0%, transparent 30%), linear-gradient(180deg, #f0fdf9 0%, #e8ffe8 45%, #fff9cc 100%)",
-
-        padding: "100px 64px",
+        background:
+          "radial-gradient(circle at 85% 20%, rgba(46,196,182,0.2) 0%, transparent 30%), linear-gradient(180deg, #f0fdf9 0%, #e8ffe8 45%, #fff9cc 100%)",
+        padding: "72px 24px",
       }}
     >
       <div
@@ -38,17 +37,16 @@ export default function MissionVision() {
           margin: "0 auto",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 28,
+          gap: 24,
         }}
       >
-        {/* ── Mission card (light) ── */}
+        {/* Mission card (light) */}
         <div
-          className="lift"
           style={{
             background: "#fff",
             border: "1.5px solid rgba(46,196,182,0.18)",
             borderRadius: 24,
-            padding: "48px 44px",
+            padding: "40px 36px",
             boxShadow: "0 8px 40px rgba(46,196,182,0.08)",
             opacity: vis ? 1 : 0,
             transform: vis ? "translateX(0)" : "translateX(-40px)",
@@ -76,7 +74,7 @@ export default function MissionVision() {
           <h3
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "1.7rem",
+              fontSize: "clamp(1.4rem, 1.7vw, 1.7rem)",
               fontWeight: 700,
               color: "#0d2b28",
               marginBottom: 16,
@@ -89,19 +87,17 @@ export default function MissionVision() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#6b9e97",
-              fontSize: "0.95rem",
+              fontSize: "clamp(0.875rem, 0.95vw, 0.95rem)",
               lineHeight: 1.82,
               marginBottom: 32,
             }}
           >
             We are dedicated to empowering careers and transforming businesses by delivering
-            exceptional,
-            high-impact talent solutions that inspire growth and innovation. We combine deep industry
+            exceptional, high-impact talent solutions that inspire growth and innovation. We combine deep industry
             expertise with a strong global outlook to provide recruitment services rooted in trust, integrity,
             and excellence.
             Our brand embodies ambition, professionalism, and a forward-thinking vision. From our identity
-            to
-            our messaging, every element reflects clarity and purpose. By fostering long-term partnerships
+            to our messaging, every element reflects clarity and purpose. By fostering long-term partnerships
             and maintaining a strong focus on quality and precision, we enable organizations and
             professionals to achieve sustainable success.
           </p>
@@ -128,13 +124,12 @@ export default function MissionVision() {
           </div>
         </div>
 
-        {/* ── approach card (dark teal) ── */}
+        {/* Approach card (dark teal) */}
         <div
-          className="lift"
           style={{
             background: "linear-gradient(145deg, #0e7a70 0%, #0d2b28 100%)",
             borderRadius: 24,
-            padding: "48px 44px",
+            padding: "40px 36px",
             boxShadow: "0 8px 40px rgba(14,122,112,0.3)",
             position: "relative",
             overflow: "hidden",
@@ -170,7 +165,7 @@ export default function MissionVision() {
           <h3
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "1.7rem",
+              fontSize: "clamp(1.4rem, 1.7vw, 1.7rem)",
               fontWeight: 700,
               color: "#fff",
               marginBottom: 16,
@@ -185,30 +180,46 @@ export default function MissionVision() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "rgba(168,230,225,0.85)",
-              fontSize: "0.95rem",
+              fontSize: "clamp(0.875rem, 0.95vw, 0.95rem)",
               lineHeight: 1.82,
               position: "relative",
               zIndex: 1,
             }}
           >
             Consultation:- Understanding Requirements
-We begin by understanding your business goals, company culture, and specific hiring needs to
-ensure the right alignment from the start.
-Talent Sourcing:- Evaluation
-Using our strong network and proven methods, we identify, engage, and carefully assess
-qualified candidates to ensure the right fit.
+            We begin by understanding your business goals, company culture, and specific hiring needs to
+            ensure the right alignment from the start.
+            Talent Sourcing:- Evaluation
+            Using our strong network and proven methods, we identify, engage, and carefully assess
+            qualified candidates to ensure the right fit.
 
-2. Delivery:- Ongoing Support
+            2. Delivery:- Ongoing Support
 
-Shortlisting:- Interview Coordination
-We present a well-screened shortlist of suitable candidates, coordinate interviews, and provide
-structured feedback to support informed decisions.
-Onboarding:- Continued Engagement
-Our partnership extends beyond placement, ensuring smooth onboarding and long-term success
-for both the organization and the candidate.
+            Shortlisting:- Interview Coordination
+            We present a well-screened shortlist of suitable candidates, coordinate interviews, and provide
+            structured feedback to support informed decisions.
+            Onboarding:- Continued Engagement
+            Our partnership extends beyond placement, ensuring smooth onboarding and long-term success
+            for both the organization and the candidate.
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #mission-vision > div {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          #mission-vision {
+            padding: 56px 16px !important;
+          }
+          #mission-vision > div > div {
+            padding: 28px 20px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

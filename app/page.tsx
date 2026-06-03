@@ -15,7 +15,14 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <main style={{ width: "100%", overflowX: "hidden" }}>
+    <main
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <Hero />
       <Stats />
       <AboutPreview />

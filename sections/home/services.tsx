@@ -59,7 +59,7 @@ export default function Services() {
       ref={ref}
       style={{
         width: "100%",
-        padding: "100px 0",
+        padding: "clamp(60px, 10vw, 100px) 0",
         background:
           "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(194, 241, 194, 0.51) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
       }}
@@ -69,26 +69,26 @@ export default function Services() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "0 64px",
+          padding: "0 clamp(20px, 4vw, 64px)",
         }}
       >
         <div
           style={{
             textAlign: "center",
-            marginBottom: 64,
+            marginBottom: "clamp(40px, 7vw, 64px)",
             opacity: vis ? 1 : 0,
             transform: vis ? "translateY(0)" : "translateY(32px)",
             transition: "all 0.7s ease",
           }}
         >
-          <div className="eyebrow" style={{ justifyContent: "center" }}>
+          <div className="eyebrow" style={{ justifyContent: "center", display: "flex", fontSize: "clamp(0.65rem, 2vw, 0.72rem)", letterSpacing: "0.14em", color: "#4a7c59", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>
             What We Do
           </div>
 
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.4rem",
+              fontSize: "clamp(1.6rem, 5vw, 2.4rem)",
               fontWeight: 700,
               background:
                 "linear-gradient(135deg, #12db12 0%, #08a71e 45%, #076b03 100%)",
@@ -96,7 +96,7 @@ export default function Services() {
               backgroundClip: "text",
               color: "transparent",
               WebkitTextFillColor: "transparent",
-              marginBottom: 16,
+              marginBottom: "clamp(12px, 3vw, 16px)",
             }}
           >
             Comprehensive Staffing Solutions
@@ -106,8 +106,8 @@ export default function Services() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#6b9e97",
-              fontSize: "1rem",
-              maxWidth: 540,
+              fontSize: "clamp(0.85rem, 2.5vw, 1rem)",
+              maxWidth: "clamp(280px, 80vw, 540px)",
               margin: "0 auto",
               lineHeight: 1.8,
             }}
@@ -120,8 +120,8 @@ export default function Services() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 28,
+            gridTemplateColumns: "repeat(auto-fit, minmax(clamp(260px, 80vw, 380px), 1fr))",
+            gap: "clamp(20px, 4vw, 28px)",
           }}
         >
           {services.map((service, index) => (
@@ -132,7 +132,7 @@ export default function Services() {
                 background: service.bg,
                 border: `1.5px solid ${service.border}`,
                 borderRadius: 24,
-                padding: "40px 34px",
+                padding: "clamp(28px, 5vw, 40px) clamp(24px, 5vw, 34px)",
                 position: "relative",
                 overflow: "hidden",
                 opacity: vis ? 1 : 0,
@@ -155,17 +155,17 @@ export default function Services() {
                 }}
               />
 
-              <div style={{ fontSize: "2rem", marginBottom: 22 }}>
+              <div style={{ fontSize: "clamp(1.5rem, 4vw, 2rem)", marginBottom: "clamp(16px, 3vw, 22px)" }}>
                 {service.icon}
               </div>
 
               <h3
                 style={{
                   fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "1.15rem",
+                  fontSize: "clamp(1rem, 3vw, 1.15rem)",
                   fontWeight: 700,
                   color: "#0d2b28",
-                  marginBottom: 14,
+                  marginBottom: "clamp(10px, 2vw, 14px)",
                 }}
               >
                 {service.title}
@@ -175,9 +175,9 @@ export default function Services() {
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   color: "#2d5c55",
-                  fontSize: "0.9rem",
+                  fontSize: "clamp(0.8rem, 2.2vw, 0.9rem)",
                   lineHeight: 1.78,
-                  marginBottom: 28,
+                  marginBottom: "clamp(20px, 4vw, 28px)",
                 }}
               >
                 {service.desc}
@@ -187,7 +187,7 @@ export default function Services() {
                 href={service.href}
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: "0.875rem",
+                  fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
                   fontWeight: 700,
                   color: service.accent,
                   display: "inline-flex",
@@ -208,6 +208,17 @@ export default function Services() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        .lift {
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .lift:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 20px 40px rgba(46,196,182,0.15);
+        }
+      `}</style>
     </section>
   );
 }

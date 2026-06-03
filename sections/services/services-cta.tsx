@@ -15,10 +15,11 @@ export default function ServicesCTA() {
 
   return (
     <section 
+      id="services-cta"
       ref={ref}
       style={{
         width: "100%",
-        padding: "0 64px 96px",
+        padding: "0 24px 72px",
         background: "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(152,251,152,0.55) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
       }}
     >
@@ -33,7 +34,7 @@ export default function ServicesCTA() {
           style={{
             background: "linear-gradient(135deg, #0d2b28 0%, #1a4a42 60%, #0e7a70 100%)",
             borderRadius: 28,
-            padding: "72px 64px",
+            padding: "56px 32px",
             textAlign: "center",
             position: "relative",
             overflow: "hidden",
@@ -52,7 +53,7 @@ export default function ServicesCTA() {
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "clamp(2rem, 3.5vw, 3rem)",
+              fontSize: "clamp(1.6rem, 3.5vw, 3rem)",
               fontWeight: 700,
               background:"linear-gradient(135deg, #0bb171 0%, #0dad7d 45%, #077579 100%)",
               WebkitBackgroundClip: "text",
@@ -60,7 +61,7 @@ export default function ServicesCTA() {
               color: "transparent",
               WebkitTextFillColor: "transparent",
               lineHeight: 1.2,
-              marginBottom: 16,
+              marginBottom: 14,
               position: "relative",
               zIndex: 1,
             }}
@@ -87,23 +88,24 @@ export default function ServicesCTA() {
               backgroundClip: "text",
               color: "transparent",
               WebkitTextFillColor: "transparent",
-              fontSize: "1rem",
+              fontSize: "clamp(0.875rem, 1vw, 1rem)",
               lineHeight: 1.8,
               maxWidth: 500,
-              margin: "0 auto 44px",
+              margin: "0 auto 36px",
               position: "relative",
               zIndex: 1,
+              padding: "0 12px",
             }}
           >
             Let's discuss how our bespoke recruitment solutions can transform your organizational growth.
           </p>
 
-          <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
             <a
               href="/contact"
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                padding: "14px 34px",
+                padding: "14px 32px",
                 background: "linear-gradient(135deg, #f5e642, #f0dc3a)",
                 color: "#0d2b28",
                 fontWeight: 800,
@@ -112,6 +114,7 @@ export default function ServicesCTA() {
                 boxShadow: "0 8px 28px rgba(245,230,66,0.4)",
                 transition: "all 0.25s ease",
                 display: "inline-block",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 36px rgba(245,230,66,0.5)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(245,230,66,0.4)"; }}
@@ -122,7 +125,7 @@ export default function ServicesCTA() {
               href="/industries"
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
-                padding: "14px 34px",
+                padding: "14px 32px",
                 background: "transparent",
                 color: "#fff",
                 fontWeight: 700,
@@ -131,6 +134,7 @@ export default function ServicesCTA() {
                 border: "1.5px solid rgba(255,255,255,0.35)",
                 transition: "all 0.25s ease",
                 display: "inline-block",
+                textDecoration: "none",
               }}
               onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.7)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"; e.currentTarget.style.transform = "translateY(0)"; }}

@@ -18,16 +18,16 @@ export default function CTA() {
       ref={ref}
       style={{
         width: "100%",
-        padding: "100px 40px",
+        padding: "clamp(60px, 10vw, 100px) clamp(20px, 4vw, 40px)",
         background: "linear-gradient(135deg, #1e3528 0%, #2d4a35 40%, #3d6347 100%)",
         position: "relative",
         overflow: "hidden",
       }}
     >
       {/* Decorative blobs */}
-      <div style={{ position: "absolute", top: -100, right: -100, width: 400, height: 400, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: -80, left: -80, width: 300, height: 300, borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "30%", left: "15%", width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.02)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: -100, right: -100, width: "clamp(200px, 40vw, 400px)", height: "clamp(200px, 40vw, 400px)", borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: -80, left: -80, width: "clamp(150px, 30vw, 300px)", height: "clamp(150px, 30vw, 300px)", borderRadius: "50%", background: "rgba(255,255,255,0.03)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", top: "30%", left: "15%", width: "clamp(60px, 12vw, 120px)", height: "clamp(60px, 12vw, 120px)", borderRadius: "50%", background: "rgba(255,255,255,0.02)", pointerEvents: "none" }} />
 
       <div
         style={{
@@ -44,15 +44,15 @@ export default function CTA() {
         <div
           style={{
             display: "inline-block",
-            padding: "6px 18px",
+            padding: "clamp(4px, 1.5vw, 6px) clamp(12px, 3vw, 18px)",
             background: "rgba(255,255,255,0.1)",
             border: "1px solid rgba(255,255,255,0.2)",
             borderRadius: 50,
-            fontSize: "0.72rem",
+            fontSize: "clamp(0.6rem, 1.8vw, 0.72rem)",
             fontWeight: 700,
             letterSpacing: "0.1em",
             color: "rgba(255,255,255,0.8)",
-            marginBottom: 24,
+            marginBottom: "clamp(16px, 3vw, 24px)",
             textTransform: "uppercase",
           }}
         >
@@ -61,7 +61,7 @@ export default function CTA() {
 
         <h2
           style={{
-            fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)",
+            fontSize: "clamp(1.5rem, 5vw, 2.6rem)",
             fontWeight: 800,
             background:"linear-gradient(135deg, #53a506 0%, #099c1d 45%, #1deb16 100%)",
               WebkitBackgroundClip: "text",
@@ -69,25 +69,25 @@ export default function CTA() {
               color: "transparent",
               WebkitTextFillColor: "transparent",
             lineHeight: 1.25,
-            marginBottom: 18,
+            marginBottom: "clamp(12px, 2vw, 18px)",
           }}
         >
           Empowering Careers &amp; Transforming Businesses
         </h2>
-        <p style={{ color: "rgba(255,255,255,0.68)", fontSize: "1rem", lineHeight: 1.8, marginBottom: 44 }}>
+        <p style={{ color: "rgba(255,255,255,0.68)", fontSize: "clamp(0.85rem, 2.2vw, 1rem)", lineHeight: 1.8, marginBottom: "clamp(28px, 5vw, 44px)" }}>
           Ready to find your dream team or land your next career milestone?
           Let&apos;s start the conversation today.
         </p>
 
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "clamp(10px, 3vw, 16px)", justifyContent: "center", flexWrap: "wrap" }}>
           <a
             href="/contact"
             style={{
-              padding: "15px 36px",
+              padding: "clamp(12px, 3vw, 15px) clamp(24px, 5vw, 36px)",
               background: "#fff",
               color: "#2d4a35",
               fontWeight: 800,
-              fontSize: "0.9rem",
+              fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
               borderRadius: 50,
               boxShadow: "0 8px 28px rgba(0,0,0,0.2)",
               transition: "all 0.25s ease",
@@ -100,11 +100,11 @@ export default function CTA() {
           <a
             href="/contact"
             style={{
-              padding: "15px 36px",
+              padding: "clamp(12px, 3vw, 15px) clamp(24px, 5vw, 36px)",
               background: "transparent",
               color: "#fff",
               fontWeight: 600,
-              fontSize: "0.9rem",
+              fontSize: "clamp(0.8rem, 2vw, 0.9rem)",
               borderRadius: 50,
               border: "1.5px solid rgba(255,255,255,0.4)",
               transition: "all 0.25s ease",

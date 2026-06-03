@@ -12,7 +12,6 @@ export default function IndustriesHero() {
 
   const scrollToSectors = () => {
     const target = document.getElementById("industry-sectors");
-
     if (target) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -22,7 +21,7 @@ export default function IndustriesHero() {
     <section
       style={{
         width: "100%",
-        minHeight: "52vh",
+        minHeight: "40vh",
         background:
           "radial-gradient(circle at 14% 18%, rgba(240,221,12,0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",
         display: "flex",
@@ -45,6 +44,7 @@ export default function IndustriesHero() {
           borderRadius: "50%",
           border: "1.5px dashed rgba(46,196,182,0.2)",
           pointerEvents: "none",
+          display: "none",
         }}
       />
 
@@ -60,6 +60,7 @@ export default function IndustriesHero() {
           border: "1px dashed rgba(240,221,12,0.3)",
           pointerEvents: "none",
           animationDirection: "reverse",
+          display: "none",
         }}
       />
 
@@ -99,7 +100,7 @@ export default function IndustriesHero() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "80px 64px",
+          padding: "60px 24px",
           textAlign: "center",
           position: "relative",
           zIndex: 1,
@@ -108,7 +109,7 @@ export default function IndustriesHero() {
         <h1
           style={{
             fontFamily: "'Clash Display', sans-serif",
-            fontSize: "clamp(2.6rem, 5vw, 4rem)",
+            fontSize: "clamp(2rem, 5vw, 4rem)",
             fontWeight: 700,
             color: "#0d2b28",
             lineHeight: 1.12,
@@ -150,10 +151,11 @@ export default function IndustriesHero() {
           style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             color: "#2d5c55",
-            fontSize: "1.05rem",
+            fontSize: "clamp(0.875rem, 1.05vw, 1.05rem)",
             lineHeight: 1.82,
             maxWidth: 520,
-            margin: "0 auto 40px",
+            margin: "0 auto 36px",
+            padding: "0 12px",
             opacity: ready ? 1 : 0,
             transform: ready ? "translateY(0)" : "translateY(20px)",
             transition: "all 0.75s ease 0.18s",
@@ -182,14 +184,14 @@ export default function IndustriesHero() {
             onMouseLeave={() => setExploreHover(false)}
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              minWidth: 168,
-              padding: "14px 34px",
+              minWidth: 160,
+              padding: "14px 32px",
               background: exploreHover
                 ? "linear-gradient(135deg, #2ec4b6, #0e7a70)"
                 : "linear-gradient(135deg, #0e7a70, #0d2b28)",
               color: "#fff",
               fontWeight: 700,
-              fontSize: "0.9rem",
+              fontSize: "0.85rem",
               borderRadius: 50,
               border: "none",
               cursor: "pointer",
@@ -217,15 +219,16 @@ export default function IndustriesHero() {
             href="/contact"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              padding: "14px 34px",
+              padding: "14px 32px",
               background: "transparent",
               color: "#0d2b28",
               fontWeight: 600,
-              fontSize: "0.9rem",
+              fontSize: "0.85rem",
               borderRadius: 50,
               border: "1.5px solid rgba(14,122,112,0.3)",
               transition: "all 0.25s ease",
               display: "inline-block",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = "#2ec4b6";

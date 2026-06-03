@@ -53,12 +53,12 @@ export default function Leadership() {
 
   return (
     <section
-    id="leadership"
+      id="leadership"
       ref={ref}
       style={{
         width: "100%",
-        background:"radial-gradient(circle at 20% 10%, rgba(46,196,182,0.18) 0%, transparent 28%), linear-gradient(180deg, #eaffea 0%, #f8fffe 52%, #fffde8 100%)",
-        padding: "100px 64px",
+        background: "radial-gradient(circle at 20% 10%, rgba(46,196,182,0.18) 0%, transparent 28%), linear-gradient(180deg, #eaffea 0%, #f8fffe 52%, #fffde8 100%)",
+        padding: "72px 24px",
       }}
     >
       <div style={{ width: "100%", maxWidth: 1280, margin: "0 auto" }}>
@@ -66,22 +66,35 @@ export default function Leadership() {
         <div
           style={{
             textAlign: "center",
-            marginBottom: 72,
+            marginBottom: 56,
             opacity: vis ? 1 : 0,
             transform: vis ? "translateY(0)" : "translateY(30px)",
             transition: "all 0.7s ease",
           }}
         >
-          <div className="eyebrow" style={{ justifyContent: "center" }}>
-            Meet the Team
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 9,
+              padding: "7px 20px",
+              background: "rgba(46,196,182,0.1)",
+              border: "1px solid rgba(46,196,182,0.22)",
+              borderRadius: 50,
+              marginBottom: 20,
+            }}
+          >
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", color: "#1a9e92", textTransform: "uppercase" }}>
+              Meet the Team
+            </span>
           </div>
 
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.4rem",
+              fontSize: "clamp(1.6rem, 2.4vw, 2.4rem)",
               fontWeight: 700,
-              background:"linear-gradient(135deg, hsl(78, 83%, 56%) 0%, #0cc228 45%, #98c007 100%)",
+              background: "linear-gradient(135deg, hsl(78, 83%, 56%) 0%, #0cc228 45%, #98c007 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
@@ -96,10 +109,11 @@ export default function Leadership() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#6b9e97",
-              fontSize: "1rem",
+              fontSize: "clamp(0.875rem, 1vw, 1rem)",
               lineHeight: 1.75,
               maxWidth: 440,
               margin: "0 auto",
+              padding: "0 12px",
             }}
           >
             Led by experts who have navigated the evolving world of talent
@@ -112,40 +126,26 @@ export default function Leadership() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 32,
+            gap: 28,
           }}
         >
           {leaders.map((leader, index) => (
             <div
               key={leader.name}
-              className="lift"
               style={{
                 background: "#fff",
                 border: "1.5px solid rgba(46,196,182,0.14)",
                 borderRadius: 24,
-                padding: "44px 36px",
+                padding: "36px 28px",
                 textAlign: "center",
                 boxShadow: "0 6px 32px rgba(46,196,182,0.08)",
                 opacity: vis ? 1 : 0,
                 transform: vis ? "translateY(0)" : "translateY(44px)",
-                transition: `opacity 0.75s ease ${
-                  0.08 + index * 0.15
-                }s, transform 0.75s ease ${0.08 + index * 0.15}s`,
+                transition: `opacity 0.75s ease ${0.08 + index * 0.15}s, transform 0.75s ease ${0.08 + index * 0.15}s`,
                 position: "relative",
                 overflow: "hidden",
               }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 3,
-                  
-                }}
-              />
-
               {/* Avatar image circle */}
               <div
                 style={{
@@ -228,6 +228,22 @@ export default function Leadership() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #leadership > div > div:last-child {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 560px) {
+          #leadership > div > div:last-child {
+            grid-template-columns: 1fr !important;
+          }
+          #leadership {
+            padding: 56px 16px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

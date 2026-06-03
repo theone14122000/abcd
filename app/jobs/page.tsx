@@ -36,7 +36,7 @@ export default function PublicJobsPage() {
   // SAFE FILTERING: Prevents crashes if a job field is missing
   const filteredJobs = jobs.filter((job) => {
     const query = search.toLowerCase();
-    
+
     const title = job.title?.toLowerCase() || "";
     const company = job.company?.toLowerCase() || "";
     const location = job.location?.toLowerCase() || "";
@@ -55,10 +55,23 @@ export default function PublicJobsPage() {
   });
 
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <JobsHero search={search} setSearch={setSearch} />
 
-      <main style={{ background: "#f4f1e8" }}>
+      <main
+        style={{
+          background: "#f4f1e8",
+          width: "100%",
+          overflowX: "hidden",
+        }}
+      >
         {SECTORS.map((sector) => {
           // CASE-INSENSITIVE MATCHING: Matches "IT", "it", "It", etc.
           const sectorJobs = filteredJobs.filter(
@@ -76,6 +89,6 @@ export default function PublicJobsPage() {
       </main>
 
       <JobsCTA />
-    </>
+    </div>
   );
 }

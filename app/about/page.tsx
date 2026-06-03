@@ -20,7 +20,14 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main style={{ width: "100%", overflowX: "hidden" }}>
+    <main
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <AboutHero />
       <AboutWhyChoose />
       <Story />

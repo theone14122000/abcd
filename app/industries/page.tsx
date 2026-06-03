@@ -10,13 +10,21 @@ export const metadata: Metadata = {
     "Specialized recruitment expertise across BPO, Information Technology, Sales & Marketing, Manufacturing, Healthcare & Life Sciences. Industry-native talent solutions.",
   openGraph: {
     title: "Industries We Serve | E Choices Career Solutions",
-    description: "Vertical-specific recruitment expertise connecting top-tier talent with industry leaders.",
+    description:
+      "Vertical-specific recruitment expertise connecting top-tier talent with industry leaders.",
   },
 };
 
 export default function IndustriesPage() {
   return (
-    <main style={{ width: "100%", overflowX: "hidden" }}>
+    <main
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
       <IndustriesHero />
       <IndustrySections />
       <VerticalExpertise />

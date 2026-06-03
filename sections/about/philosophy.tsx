@@ -37,11 +37,12 @@ export default function Philosophy() {
 
   return (
     <section
+      id="philosophy"
       ref={ref}
       style={{
         width: "100%",
         background: "#fefce8",
-        padding: "0 64px",
+        padding: "0 24px",
       }}
     >
       <div
@@ -49,10 +50,10 @@ export default function Philosophy() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "96px 0",
+          padding: "72px 0",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 72,
+          gap: 56,
           alignItems: "center",
         }}
       >
@@ -64,20 +65,35 @@ export default function Philosophy() {
             transition: "all 0.85s cubic-bezier(0.22,1,0.36,1)",
           }}
         >
-          <div className="eyebrow"><b>Our Approach</b></div>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 9,
+              padding: "7px 20px",
+              background: "rgba(46,196,182,0.1)",
+              border: "1px solid rgba(46,196,182,0.22)",
+              borderRadius: 50,
+              marginBottom: 24,
+            }}
+          >
+            <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", color: "#1a9e92", textTransform: "uppercase" }}>
+              Our Approach
+            </span>
+          </div>
 
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.5rem",
+              fontSize: "clamp(1.6rem, 2.5vw, 2.5rem)",
               fontWeight: 700,
-              background:"linear-gradient(135deg, hsl(120, 90%, 42%) 0%, #0cc228 45%, #066b03 100%)",
+              background: "linear-gradient(135deg, hsl(120, 90%, 42%) 0%, #0cc228 45%, #066b03 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
               WebkitTextFillColor: "transparent",
               lineHeight: 1.15,
-              marginBottom: 36,
+              marginBottom: 32,
             }}
           >
             Our Philosophy:
@@ -86,11 +102,11 @@ export default function Philosophy() {
               style={{
                 fontFamily: "'Clash Display', sans-serif",
                 fontStyle: "italic",
-                background:"linear-gradient(135deg, hsl(184, 94%, 35%) 0%, #067aa8 45%, #054c8f 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-              WebkitTextFillColor: "transparent",
+                background: "linear-gradient(135deg, hsl(184, 94%, 35%) 0%, #067aa8 45%, #054c8f 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+                WebkitTextFillColor: "transparent",
               }}
             >
               The Holistic Match
@@ -98,36 +114,34 @@ export default function Philosophy() {
           </h2>
 
           {/* Bullet points */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             {points.map((pt, i) => (
               <div
                 key={pt.title}
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: 18,
+                  gap: 16,
                   opacity: vis ? 1 : 0,
                   transform: vis ? "translateX(0)" : "translateX(-28px)",
                   transition: `all 0.65s ease ${0.25 + i * 0.13}s`,
                 }}
               >
-                {/* Vertical accent line */}
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0, flexShrink: 0 }}>
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: 10,
-                      background: "rgba(46,196,182,0.12)",
-                      border: "1.5px solid rgba(46,196,182,0.22)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "1.1rem",
-                    }}
-                  >
-                    {pt.icon}
-                  </div>
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 10,
+                    background: "rgba(46,196,182,0.12)",
+                    border: "1.5px solid rgba(46,196,182,0.22)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.1rem",
+                    flexShrink: 0,
+                  }}
+                >
+                  {pt.icon}
                 </div>
                 <div>
                   <div
@@ -188,6 +202,23 @@ export default function Philosophy() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #philosophy > div {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          #philosophy {
+            padding: 0 16px !important;
+          }
+          #philosophy > div {
+            padding: 48px 0 !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

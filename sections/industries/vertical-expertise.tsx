@@ -45,12 +45,13 @@ export default function VerticalExpertise() {
 
   return (
     <section
+      data-ve
       ref={ref}
       style={{
         width: "100%",
         background:
           "radial-gradient(circle at 14% 18%, rgba(240,221,12,0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",
-        padding: "96px 64px",
+        padding: "72px 24px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -63,7 +64,7 @@ export default function VerticalExpertise() {
           left: "50%",
           transform: "translate(-50%, -50%)",
           fontFamily: "'Clash Display', sans-serif",
-          fontSize: "18rem",
+          fontSize: "clamp(8rem, 18vw, 18rem)",
           fontWeight: 700,
           color: "rgba(46,196,182,0.03)",
           whiteSpace: "nowrap",
@@ -82,7 +83,7 @@ export default function VerticalExpertise() {
         <div
           style={{
             textAlign: "center",
-            marginBottom: 64,
+            marginBottom: 48,
             opacity: vis ? 1 : 0,
             transform: vis ? "translateY(0)" : "translateY(32px)",
             transition: "all 0.75s ease",
@@ -91,7 +92,7 @@ export default function VerticalExpertise() {
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.4rem",
+              fontSize: "clamp(1.6rem, 2.4vw, 2.4rem)",
               fontWeight: 700,
               color: "#0d2b28",
               marginBottom: 14,
@@ -115,10 +116,11 @@ export default function VerticalExpertise() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#6b9e97",
-              fontSize: "1rem",
+              fontSize: "clamp(0.875rem, 1vw, 1rem)",
               lineHeight: 1.78,
               maxWidth: 460,
               margin: "0 auto",
+              padding: "0 12px",
             }}
           >
             We don't just find employees; we find industry-native specialists who
@@ -127,7 +129,7 @@ export default function VerticalExpertise() {
         </div>
 
         {/* Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
           {cards.map((c, i) => (
             <div
               key={c.title}
@@ -136,7 +138,7 @@ export default function VerticalExpertise() {
                 backdropFilter: "blur(16px)",
                 border: "1.5px solid rgba(46,196,182,0.15)",
                 borderRadius: 22,
-                padding: "40px 34px",
+                padding: "36px 28px",
                 boxShadow: "0 6px 32px rgba(46,196,182,0.07)",
                 position: "relative",
                 overflow: "hidden",
@@ -181,7 +183,7 @@ export default function VerticalExpertise() {
               <h3
                 style={{
                   fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "1.25rem",
+                  fontSize: "1.2rem",
                   fontWeight: 700,
                   marginBottom: 12,
                   lineHeight: 1.2,
@@ -205,7 +207,7 @@ export default function VerticalExpertise() {
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   color: "#6b9e97",
-                  fontSize: "0.9rem",
+                  fontSize: "0.875rem",
                   lineHeight: 1.78,
                 }}
               >
@@ -215,6 +217,20 @@ export default function VerticalExpertise() {
           ))}
         </div>
       </div>
+
+      {/* Responsive inline style */}
+      <style>{`
+        @media (max-width: 768px) {
+          section[data-ve] > div > div:last-child {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (min-width: 769px) and (max-width: 900px) {
+          section[data-ve] > div > div:last-child {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

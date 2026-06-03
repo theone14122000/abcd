@@ -80,6 +80,7 @@ export default function RegisterPage() {
 
   return (
     <div
+      className="register-page-root"
       style={{
         minHeight: "100vh",
         background:
@@ -87,13 +88,13 @@ export default function RegisterPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "20px",
+        padding: "20px 16px",
         fontFamily: "'Plus Jakarta Sans', sans-serif",
       }}
     >
       <div style={{ width: "100%", maxWidth: 460 }}>
         {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
           <Link
             href="/"
             style={{
@@ -133,19 +134,20 @@ export default function RegisterPage() {
 
         {/* Card */}
         <div
+          className="register-card"
           style={{
             background: "rgba(255,255,255,0.8)",
             backdropFilter: "blur(20px)",
             border: "1px solid rgba(13,43,40,0.08)",
             borderRadius: 24,
-            padding: "44px 40px",
+            padding: "40px 32px",
             boxShadow: "0 20px 60px rgba(13,43,40,0.08)",
           }}
         >
           <h1
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "1.8rem",
+              fontSize: "clamp(1.4rem, 4vw, 1.8rem)",
               fontWeight: 700,
               color: "#0d2b28",
               marginBottom: 8,
@@ -156,9 +158,9 @@ export default function RegisterPage() {
 
           <p
             style={{
-              fontSize: "0.9rem",
+              fontSize: "clamp(0.82rem, 0.9vw, 0.9rem)",
               color: "#6b9e97",
-              marginBottom: 32,
+              marginBottom: 28,
             }}
           >
             Join E Choices and find your dream job
@@ -184,7 +186,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit}>
             {/* Name */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 18 }}>
               <label style={labelStyle}>Full Name</label>
               <input
                 type="text"
@@ -207,7 +209,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Email */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 18 }}>
               <label style={labelStyle}>Email Address</label>
               <input
                 type="email"
@@ -230,7 +232,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Password */}
-            <div style={{ marginBottom: 20 }}>
+            <div style={{ marginBottom: 18 }}>
               <label style={labelStyle}>Password</label>
               <input
                 type="password"
@@ -253,7 +255,7 @@ export default function RegisterPage() {
             </div>
 
             {/* Confirm Password */}
-            <div style={{ marginBottom: 28 }}>
+            <div style={{ marginBottom: 24 }}>
               <label style={labelStyle}>Confirm Password</label>
               <input
                 type="password"
@@ -309,7 +311,7 @@ export default function RegisterPage() {
           <p
             style={{
               textAlign: "center",
-              marginTop: 24,
+              marginTop: 22,
               fontSize: "0.85rem",
               color: "#6b9e97",
             }}
@@ -328,6 +330,18 @@ export default function RegisterPage() {
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .register-page-root {
+            padding: 16px 12px !important;
+          }
+          .register-card {
+            padding: 28px 20px !important;
+            border-radius: 20px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

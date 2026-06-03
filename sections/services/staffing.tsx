@@ -32,7 +32,7 @@ export default function Staffing() {
       style={{
         width: "100%",
         background: "radial-gradient(circle at 12% 18%, rgba(46,196,182,0.16) 0%, transparent 30%), radial-gradient(circle at 88% 12%, rgba(245,230,66,0.36) 0%, transparent 32%), linear-gradient(135deg, #eaffea 0%, #f3ffd8 45%, #fff9b8 100%)",
-        padding: "0 64px",
+        padding: "0 24px",
       }}
     >
       <div
@@ -40,10 +40,10 @@ export default function Staffing() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "96px 0",
+          padding: "72px 0",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gap: 64,
           alignItems: "center",
         }}
       >
@@ -80,31 +80,28 @@ export default function Staffing() {
           }}
         >
           {/* icon */}
-          <div style={{ width: 52, height: 52, borderRadius: 14, background: "rgba(245,230,66,0.2)", border: "1.5px solid rgba(200,180,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", marginBottom: 24 }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: "rgba(245,230,66,0.2)", border: "1.5px solid rgba(200,180,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.6rem", marginBottom: 20 }}>
             🔄
           </div>
 
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.2rem",
+              fontSize: "clamp(1.6rem, 2.2vw, 2.2rem)",
               fontWeight: 700,
               background:"linear-gradient(135deg, #3ef13e 0%, #27bd3b 45%, #15ac10 100%)",
               WebkitBackgroundClip: "text",
               backgroundClip: "text",
               color: "transparent",
               WebkitTextFillColor: "transparent",
-              marginBottom: 16,
+              marginBottom: 14,
               lineHeight: 1.18,
             }}
           >
-            Staffing{" "}<br />
-            <span style={{ background: "linear-gradient(135deg, #09c4ca 0%, #079499 45%, #095cf7 100%)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", WebkitTextFillColor: "transparent" }}>
-            
-            </span>
+            Staffing
           </h2>
 
-          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#2d5c55", fontSize: "0.96rem", lineHeight: 1.82, marginBottom: 32 }}>
+          <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#2d5c55", fontSize: "clamp(0.875rem, 0.96vw, 0.96rem)", lineHeight: 1.82, marginBottom: 28 }}>
             <b>Staffing:-</b><br />Agility for the unexpected. Whether it's seasonal surges, maternity leave, or specialized project needs, we provide qualified personnel who hit the ground running.
             <br /><b>Scale on Demand:</b> Adjust team sizes instantly without long-term financial commitments.
             <br /><b>Reduced Overhead:</b> Lower your administrative costs, payroll processing, and benefits liabilities.
@@ -130,7 +127,7 @@ export default function Staffing() {
             </div>
           </div><br />
           {/* Mini stat cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 28 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 24 }}>
             {miniStats.map((s) => (
               <div
                 key={s.title}
@@ -139,18 +136,35 @@ export default function Staffing() {
                   backdropFilter: "blur(10px)",
                   border: "1.5px solid rgba(46,196,182,0.18)",
                   borderRadius: 14,
-                  padding: "18px 18px",
+                  padding: "16px",
                   boxShadow: "0 4px 16px rgba(46,196,182,0.08)",
                 }}
               >
-                <div style={{ fontSize: "1.4rem", marginBottom: 8 }}>{s.icon}</div>
-                <div style={{ fontFamily: "'Clash Display', sans-serif", fontWeight: 700, fontSize: "0.9rem", color: "#0d2b28", marginBottom: 3 }}>{s.title}</div>
-                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.75rem", color: "#6b9e97" }}>{s.sub}</div>
+                <div style={{ fontSize: "1.3rem", marginBottom: 6 }}>{s.icon}</div>
+                <div style={{ fontFamily: "'Clash Display', sans-serif", fontWeight: 700, fontSize: "clamp(0.85rem, 0.9vw, 0.9rem)", color: "#0d2b28", marginBottom: 2 }}>{s.title}</div>
+                <div style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "clamp(0.7rem, 0.75vw, 0.75rem)", color: "#6b9e97" }}>{s.sub}</div>
               </div>
             ))}
           </div>          
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #staffing > div {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+        }
+        @media (max-width: 640px) {
+          #staffing {
+            padding: 0 16px !important;
+          }
+          #staffing > div {
+            padding: 56px 0 !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

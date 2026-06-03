@@ -14,7 +14,7 @@ export default function AboutHero() {
       id="about-hero"
       style={{
         width: "100%",
-        minHeight: "54vh",
+        minHeight: "50vh",
         background:
           "radial-gradient(circle at 12% 18%, rgba(46,196,182,0.16) 0%, transparent 30%), radial-gradient(circle at 88% 12%, rgba(245,230,66,0.36) 0%, transparent 32%), linear-gradient(135deg, #eaffea 0%, #f3ffd8 45%, #fff9b8 100%)",
         display: "flex",
@@ -68,6 +68,7 @@ export default function AboutHero() {
           borderRadius: "50%",
           border: "1.5px dashed rgba(46,196,182,0.18)",
           pointerEvents: "none",
+          display: "none",
         }}
       />
 
@@ -83,6 +84,7 @@ export default function AboutHero() {
           border: "1px dashed rgba(245,230,66,0.25)",
           pointerEvents: "none",
           animationDirection: "reverse",
+          display: "none",
         }}
       />
 
@@ -91,7 +93,7 @@ export default function AboutHero() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "80px 64px",
+          padding: "60px 24px",
           textAlign: "center",
           position: "relative",
           zIndex: 1,
@@ -103,7 +105,7 @@ export default function AboutHero() {
             maxWidth: 1100,
             margin: "0 auto",
             borderRadius: 34,
-            padding: "56px 48px",
+            padding: "48px 32px",
             textAlign: "center",
             border: "1px solid rgba(46,196,182,0.18)",
             boxShadow: "0 24px 70px rgba(13,43,40,0.08)",
@@ -155,7 +157,7 @@ export default function AboutHero() {
           <h1
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "clamp(2.4rem, 4.5vw, 4rem)",
+              fontSize: "clamp(1.8rem, 4.5vw, 4rem)",
               fontWeight: 700,
               background:
                 "linear-gradient(135deg, #0d2b28 0%, #0e7a70 45%, #2f6b37 100%)",
@@ -212,10 +214,11 @@ export default function AboutHero() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#2d5c55",
-              fontSize: "1rem",
+              fontSize: "clamp(0.875rem, 1vw, 1rem)",
               lineHeight: 1.88,
               maxWidth: 940,
               margin: "0 auto",
+              padding: "0 8px",
             }}
           >
             <b>Integrity:</b> we operate with honesty, transparency, and
@@ -253,20 +256,14 @@ export default function AboutHero() {
         }
 
         @keyframes aboutColorFlow {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
         @media (max-width: 720px) {
           .about-hero-card {
-            padding: 40px 24px !important;
+            padding: 36px 20px !important;
           }
         }
       `}</style>

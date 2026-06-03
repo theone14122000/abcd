@@ -38,7 +38,8 @@ const industries: Industry[] = [
     imageUrl: "/images/industries/bpo.jpg",
     imageAlt: "BPO & Contact Centers",
     reverse: false,
-    bg: "radial-gradient(circle at 14% 18%, rgba(240,221,12,0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",},
+    bg: "radial-gradient(circle at 14% 18%, rgba(240,221,12,0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",
+  },
   {
     id: "it",
     badge: "INNOVATION & TECH",
@@ -153,7 +154,7 @@ function IndustryBlock({ ind }: { ind: Industry }) {
           borderRadius: 50,
           marginBottom: 20,
         }}
-        id="industry-sectors"
+        id={ind.id === "bpo" ? "industry-sectors" : undefined}
       >
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: ind.badgeColor, display: "inline-block" }} />
         <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.67rem", fontWeight: 800, letterSpacing: "0.13em", color: ind.badgeColor, textTransform: "uppercase" }}>
@@ -165,7 +166,7 @@ function IndustryBlock({ ind }: { ind: Industry }) {
       <h2
         style={{
           fontFamily: "'Clash Display', sans-serif",
-          fontSize: "2.2rem",
+          fontSize: "clamp(1.6rem, 2.2vw, 2.2rem)",
           fontWeight: 700,
           lineHeight: 1.16,
           marginBottom: 16,
@@ -191,7 +192,7 @@ function IndustryBlock({ ind }: { ind: Industry }) {
         style={{
           fontFamily: "'Plus Jakarta Sans', sans-serif",
           color: "#2d5c55",
-          fontSize: "0.94rem",
+          fontSize: "clamp(0.85rem, 0.94vw, 0.94rem)",
           lineHeight: 1.85,
           marginBottom: 24,
         }}
@@ -316,7 +317,7 @@ function IndustryBlock({ ind }: { ind: Industry }) {
       style={{
         width: "100%",
         background: ind.bg,
-        padding: "0 64px",
+        padding: "0 24px",
       }}
     >
       <div
@@ -324,10 +325,10 @@ function IndustryBlock({ ind }: { ind: Industry }) {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "88px 0",
+          padding: "64px 0",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gap: 40,
           alignItems: "center",
         }}
       >
@@ -343,6 +344,22 @@ function IndustryBlock({ ind }: { ind: Industry }) {
           </>
         )}
       </div>
+      {/* Responsive: stack on mobile */}
+      <style>{`
+        @media (max-width: 768px) {
+          #${ind.id} > div {
+            grid-template-columns: 1fr !important;
+            gap: 32px !important;
+            padding: 40px 0 !important;
+          }
+          #${ind.id} > div > :first-child {
+            ${ind.reverse ? "" : "order: 1 !important;"}
+          }
+          #${ind.id} > div > :last-child {
+            ${ind.reverse ? "order: 1 !important;" : ""}
+          }
+        }
+      `}</style>
     </div>
   );
 }

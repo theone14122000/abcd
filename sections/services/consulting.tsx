@@ -28,7 +28,7 @@ export default function Consulting() {
         backdropFilter: "blur(16px)",
         border: "1.5px solid rgba(46,196,182,0.16)",
         borderRadius: 22,
-        padding: "40px 36px",
+        padding: "36px 30px",
         boxShadow: "0 8px 36px rgba(46,196,182,0.08)",
         opacity: vis ? 1 : 0,
         transform: vis ? "translateY(0)" : "translateY(40px)",
@@ -46,13 +46,13 @@ export default function Consulting() {
       <h3
         style={{
           fontFamily: "'Clash Display', sans-serif",
-          fontSize: "1.55rem",
+          fontSize: "clamp(1.25rem, 1.55vw, 1.55rem)",
           fontWeight: 700,
-          background:"linear-gradient(135deg, #18f118 0%, #07c220 45%, #0c8d07 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-              WebkitTextFillColor: "transparent",
+          background: "linear-gradient(135deg, #18f118 0%, #07c220 45%, #0c8d07 100%)",
+          WebkitBackgroundClip: "text",
+          backgroundClip: "text",
+          color: "transparent",
+          WebkitTextFillColor: "transparent",
           marginBottom: 14,
           lineHeight: 1.2,
         }}
@@ -63,7 +63,7 @@ export default function Consulting() {
         </span>
       </h3>
 
-      <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#6b9e97", fontSize: "0.92rem", lineHeight: 1.8, marginBottom: 28 }}>
+      <p style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#6b9e97", fontSize: "clamp(0.86rem, 0.92vw, 0.92rem)", lineHeight: 1.8, marginBottom: 28 }}>
         {desc}
       </p>
 
@@ -92,14 +92,15 @@ export default function Consulting() {
 
   return (
     <section
+      id="consulting"
       ref={ref}
       style={{
         width: "100%",
         background: "radial-gradient(circle at 12% 18%, rgba(46,196,182,0.16) 0%, transparent 30%), radial-gradient(circle at 88% 12%, rgba(245,230,66,0.36) 0%, transparent 32%), linear-gradient(135deg, #eaffea 0%, #f3ffd8 45%, #fff9b8 100%)",
-        padding: "96px 64px",
+        padding: "72px 24px",
       }}
     >
-      <div style={{ width: "100%", maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }}>
+      <div style={{ width: "100%", maxWidth: 1280, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
         <Card
           icon="🔧"
           title="Recruitment Consulting"
@@ -117,6 +118,22 @@ export default function Consulting() {
           accent="linear-gradient(90deg, #f5e642, #2ec4b6)"
         />
       </div>
+
+      <style>{`
+        @media (max-width: 800px) {
+          #consulting > div {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 520px) {
+          #consulting {
+            padding: 56px 16px !important;
+          }
+          #consulting > div > div {
+            padding: 30px 22px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

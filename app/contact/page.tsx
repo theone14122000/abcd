@@ -6,7 +6,16 @@ import ContactCTA from "@/sections/contact/contact-cta";
 
 export default function ContactPage() {
   return (
-    <main style={{ overflow: "hidden", background: "#f8fffe" }}>
+    <main
+      style={{
+        width: "100%",
+        maxWidth: "100vw",
+        overflow: "hidden",
+        overflowX: "hidden",
+        position: "relative",
+        background: "#f8fffe",
+      }}
+    >
       <ContactHero />
       <ContactLeadership />
       <ContactHeadquarters />

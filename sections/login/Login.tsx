@@ -1,19 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 
 export function Login() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // optional redirect support: /login?from=/jobs
-  const from = searchParams.get("from") ?? "/jobs";
-
-  const { login: saveUser, loading: authLoading } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -28,26 +17,12 @@ export function Login() {
     setSubmitting(true);
 
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, remember }),
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        throw new Error(data?.message || "Invalid credentials");
+      // Demo: simulate API call
+      await new Promise((r) => setTimeout(r, 1000));
+      if (!email || !password) {
+        throw new Error("Please fill in all fields");
       }
-
-      // AuthContext expects a User object
-      saveUser(data);
-
-      if (data?.role === "ADMIN") {
-        router.replace("/admin");
-      } else {
-        router.replace(from);
-      }
+      alert("Login successful (demo)");
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Invalid credentials";
       setError(msg);
@@ -56,87 +31,147 @@ export function Login() {
     }
   }
 
-  // If AuthContext is still restoring from localStorage, you can keep showing UI.
-  // But to avoid flicker, we can optionally block:
-  if (authLoading) {
-    return (
-      <div
+  return (
+    <div
+      id="login-page"
+      style={{
+        position: "relative",
+        display: "flex",
+        minHeight: "100vh",
+        flexDirection: "column",
+        background: "linear-gradient(135deg, #eaf6ea 0%, #f5fbf0 40%, #fdf8e6 100%)",
+      }}
+    >
+      {/* Nav bar */}
+      <header
         style={{
-          minHeight: "60vh",
           display: "flex",
+          height: 64,
           alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "'Plus Jakarta Sans', sans-serif",
-          color: "#6b9e97",
+          justifyContent: "space-between",
+          padding: "0 24px",
         }}
       >
-        Loading...
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative flex min-h-screen flex-col bg-[linear-gradient(135deg,#eaf6ea_0%,#f5fbf0_40%,#fdf8e6_100%)]">
-      {/* Nav bar matching the screenshot */}
-      <header className="flex h-16 items-center justify-between px-6 sm:px-10">
-        <Link href="/" className="text-xl font-bold tracking-tight text-brand-800">
+        <a
+          href="/"
+          style={{
+            fontSize: "1.25rem",
+            fontWeight: 700,
+            letterSpacing: "-0.02em",
+            color: "#0d2b28",
+            textDecoration: "none",
+            fontFamily: "'Clash Display', sans-serif",
+          }}
+        >
           E Choices
-        </Link>
+        </a>
 
-        <nav className="hidden items-center gap-6 text-sm font-medium text-slate-700 md:flex">
-          <Link href="/" className="transition-colors hover:text-brand-700">
-            Home
-          </Link>
-          <Link
-            href="/services"
-            className="transition-colors hover:text-brand-700"
-          >
-            Services
-          </Link>
-
-          <Link
+        <nav
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 20,
+            fontSize: "0.875rem",
+            fontWeight: 500,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+          }}
+        >
+          <a href="/" style={{ color: "#475569", textDecoration: "none", transition: "color 0.2s" }}>Home</a>
+          <a href="/services" style={{ color: "#475569", textDecoration: "none", transition: "color 0.2s" }}>Services</a>
+          <a
             href="/login"
-            className="rounded-full border border-brand-700 px-5 py-1.5 text-brand-800 transition-colors hover:bg-brand-50"
+            style={{
+              borderRadius: 999,
+              border: "1px solid #0d2b28",
+              padding: "6px 20px",
+              color: "#0d2b28",
+              textDecoration: "none",
+              transition: "0.2s",
+            }}
           >
             Login
-          </Link>
-
-          <Link
+          </a>
+          <a
             href="/register"
-            className="rounded-full bg-brand-500 px-5 py-1.5 text-white shadow-sm transition-colors hover:bg-brand-600"
+            style={{
+              borderRadius: 999,
+              background: "#0e7a70",
+              padding: "6px 20px",
+              color: "#fff",
+              textDecoration: "none",
+              boxShadow: "0 2px 8px rgba(14,122,112,0.2)",
+              transition: "0.2s",
+            }}
           >
             Register
-          </Link>
+          </a>
         </nav>
-
-        <button className="rounded-full border border-brand-700 px-4 py-1.5 text-sm font-medium text-brand-800 md:hidden">
-          Login
-        </button>
       </header>
 
       {/* Form card */}
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md rounded-3xl border border-white/70 bg-white/90 p-8 shadow-xl shadow-brand-900/5 backdrop-blur sm:p-10">
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-slate-900 sm:text-4xl">
+      <main
+        style={{
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "48px 20px",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 440,
+            borderRadius: 24,
+            border: "1px solid rgba(255,255,255,0.7)",
+            background: "rgba(255,255,255,0.9)",
+            padding: "36px 32px",
+            boxShadow: "0 20px 50px rgba(13,43,40,0.06)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          <div style={{ marginBottom: 32, textAlign: "center" }}>
+            <h1
+              style={{
+                fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
+                fontWeight: 700,
+                color: "#0f172a",
+                fontFamily: "'Clash Display', sans-serif",
+              }}
+            >
               Welcome Back
             </h1>
-            <p className="mt-2 text-sm text-slate-600 sm:text-base">
+            <p
+              style={{
+                marginTop: 8,
+                fontSize: "clamp(0.8rem, 0.9vw, 0.9rem)",
+                color: "#475569",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
               Sign in to manage your career journey
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
             {/* Email */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: 6,
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "#1e293b",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 Email Address
               </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }}>
                   <EnvelopeIcon />
                 </span>
-
                 <input
                   type="email"
                   required
@@ -144,21 +179,51 @@ export function Login() {
                   placeholder="name@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-11 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                  style={{
+                    width: "100%",
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    background: "rgba(248,250,252,0.8)",
+                    padding: "12px 16px 12px 42px",
+                    fontSize: "0.875rem",
+                    color: "#0f172a",
+                    outline: "none",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.2s, box-shadow 0.2s",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#0e7a70";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(14,122,112,0.1)";
+                    e.currentTarget.style.background = "#fff";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#e2e8f0";
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.background = "rgba(248,250,252,0.8)";
+                  }}
                 />
               </div>
             </div>
 
             {/* Password */}
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-slate-800">
+              <label
+                style={{
+                  display: "block",
+                  marginBottom: 6,
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "#1e293b",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 Password
               </label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }}>
                   <LockIcon />
                 </span>
-
                 <input
                   type={showPassword ? "text" : "password"}
                   required
@@ -166,13 +231,45 @@ export function Login() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-3 pl-11 pr-11 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-600/20"
+                  style={{
+                    width: "100%",
+                    borderRadius: 12,
+                    border: "1px solid #e2e8f0",
+                    background: "rgba(248,250,252,0.8)",
+                    padding: "12px 42px 12px 42px",
+                    fontSize: "0.875rem",
+                    color: "#0f172a",
+                    outline: "none",
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    boxSizing: "border-box",
+                    transition: "border-color 0.2s, box-shadow 0.2s",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = "#0e7a70";
+                    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(14,122,112,0.1)";
+                    e.currentTarget.style.background = "#fff";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "#e2e8f0";
+                    e.currentTarget.style.boxShadow = "none";
+                    e.currentTarget.style.background = "rgba(248,250,252,0.8)";
+                  }}
                 />
-
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  style={{
+                    position: "absolute",
+                    right: 14,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#94a3b8",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: 0,
+                    display: "flex",
+                  }}
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOffIcon /> : <EyeIcon />}
@@ -181,24 +278,60 @@ export function Login() {
             </div>
 
             {/* Remember / Forgot */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="inline-flex cursor-pointer items-center gap-2 text-slate-600">
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                fontSize: "0.875rem",
+                flexWrap: "wrap",
+                gap: 8,
+              }}
+            >
+              <label
+                style={{
+                  display: "inline-flex",
+                  cursor: "pointer",
+                  alignItems: "center",
+                  gap: 8,
+                  color: "#475569",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 <input
                   type="checkbox"
                   checked={remember}
                   onChange={(e) => setRemember(e.target.checked)}
-                  className="h-4 w-4 rounded border-slate-300 text-brand-700 focus:ring-brand-600"
+                  style={{ width: 16, height: 16, borderRadius: 4, accentColor: "#0e7a70" }}
                 />
                 Remember me
               </label>
 
-              <a href="#" className="font-medium text-brand-700 hover:text-brand-800">
+              <a
+                href="#"
+                style={{
+                  fontWeight: 600,
+                  color: "#0e7a70",
+                  textDecoration: "none",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 Forgot Password?
               </a>
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              <div
+                style={{
+                  borderRadius: 10,
+                  border: "1px solid #fecaca",
+                  background: "#fef2f2",
+                  padding: "8px 12px",
+                  fontSize: "0.875rem",
+                  color: "#b91c1c",
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                }}
+              >
                 {error}
               </div>
             )}
@@ -206,49 +339,79 @@ export function Login() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-full bg-brand-800 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-900/20 transition-all hover:bg-brand-900 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+              style={{
+                width: "100%",
+                borderRadius: 999,
+                background: "#0d2b28",
+                padding: "14px 0",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "#fff",
+                border: "none",
+                cursor: submitting ? "not-allowed" : "pointer",
+                opacity: submitting ? 0.6 : 1,
+                boxShadow: "0 8px 24px rgba(13,43,40,0.18)",
+                transition: "all 0.2s ease",
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting) {
+                  e.currentTarget.style.background = "#0e3e38";
+                  e.currentTarget.style.boxShadow = "0 12px 32px rgba(13,43,40,0.28)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "#0d2b28";
+                e.currentTarget.style.boxShadow = "0 8px 24px rgba(13,43,40,0.18)";
+              }}
             >
-              {submitting ? (
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/60 border-t-white" />
-                  Signing in…
-                </span>
-              ) : (
-                "Sign In"
-              )}
+              {submitting ? "Signing in…" : "Sign In"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-slate-600">
+          <p
+            style={{
+              marginTop: 32,
+              textAlign: "center",
+              fontSize: "0.875rem",
+              color: "#475569",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
             Don&apos;t have an account?{" "}
-            <Link
+            <a
               href="/register"
-              className="font-semibold text-brand-800 hover:text-brand-900"
+              style={{
+                fontWeight: 700,
+                color: "#0d2b28",
+                textDecoration: "none",
+              }}
             >
               Register now
-            </Link>
+            </a>
           </p>
         </div>
       </main>
+
+      <style>{`
+        @media (max-width: 640px) {
+          #login-page > header > nav > a:first-child,
+          #login-page > header > nav > a:nth-child(2) {
+            display: none;
+          }
+          #login-page > main > div {
+            padding: 28px 20px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Inline SVG icons (no extra deps)
-// ---------------------------------------------------------------------------
+/* ---- Inline SVG icons ---- */
 function EnvelopeIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="5" width="18" height="14" rx="2" />
       <path d="m3 7 9 6 9-6" />
     </svg>
@@ -256,16 +419,7 @@ function EnvelopeIcon() {
 }
 function LockIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="4" y="11" width="16" height="10" rx="2" />
       <path d="M8 11V7a4 4 0 0 1 8 0v4" />
     </svg>
@@ -273,16 +427,7 @@ function LockIcon() {
 }
 function EyeIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
@@ -290,16 +435,7 @@ function EyeIcon() {
 }
 function EyeOffIcon() {
   return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
       <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
       <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
@@ -307,3 +443,5 @@ function EyeOffIcon() {
     </svg>
   );
 }
+
+export default Login;

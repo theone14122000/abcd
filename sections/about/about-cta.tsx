@@ -19,12 +19,12 @@ export default function AboutCTA() {
 
   return (
     <section
-    id="about-cta"
+      id="about-cta"
       ref={ref}
       style={{
         width: "100%",
-        background:"radial-gradient(circle at 10% 20%, rgba(152,251,152,0.35) 0%, transparent 32%), radial-gradient(circle at 90% 10%, rgba(245,230,66,0.24) 0%, transparent 30%), linear-gradient(180deg, #f8fffe 0%, #dfffdc 100%)",
-        padding: "112px 64px",
+        background: "radial-gradient(circle at 10% 20%, rgba(152,251,152,0.35) 0%, transparent 32%), radial-gradient(circle at 90% 10%, rgba(245,230,66,0.24) 0%, transparent 30%), linear-gradient(180deg, #f8fffe 0%, #dfffdc 100%)",
+        padding: "72px 24px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -59,7 +59,7 @@ export default function AboutCTA() {
             marginBottom: 28,
           }}
         >
-          <span className="pulse-dot" style={{ width: 7, height: 7, borderRadius: "50%", background: "#2ec4b6", display: "inline-block" }} />
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#2ec4b6", display: "inline-block" }} />
           <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", color: "#1a9e92", textTransform: "uppercase" }}>
             Take the Next Step
           </span>
@@ -68,9 +68,9 @@ export default function AboutCTA() {
         <h2
           style={{
             fontFamily: "'Clash Display', sans-serif",
-            fontSize: "clamp(2rem, 4vw, 3.2rem)",
+            fontSize: "clamp(1.6rem, 4vw, 3.2rem)",
             fontWeight: 700,
-            background:"linear-gradient(135deg, hsl(120, 90%, 42%) 0%, #0cc228 45%, #066b03 100%)",
+            background: "linear-gradient(135deg, hsl(120, 90%, 42%) 0%, #0cc228 45%, #066b03 100%)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
             color: "transparent",
@@ -80,21 +80,25 @@ export default function AboutCTA() {
           }}
         >
           Ready to make your{" "}
-          <span style={{ background:"linear-gradient(135deg, hsl(182, 93%, 34%) 0%, #05a7a7 45%, #076fac 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              color: "transparent",
-              WebkitTextFillColor: "transparent", fontStyle: "italic" }}>next choice?</span>
+          <span style={{
+            background: "linear-gradient(135deg, hsl(182, 93%, 34%) 0%, #05a7a7 45%, #076fac 100%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            WebkitTextFillColor: "transparent",
+            fontStyle: "italic"
+          }}>next choice?</span>
         </h2>
 
         <p
           style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             color: "#6b9e97",
-            fontSize: "1rem",
+            fontSize: "clamp(0.875rem, 1vw, 1rem)",
             lineHeight: 1.8,
             maxWidth: 500,
-            margin: "0 auto 48px",
+            margin: "0 auto 40px",
+            padding: "0 12px",
           }}
         >
           Whether you're looking for your dream role or your next star employee, we'd
@@ -106,7 +110,7 @@ export default function AboutCTA() {
             href="/contact"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              padding: "15px 36px",
+              padding: "15px 32px",
               background: "linear-gradient(135deg, #2ec4b6, #0e7a70)",
               color: "#fff",
               fontWeight: 700,
@@ -117,6 +121,7 @@ export default function AboutCTA() {
               gap: 8,
               boxShadow: "0 8px 28px rgba(46,196,182,0.38)",
               transition: "all 0.25s ease",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(46,196,182,0.48)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 28px rgba(46,196,182,0.38)"; }}
@@ -128,7 +133,7 @@ export default function AboutCTA() {
             href="/contact"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              padding: "15px 36px",
+              padding: "15px 32px",
               background: "rgba(255,255,255,0.85)",
               color: "#0d2b28",
               fontWeight: 700,
@@ -137,6 +142,7 @@ export default function AboutCTA() {
               border: "1.5px solid rgba(46,196,182,0.28)",
               transition: "all 0.25s ease",
               backdropFilter: "blur(8px)",
+              textDecoration: "none",
             }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#2ec4b6"; e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.background = "rgba(46,196,182,0.06)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(46,196,182,0.28)"; e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.background = "rgba(255,255,255,0.85)"; }}

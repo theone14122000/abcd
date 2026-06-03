@@ -60,14 +60,10 @@ function LoadingScreen() {
         <p style={{ color: "#6b9e97", fontSize: "1rem" }}>
           Loading careers...
         </p>
-        <style jsx>{`
+        <style>{`
           @keyframes spin {
-            0% {
-              transform: rotate(0deg);
-            }
-            100% {
-              transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}</style>
       </div>
@@ -109,11 +105,7 @@ export default function CareersPage() {
       try {
         setFetchingJobs(true);
         const res = await fetch("/api/jobs", { cache: "no-store" });
-
-        if (!res.ok) {
-          throw new Error("Failed to fetch jobs");
-        }
-
+        if (!res.ok) throw new Error("Failed to fetch jobs");
         const data = await res.json();
         setJobs(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -123,13 +115,11 @@ export default function CareersPage() {
         setFetchingJobs(false);
       }
     };
-
     fetchJobs();
   }, []);
 
   const filteredJobs = useMemo(() => {
     const query = search.trim().toLowerCase();
-
     return jobs.filter((job) => {
       const matchesSearch =
         !query ||
@@ -137,13 +127,8 @@ export default function CareersPage() {
         job.company.toLowerCase().includes(query) ||
         job.location.toLowerCase().includes(query) ||
         job.sector.toLowerCase().includes(query);
-
-      const matchesSector =
-        selectedSector === "ALL" || job.sector === selectedSector;
-
-      const matchesType =
-        selectedType === "ALL" || job.type === selectedType;
-
+      const matchesSector = selectedSector === "ALL" || job.sector === selectedSector;
+      const matchesType = selectedType === "ALL" || job.type === selectedType;
       return matchesSearch && matchesSector && matchesType;
     });
   }, [jobs, search, selectedSector, selectedType]);
@@ -155,9 +140,7 @@ export default function CareersPage() {
     }));
   }, [jobs]);
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <div
@@ -171,14 +154,14 @@ export default function CareersPage() {
       <div
         style={{
           background: "linear-gradient(135deg, #0d2b28 0%, #0e7a70 100%)",
-          padding: "80px 24px 60px",
+          padding: "80px 20px 52px",
           textAlign: "center",
         }}
       >
         <h1
           style={{
             fontFamily: "'Clash Display', sans-serif",
-            fontSize: "3rem",
+            fontSize: "clamp(1.8rem, 5vw, 3rem)",
             color: "white",
             marginBottom: "16px",
           }}
@@ -188,10 +171,11 @@ export default function CareersPage() {
         <p
           style={{
             color: "rgba(255,255,255,0.75)",
-            fontSize: "1.1rem",
+            fontSize: "clamp(0.9rem, 1.1vw, 1.1rem)",
             maxWidth: "600px",
-            margin: "0 auto 32px",
+            margin: "0 auto 28px",
             lineHeight: 1.7,
+            padding: "0 8px",
           }}
         >
           Explore {jobs.length} open positions across {sectors.length} industries.
@@ -199,12 +183,7 @@ export default function CareersPage() {
         </p>
 
         {/* SEARCH BAR */}
-        <div
-          style={{
-            maxWidth: "650px",
-            margin: "0 auto",
-          }}
-        >
+        <div style={{ maxWidth: "650px", margin: "0 auto", padding: "0 8px" }}>
           <input
             type="text"
             value={search}
@@ -212,7 +191,7 @@ export default function CareersPage() {
             placeholder="Search by job title, company, or location..."
             style={{
               width: "100%",
-              padding: "16px 24px",
+              padding: "14px 20px",
               borderRadius: "16px",
               border: "1px solid rgba(255,255,255,0.2)",
               background: "rgba(255,255,255,0.15)",
@@ -221,26 +200,21 @@ export default function CareersPage() {
               fontSize: "1rem",
               outline: "none",
               fontFamily: "'Plus Jakarta Sans', sans-serif",
+              boxSizing: "border-box",
             }}
           />
         </div>
       </div>
 
-      <div
-        style={{
-          maxWidth: 1400,
-          margin: "0 auto",
-          padding: "40px 24px",
-        }}
-      >
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "32px 20px" }}>
         {/* SECTOR CARDS */}
-        <div style={{ marginBottom: "32px" }}>
+        <div style={{ marginBottom: "28px" }}>
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "1.5rem",
+              fontSize: "clamp(1.2rem, 1.5vw, 1.5rem)",
               color: "#0d2b28",
-              marginBottom: "16px",
+              marginBottom: "14px",
             }}
           >
             Browse by Sector
@@ -250,23 +224,17 @@ export default function CareersPage() {
             className="sector-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
-              gap: "12px",
+              gridTemplateColumns: "repeat(7, minmax(0, 1fr))",
+              gap: "10px",
             }}
           >
             <button
               onClick={() => setSelectedSector("ALL")}
               style={{
-                padding: "16px 12px",
+                padding: "14px 10px",
                 borderRadius: "16px",
-                border:
-                  selectedSector === "ALL"
-                    ? "2px solid #0e7a70"
-                    : "1px solid rgba(46,196,182,0.15)",
-                background:
-                  selectedSector === "ALL"
-                    ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))"
-                    : "rgba(255,255,255,0.8)",
+                border: selectedSector === "ALL" ? "2px solid #0e7a70" : "1px solid rgba(46,196,182,0.15)",
+                background: selectedSector === "ALL" ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))" : "rgba(255,255,255,0.8)",
                 backdropFilter: "blur(12px)",
                 cursor: "pointer",
                 textAlign: "center",
@@ -274,26 +242,9 @@ export default function CareersPage() {
                 outline: "none",
               }}
             >
-              <div style={{ fontSize: "1.3rem", marginBottom: "6px" }}>🌐</div>
-              <div
-                style={{
-                  fontSize: "0.82rem",
-                  color: "#0d2b28",
-                  fontWeight: 600,
-                }}
-              >
-                All
-              </div>
-              <div
-                style={{
-                  fontSize: "0.75rem",
-                  color: "#0e7a70",
-                  fontWeight: 600,
-                  marginTop: "2px",
-                }}
-              >
-                {jobs.length}
-              </div>
+              <div style={{ fontSize: "1.3rem", marginBottom: "4px" }}>🌐</div>
+              <div style={{ fontSize: "0.78rem", color: "#0d2b28", fontWeight: 600 }}>All</div>
+              <div style={{ fontSize: "0.72rem", color: "#0e7a70", fontWeight: 600, marginTop: "2px" }}>{jobs.length}</div>
             </button>
 
             {sectorCounts.map((item) => (
@@ -301,16 +252,10 @@ export default function CareersPage() {
                 key={item.sector}
                 onClick={() => setSelectedSector(item.sector)}
                 style={{
-                  padding: "16px 12px",
+                  padding: "14px 10px",
                   borderRadius: "16px",
-                  border:
-                    selectedSector === item.sector
-                      ? "2px solid #0e7a70"
-                      : "1px solid rgba(46,196,182,0.15)",
-                  background:
-                    selectedSector === item.sector
-                      ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))"
-                      : "rgba(255,255,255,0.8)",
+                  border: selectedSector === item.sector ? "2px solid #0e7a70" : "1px solid rgba(46,196,182,0.15)",
+                  background: selectedSector === item.sector ? "linear-gradient(135deg, rgba(46,196,182,0.18), rgba(14,122,112,0.12))" : "rgba(255,255,255,0.8)",
                   backdropFilter: "blur(12px)",
                   cursor: "pointer",
                   textAlign: "center",
@@ -318,28 +263,9 @@ export default function CareersPage() {
                   outline: "none",
                 }}
               >
-                <div style={{ fontSize: "1.3rem", marginBottom: "6px" }}>
-                  {sectorIcons[item.sector]}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.82rem",
-                    color: "#0d2b28",
-                    fontWeight: 600,
-                  }}
-                >
-                  {sectorLabels[item.sector]?.split(" ")[0] || item.sector}
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.75rem",
-                    color: "#0e7a70",
-                    fontWeight: 600,
-                    marginTop: "2px",
-                  }}
-                >
-                  {item.count}
-                </div>
+                <div style={{ fontSize: "1.3rem", marginBottom: "4px" }}>{sectorIcons[item.sector]}</div>
+                <div style={{ fontSize: "0.78rem", color: "#0d2b28", fontWeight: 600 }}>{sectorLabels[item.sector]?.split(" ")[0] || item.sector}</div>
+                <div style={{ fontSize: "0.72rem", color: "#0e7a70", fontWeight: 600, marginTop: "2px" }}>{item.count}</div>
               </button>
             ))}
           </div>
@@ -347,13 +273,14 @@ export default function CareersPage() {
 
         {/* FILTER BAR */}
         <div
+          className="filter-bar"
           style={{
             background: "rgba(255,255,255,0.78)",
             backdropFilter: "blur(18px)",
             border: "1px solid rgba(46,196,182,0.16)",
             borderRadius: "20px",
-            padding: "18px 22px",
-            marginBottom: "24px",
+            padding: "16px 20px",
+            marginBottom: "20px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -366,17 +293,14 @@ export default function CareersPage() {
               style={{
                 fontFamily: "'Clash Display', sans-serif",
                 color: "#0d2b28",
-                fontSize: "1.2rem",
+                fontSize: "clamp(1rem, 1.2vw, 1.2rem)",
                 marginBottom: "2px",
               }}
             >
-              {selectedSector === "ALL"
-                ? "All Open Positions"
-                : `${sectorLabels[selectedSector] || selectedSector} Positions`}
+              {selectedSector === "ALL" ? "All Open Positions" : `${sectorLabels[selectedSector] || selectedSector} Positions`}
             </h3>
-            <p style={{ color: "#6b9e97", fontSize: "0.88rem" }}>
-              {filteredJobs.length} job{filteredJobs.length !== 1 ? "s" : ""}{" "}
-              found
+            <p style={{ color: "#6b9e97", fontSize: "0.85rem" }}>
+              {filteredJobs.length} job{filteredJobs.length !== 1 ? "s" : ""} found
             </p>
           </div>
 
@@ -388,7 +312,7 @@ export default function CareersPage() {
               borderRadius: "12px",
               border: "1px solid rgba(46,196,182,0.18)",
               background: "rgba(248,250,252,0.95)",
-              fontSize: "0.88rem",
+              fontSize: "0.85rem",
               outline: "none",
               color: "#0d2b28",
               fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -413,23 +337,13 @@ export default function CareersPage() {
               backdropFilter: "blur(18px)",
               border: "1px solid rgba(46,196,182,0.16)",
               borderRadius: "24px",
-              padding: "60px 20px",
+              padding: "52px 20px",
               textAlign: "center",
             }}
           >
             <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔍</div>
-            <h3
-              style={{
-                color: "#0d2b28",
-                marginBottom: "8px",
-                fontFamily: "'Clash Display', sans-serif",
-              }}
-            >
-              No jobs found
-            </h3>
-            <p style={{ color: "#6b9e97" }}>
-              Try adjusting your search or filters.
-            </p>
+            <h3 style={{ color: "#0d2b28", marginBottom: "8px", fontFamily: "'Clash Display', sans-serif" }}>No jobs found</h3>
+            <p style={{ color: "#6b9e97" }}>Try adjusting your search or filters.</p>
           </div>
         ) : (
           <div
@@ -437,7 +351,7 @@ export default function CareersPage() {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-              gap: "20px",
+              gap: "18px",
             }}
           >
             {filteredJobs.map((job) => (
@@ -449,7 +363,7 @@ export default function CareersPage() {
                   backdropFilter: "blur(18px)",
                   border: "1px solid rgba(46,196,182,0.14)",
                   borderRadius: "20px",
-                  padding: "24px",
+                  padding: "22px",
                   boxShadow: "0 10px 30px rgba(13,43,40,0.06)",
                   transition: "0.3s",
                   display: "flex",
@@ -460,186 +374,41 @@ export default function CareersPage() {
               >
                 {/* TOP */}
                 <div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "start",
-                      marginBottom: "12px",
-                      gap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "0.72rem",
-                        background: "#f0fdf9",
-                        color: "#0e7a70",
-                        padding: "4px 10px",
-                        borderRadius: "999px",
-                        border: "1px solid #ccfbf1",
-                        fontWeight: 600,
-                      }}
-                    >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "10px", gap: "8px" }}>
+                    <span style={{ fontSize: "0.72rem", background: "#f0fdf9", color: "#0e7a70", padding: "4px 10px", borderRadius: "999px", border: "1px solid #ccfbf1", fontWeight: 600 }}>
                       {sectorLabels[job.sector]?.split(" ")[0] || job.sector}
                     </span>
-                    <span
-                      style={{
-                        fontSize: "0.72rem",
-                        color: "#6b9e97",
-                      }}
-                    >
-                      {formatDate(job.createdAt)}
-                    </span>
+                    <span style={{ fontSize: "0.72rem", color: "#6b9e97", whiteSpace: "nowrap" }}>{formatDate(job.createdAt)}</span>
                   </div>
 
-                  <h3
-                    style={{
-                      color: "#0d2b28",
-                      fontSize: "1.1rem",
-                      marginBottom: "8px",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {job.title}
-                  </h3>
+                  <h3 style={{ color: "#0d2b28", fontSize: "clamp(0.95rem, 1.1vw, 1.1rem)", marginBottom: "6px", fontWeight: 700 }}>{job.title}</h3>
+                  <p style={{ color: "#6b9e97", fontSize: "0.88rem", marginBottom: "6px" }}>{job.company}</p>
 
-                  <p
-                    style={{
-                      color: "#6b9e97",
-                      fontSize: "0.9rem",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    {job.company}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "8px",
-                      marginBottom: "12px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#3a7a6f",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      📍 {job.location}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: "0.8rem",
-                        color: "#3a7a6f",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                      }}
-                    >
-                      💰 ₹{job.salary}/month
-                    </span>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "10px" }}>
+                    <span style={{ fontSize: "0.78rem", color: "#3a7a6f", display: "flex", alignItems: "center", gap: "4px" }}>📍 {job.location}</span>
+                    <span style={{ fontSize: "0.78rem", color: "#3a7a6f", display: "flex", alignItems: "center", gap: "4px" }}>💰 ₹{job.salary}/month</span>
                   </div>
 
-                  <span
-                    style={{
-                      display: "inline-block",
-                      fontSize: "0.72rem",
-                      background: "rgba(46,196,182,0.1)",
-                      color: "#0e7a70",
-                      padding: "4px 10px",
-                      borderRadius: "8px",
-                      fontWeight: 600,
-                      marginBottom: "16px",
-                    }}
-                  >
+                  <span style={{ display: "inline-block", fontSize: "0.72rem", background: "rgba(46,196,182,0.1)", color: "#0e7a70", padding: "4px 10px", borderRadius: "8px", fontWeight: 600, marginBottom: "14px" }}>
                     {job.type}
                   </span>
 
-                  <p
-                    style={{
-                      color: "#6b9e97",
-                      fontSize: "0.85rem",
-                      lineHeight: 1.6,
-                      marginBottom: "16px",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 3,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
+                  <p style={{ color: "#6b9e97", fontSize: "0.83rem", lineHeight: 1.6, marginBottom: "14px", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                     {job.description}
                   </p>
                 </div>
 
                 {/* BOTTOM */}
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                  }}
-                >
-                  <Link
-                    href={`/jobs/${job.id}`}
-                    style={{
-                      flex: 1,
-                      padding: "11px",
-                      borderRadius: "12px",
-                      border: "1px solid rgba(46,196,182,0.3)",
-                      background: "transparent",
-                      color: "#0e7a70",
-                      fontWeight: 600,
-                      fontSize: "0.85rem",
-                      textDecoration: "none",
-                      textAlign: "center",
-                      transition: "0.2s",
-                    }}
-                  >
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <Link href={`/jobs/${job.id}`} style={{ flex: 1, padding: "10px", borderRadius: "12px", border: "1px solid rgba(46,196,182,0.3)", background: "transparent", color: "#0e7a70", fontWeight: 600, fontSize: "0.83rem", textDecoration: "none", textAlign: "center", transition: "0.2s" }}>
                     View Details
                   </Link>
-
                   {user ? (
-                    <Link
-                      href={`/jobs/${job.id}/apply`}
-                      style={{
-                        flex: 1,
-                        padding: "11px",
-                        borderRadius: "12px",
-                        border: "none",
-                        background:
-                          "linear-gradient(135deg, #0e7a70, #0d2b28)",
-                        color: "white",
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                        textDecoration: "none",
-                        textAlign: "center",
-                        transition: "0.2s",
-                      }}
-                    >
+                    <Link href={`/jobs/${job.id}/apply`} style={{ flex: 1, padding: "10px", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #0e7a70, #0d2b28)", color: "white", fontWeight: 600, fontSize: "0.83rem", textDecoration: "none", textAlign: "center", transition: "0.2s" }}>
                       Apply Now
                     </Link>
                   ) : (
-                    <Link
-                      href="/login"
-                      style={{
-                        flex: 1,
-                        padding: "11px",
-                        borderRadius: "12px",
-                        border: "none",
-                        background:
-                          "linear-gradient(135deg, #2ec4b6, #0e7a70)",
-                        color: "white",
-                        fontWeight: 600,
-                        fontSize: "0.85rem",
-                        textDecoration: "none",
-                        textAlign: "center",
-                        transition: "0.2s",
-                      }}
-                    >
+                    <Link href="/login" style={{ flex: 1, padding: "10px", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #2ec4b6, #0e7a70)", color: "white", fontWeight: 600, fontSize: "0.83rem", textDecoration: "none", textAlign: "center", transition: "0.2s" }}>
                       Login to Apply
                     </Link>
                   )}
@@ -652,82 +421,43 @@ export default function CareersPage() {
         {/* CTA */}
         {!user && jobs.length > 0 && (
           <div
+            className="careers-cta"
             style={{
-              marginTop: "40px",
-              background:
-                "linear-gradient(135deg, #0d2b28 0%, #0e7a70 100%)",
+              marginTop: "36px",
+              background: "linear-gradient(135deg, #0d2b28 0%, #0e7a70 100%)",
               borderRadius: "24px",
-              padding: "40px",
+              padding: "36px 28px",
               textAlign: "center",
             }}
           >
-            <h2
-              style={{
-                fontFamily: "'Clash Display', sans-serif",
-                color: "white",
-                fontSize: "1.8rem",
-                marginBottom: "12px",
-              }}
-            >
+            <h2 style={{ fontFamily: "'Clash Display', sans-serif", color: "white", fontSize: "clamp(1.3rem, 1.8vw, 1.8rem)", marginBottom: "12px" }}>
               Ready to Start Your Career?
             </h2>
-            <p
-              style={{
-                color: "rgba(255,255,255,0.7)",
-                marginBottom: "24px",
-                fontSize: "1rem",
-              }}
-            >
+            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "20px", fontSize: "clamp(0.88rem, 1vw, 1rem)" }}>
               Create an account to apply for jobs and track your applications.
             </p>
-            <Link
-              href="/register"
-              style={{
-                display: "inline-block",
-                padding: "14px 32px",
-                borderRadius: "14px",
-                background: "white",
-                color: "#0d2b28",
-                fontWeight: 700,
-                fontSize: "0.95rem",
-                textDecoration: "none",
-                transition: "0.2s",
-              }}
-            >
+            <Link href="/register" style={{ display: "inline-block", padding: "14px 32px", borderRadius: "14px", background: "white", color: "#0d2b28", fontWeight: 700, fontSize: "0.95rem", textDecoration: "none", transition: "0.2s" }}>
               Register Now
             </Link>
           </div>
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .job-card:hover {
           transform: translateY(-4px);
           box-shadow: 0 20px 50px rgba(13, 43, 40, 0.12);
         }
-
         @media (max-width: 1100px) {
-          .jobs-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          }
-          .sector-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-          }
+          .jobs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          .sector-grid { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
         }
-
         @media (max-width: 700px) {
-          .jobs-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .sector-grid {
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-          }
+          .jobs-grid { grid-template-columns: 1fr !important; }
+          .sector-grid { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
         }
-
         @media (max-width: 480px) {
-          .sector-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-          }
+          .sector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
         }
       `}</style>
     </div>

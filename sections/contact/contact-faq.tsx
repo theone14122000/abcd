@@ -41,15 +41,22 @@ export default function ContactFAQ() {
 
   return (
     <section
+      id="contact-faq"
       ref={ref}
       style={{
         width: "100%",
-        padding: "90px 0",
+        padding: "72px 24px",
         background:
           "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(152,251,152,0.55) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
       }}
     >
-      <div className="inner">
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 1280,
+          margin: "0 auto",
+        }}
+      >
         <div
           style={{
             display: "flex",
@@ -60,15 +67,31 @@ export default function ContactFAQ() {
             opacity: vis ? 1 : 0,
             transform: vis ? "translateY(0)" : "translateY(28px)",
             transition: "all 0.7s ease",
+            flexWrap: "wrap",
           }}
         >
           <div>
-            <div className="eyebrow">Quick Support</div>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 9,
+                padding: "7px 20px",
+                background: "rgba(46,196,182,0.1)",
+                border: "1px solid rgba(46,196,182,0.22)",
+                borderRadius: 50,
+                marginBottom: 12,
+              }}
+            >
+              <span style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.14em", color: "#1a9e92", textTransform: "uppercase" }}>
+                Quick Support
+              </span>
+            </div>
 
             <h2
               style={{
                 fontFamily: "'Clash Display', sans-serif",
-                fontSize: "2.2rem",
+                fontSize: "clamp(1.6rem, 2.2vw, 2.2rem)",
                 color: "#0d2b28",
               }}
             >
@@ -80,32 +103,32 @@ export default function ContactFAQ() {
             href="/contact"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
-              fontSize: "0.86rem",
+              fontSize: "clamp(0.8rem, 0.86vw, 0.86rem)",
               color: "#2f6b37",
               fontWeight: 700,
+              textDecoration: "none",
+              whiteSpace: "nowrap",
             }}
           >
-            View Help Center -&gt;
+            View Help Center →
           </a>
         </div>
 
         <div
-          className="contact-faq-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 28,
+            gap: 24,
           }}
         >
           {faqs.map((faq, index) => (
             <div
               key={faq.title}
-              className="lift"
               style={{
                 background: "rgba(255,255,255,0.72)",
                 border: "1px solid rgba(46,196,182,0.16)",
                 borderRadius: 18,
-                padding: 32,
+                padding: 28,
                 opacity: vis ? 1 : 0,
                 transform: vis ? "translateY(0)" : "translateY(34px)",
                 transition: `all 0.7s ease ${index * 0.12}s`,
@@ -121,8 +144,10 @@ export default function ContactFAQ() {
                   alignItems: "center",
                   justifyContent: "center",
                   color: "#2f6b37",
-                  marginBottom: 24,
+                  marginBottom: 20,
                   fontWeight: 800,
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: "0.9rem",
                 }}
               >
                 {index + 1}
@@ -131,9 +156,9 @@ export default function ContactFAQ() {
               <h3
                 style={{
                   fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "1.25rem",
+                  fontSize: "clamp(1.1rem, 1.25vw, 1.25rem)",
                   color: "#0d2b28",
-                  marginBottom: 14,
+                  marginBottom: 12,
                 }}
               >
                 {faq.title}
@@ -156,8 +181,20 @@ export default function ContactFAQ() {
 
       <style>{`
         @media (max-width: 900px) {
-          .contact-faq-grid {
+          #contact-faq > div > div:last-child {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (max-width: 620px) {
+          #contact-faq > div > div:last-child {
             grid-template-columns: 1fr !important;
+          }
+          #contact-faq > div > div:first-child {
+            flex-direction: column;
+            align-items: flex-start !important;
+          }
+          #contact-faq > div > div:first-child > a {
+            align-self: flex-start;
           }
         }
       `}</style>

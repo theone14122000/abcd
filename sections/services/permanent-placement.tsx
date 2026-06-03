@@ -42,7 +42,7 @@ export default function PermanentPlacement() {
         width: "100%",
         background:
           "radial-gradient(circle at 8% 18%, rgba(46,196,182,0.22) 0%, transparent 32%), radial-gradient(circle at 92% 18%, rgba(152,251,152,0.55) 0%, transparent 34%), linear-gradient(180deg, #d7ffd7 0%, #a8f0a8 48%, #f0fdf9 100%)",
-        padding: "0 64px",
+        padding: "0 24px",
       }}
     >
       <div
@@ -50,10 +50,10 @@ export default function PermanentPlacement() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "96px 0",
+          padding: "72px 0",
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gap: 56,
           alignItems: "center",
         }}
       >
@@ -85,7 +85,7 @@ export default function PermanentPlacement() {
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.2rem",
+              fontSize: "clamp(1.6rem, 2.2vw, 2.2rem)",
               fontWeight: 700,
               background:
                 "linear-gradient(135deg, #10f110 0%, #09be21 45%, #0d9608 100%)",
@@ -116,7 +116,7 @@ export default function PermanentPlacement() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#2d5c55",
-              fontSize: "0.96rem",
+              fontSize: "clamp(0.88rem, 0.96vw, 0.96rem)",
               lineHeight: 1.82,
               marginBottom: 28,
             }}
@@ -172,7 +172,7 @@ export default function PermanentPlacement() {
             ))}
           </div>
 
-          <div style={{ display: "flex", gap: 40 }}>
+          <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
             {stats.map((stat, index) => (
               <div
                 key={`${stat.value}-${index}`}
@@ -185,7 +185,7 @@ export default function PermanentPlacement() {
                 <div
                   style={{
                     fontFamily: "'Clash Display', sans-serif",
-                    fontSize: "1.8rem",
+                    fontSize: "clamp(1.45rem, 1.8vw, 1.8rem)",
                     fontWeight: 700,
                     color: "#0d2b28",
                     lineHeight: 1,
@@ -225,7 +225,6 @@ export default function PermanentPlacement() {
               borderRadius: 24,
               overflow: "hidden",
               aspectRatio: "4/3",
-              
               boxShadow: "0 28px 72px rgba(14,122,112,0.25)",
               position: "relative",
             }}
@@ -260,12 +259,28 @@ export default function PermanentPlacement() {
                 left: 0,
                 right: 0,
                 height: 4,
-                
               }}
             />
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          #permanent-placement > div {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+        }
+        @media (max-width: 560px) {
+          #permanent-placement {
+            padding: 0 16px !important;
+          }
+          #permanent-placement > div {
+            padding: 56px 0 !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -51,7 +51,7 @@ export default function AboutPreview() {
       ref={ref}
       style={{
         width: "100%",
-        padding: "100px 0",
+        padding: "clamp(60px, 10vw, 100px) 0",
         background:
           "radial-gradient(circle at 14% 18%, rgba(240, 221, 12, 0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",
       }}
@@ -61,10 +61,10 @@ export default function AboutPreview() {
           width: "100%",
           maxWidth: 1280,
           margin: "0 auto",
-          padding: "0 64px",
+          padding: "0 clamp(20px, 4vw, 64px)",
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 80,
+          gridTemplateColumns: "1fr",
+          gap: "clamp(40px, 8vw, 80px)",
           alignItems: "center",
         }}
       >
@@ -112,15 +112,15 @@ export default function AboutPreview() {
               onMouseLeave={() => setMissionHover(false)}
               style={{
                 position: "absolute",
-                bottom: 22,
-                left: 22,
+                bottom: "clamp(14px, 3vw, 22px)",
+                left: "clamp(14px, 3vw, 22px)",
                 background: "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(16px)",
                 borderRadius: 16,
-                padding: "14px 22px",
+                padding: "clamp(10px, 2vw, 14px) clamp(14px, 3vw, 22px)",
                 display: "flex",
                 alignItems: "center",
-                gap: 14,
+                gap: "clamp(10px, 2vw, 14px)",
                 boxShadow: missionHover
                   ? "0 16px 38px rgba(46,196,182,0.28)"
                   : "0 8px 28px rgba(0,0,0,0.12)",
@@ -135,8 +135,8 @@ export default function AboutPreview() {
             >
               <div
                 style={{
-                  width: 42,
-                  height: 42,
+                  width: "clamp(36px, 8vw, 42px)",
+                  height: "clamp(36px, 8vw, 42px)",
                   borderRadius: 12,
                   background: missionHover
                     ? "linear-gradient(135deg, #f5e642, #2ec4b6)"
@@ -144,7 +144,7 @@ export default function AboutPreview() {
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: "1.3rem",
+                  fontSize: "clamp(1rem, 2.5vw, 1.3rem)",
                   transition: "background 0.28s ease, transform 0.28s ease",
                   transform: missionHover ? "rotate(8deg)" : "rotate(0deg)",
                 }}
@@ -157,7 +157,7 @@ export default function AboutPreview() {
                   style={{
                     fontFamily: "'Clash Display', sans-serif",
                     fontWeight: 700,
-                    fontSize: "0.9rem",
+                    fontSize: "clamp(0.75rem, 2vw, 0.9rem)",
                     color: "#0d2b28",
                   }}
                 >
@@ -167,7 +167,7 @@ export default function AboutPreview() {
                 <div
                   style={{
                     fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    fontSize: "0.75rem",
+                    fontSize: "clamp(0.65rem, 1.8vw, 0.75rem)",
                     color: missionHover ? "#0e7a70" : "#6b9e97",
                     transition: "color 0.28s ease",
                   }}
@@ -181,12 +181,12 @@ export default function AboutPreview() {
             <div
               style={{
                 position: "absolute",
-                top: 20,
-                right: 20,
+                top: "clamp(14px, 3vw, 20px)",
+                right: "clamp(14px, 3vw, 20px)",
                 background: "rgba(245,230,66,0.95)",
                 backdropFilter: "blur(10px)",
                 borderRadius: 14,
-                padding: "10px 18px",
+                padding: "clamp(6px, 1.5vw, 10px) clamp(12px, 2.5vw, 18px)",
                 textAlign: "center",
                 boxShadow: "0 4px 16px rgba(245,230,66,0.4)",
               }}
@@ -194,7 +194,7 @@ export default function AboutPreview() {
               <div
                 style={{
                   fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "1.5rem",
+                  fontSize: "clamp(1.1rem, 3vw, 1.5rem)",
                   fontWeight: 700,
                   color: "#0d2b28",
                   lineHeight: 1,
@@ -206,7 +206,7 @@ export default function AboutPreview() {
               <div
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: "0.68rem",
+                  fontSize: "clamp(0.55rem, 1.5vw, 0.68rem)",
                   color: "#5a4a00",
                   fontWeight: 600,
                 }}
@@ -225,12 +225,12 @@ export default function AboutPreview() {
             transition: "all 0.85s cubic-bezier(0.22,1,0.36,1) 0.12s",
           }}
         >
-          <div className="eyebrow">Who We Are</div>
+          <div className="eyebrow" style={{ fontSize: "clamp(0.65rem, 2vw, 0.72rem)", letterSpacing: "0.14em", color: "#4a7c59", fontWeight: 700, marginBottom: 12, textTransform: "uppercase" }}>Who We Are</div>
 
           <h2
             style={{
               fontFamily: "'Clash Display', sans-serif",
-              fontSize: "2.4rem",
+              fontSize: "clamp(1.5rem, 5vw, 2.4rem)",
               fontWeight: 700,
               background:
                 "linear-gradient(135deg, #05fd05 0%, #05b61d 45%, #0b6808 100%)",
@@ -239,7 +239,7 @@ export default function AboutPreview() {
               color: "transparent",
               WebkitTextFillColor: "transparent",
               lineHeight: 1.18,
-              marginBottom: 20,
+              marginBottom: "clamp(14px, 3vw, 20px)",
             }}
           >
             Redefining Recruitment Through{" "}
@@ -261,9 +261,9 @@ export default function AboutPreview() {
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               color: "#2d5c55",
-              fontSize: "0.975rem",
+              fontSize: "clamp(0.85rem, 2.2vw, 0.975rem)",
               lineHeight: 1.85,
-              marginBottom: 40,
+              marginBottom: "clamp(24px, 5vw, 40px)",
             }}
           >
             At E Choices, we believe recruitment is more than just filling
@@ -271,14 +271,14 @@ export default function AboutPreview() {
             thriving organizations that stand the test of time.
           </p>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "clamp(16px, 3vw, 24px)" }}>
             {values.map((value, index) => (
               <div
                 key={value.title}
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: 18,
+                  gap: "clamp(12px, 2.5vw, 18px)",
                   opacity: vis ? 1 : 0,
                   transform: vis ? "translateX(0)" : "translateX(28px)",
                   transition: `all 0.65s ease ${0.3 + index * 0.12}s`,
@@ -286,14 +286,14 @@ export default function AboutPreview() {
               >
                 <div
                   style={{
-                    width: 44,
-                    height: 44,
+                    width: "clamp(38px, 8vw, 44px)",
+                    height: "clamp(38px, 8vw, 44px)",
                     background: value.bg,
                     borderRadius: 12,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1.1rem",
+                    fontSize: "clamp(0.9rem, 2vw, 1.1rem)",
                     color: "#2ec4b6",
                     flexShrink: 0,
                     marginTop: 2,
@@ -309,7 +309,7 @@ export default function AboutPreview() {
                       fontFamily: "'Clash Display', sans-serif",
                       fontWeight: 700,
                       color: "#0d2b28",
-                      fontSize: "0.95rem",
+                      fontSize: "clamp(0.85rem, 2vw, 0.95rem)",
                       marginBottom: 5,
                     }}
                   >
@@ -320,7 +320,7 @@ export default function AboutPreview() {
                     style={{
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                       color: "#6b9e97",
-                      fontSize: "0.875rem",
+                      fontSize: "clamp(0.75rem, 2vw, 0.875rem)",
                       lineHeight: 1.7,
                     }}
                   >
@@ -332,6 +332,14 @@ export default function AboutPreview() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @media (min-width: 768px) {
+          section > div {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      `}</style>
     </section>
   );
 }
