@@ -35,29 +35,26 @@ model Job {
 
 model Application {
   id                String   @id @default(cuid())
-
   jobId             String?
   userId            String?
-
   fullName          String
   email             String
-  phone             String?
-  positionApplied   String?
-
   currentCTC        String?
   expectedCTC       String?
   preferredLocation String?
-  currentLocation   String?
   noticePeriod      String?
   skills            String?  @db.Text
   resumeUrl         String?  @db.Text
-
   status            String   @default("PENDING")
-  source            String?
-
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  currentLocation   String?
+  phone             String?
+  positionApplied   String?
+  source            String?
+  job               Job?     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user              User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  job  Job?  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([jobId], map: "Application_jobId_fkey")
+  @@index([userId], map: "Application_userId_fkey")
 }
