@@ -91,7 +91,7 @@ export default function Navbar() {
       <div className="nav-shell">
         <Link href="/" className="brand-link" aria-label="E Choices home">
           <Image
-            src="/logo/logo.jpg"
+            src="/logo/logo.svg"
             alt="E Choices logo"
             width={44}
             height={44}
