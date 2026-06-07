@@ -16,31 +16,43 @@ export default function Navbar() {
   const [hoveredSector, setHoveredSector] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileJobsOpen, setMobileJobsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  // Scroll detection
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileOpen(false);
     setMobileJobsOpen(false);
   }, [pathname]);
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+        setMobileJobsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -75,22 +87,20 @@ export default function Navbar() {
   };
 
   return (
-    <header className="site-header">
+    <header className={`site-header ${isScrolled ? "scrolled" : ""}`}>
       <div className="nav-shell">
-        {/* Logo with dynamic sizing */}
         <Link href="/" className="brand-link" aria-label="E Choices home">
           <Image
             src="/logo/logo.jpg"
             alt="E Choices logo"
-            width={scrolled ? 38 : 56}
-            height={scrolled ? 38 : 56}
-            className={`brand-logo ${scrolled ? "scrolled" : ""}`}
+            width={44}
+            height={44}
+            className="brand-logo"
             priority
           />
           <span className="brand-name">E Choices</span>
         </Link>
 
-        {/* Desktop Navigation */}
         <nav className="desktop-nav" aria-label="Main navigation">
           {navLinks.map((link) => {
             const isActive = isActiveLink(link.href);
@@ -117,7 +127,11 @@ export default function Navbar() {
                         <Link
                           key={sector.href}
                           href={sector.href}
-                          className="jobs-menu-link"
+                          className={`jobs-menu-link ${
+                            hoveredSector === sector.href ? "hovered" : ""
+                          }`}
+                          onMouseEnter={() => setHoveredSector(sector.href)}
+                          onMouseLeave={() => setHoveredSector(null)}
                         >
                           {sector.label}
                         </Link>
@@ -140,7 +154,6 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* Desktop Auth */}
         <div className="desktop-auth">
           {!user ? (
             <>
@@ -161,11 +174,11 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
           className={`mobile-menu-btn ${mobileOpen ? "open" : ""}`}
           onClick={() => setMobileOpen((open) => !open)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
           type="button"
         >
           <span />
@@ -174,7 +187,6 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div className={`mobile-overlay ${mobileOpen ? "open" : ""}`}>
         <nav className="mobile-panel" aria-label="Mobile navigation">
           {navLinks.map((link) => {
@@ -190,10 +202,13 @@ export default function Navbar() {
                     >
                       Jobs
                     </Link>
+
                     <button
                       type="button"
                       className="mobile-jobs-toggle"
                       onClick={() => setMobileJobsOpen((open) => !open)}
+                      aria-label="Toggle jobs categories"
+                      aria-expanded={mobileJobsOpen}
                     >
                       <span>{mobileJobsOpen ? "−" : "+"}</span>
                     </button>
@@ -232,13 +247,23 @@ export default function Navbar() {
           <div className="mobile-auth">
             {!user ? (
               <>
-                <Link href="/login" className="mobile-login">Login</Link>
-                <Link href="/register" className="mobile-register">Register</Link>
+                <Link href="/login" className="mobile-login">
+                  Login
+                </Link>
+                <Link href="/register" className="mobile-register">
+                  Register
+                </Link>
               </>
             ) : (
               <>
                 <span className="mobile-user">Hi, {user?.name || "User"}</span>
-                <button onClick={handleLogout} className="mobile-logout">Logout</button>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mobile-logout"
+                >
+                  Logout
+                </button>
               </>
             )}
           </div>
@@ -255,130 +280,437 @@ export default function Navbar() {
           backdrop-filter: blur(14px);
           border-bottom: 1px solid rgba(0, 0, 0, 0.05);
           z-index: 1000;
-          transition: all 0.3s ease;
+          transition:
+            background 0.3s ease,
+            box-shadow 0.3s ease,
+            border-color 0.3s ease;
+        }
+
+        .site-header.scrolled {
+          background: rgba(248, 255, 254, 0.92);
+          box-shadow: 0 10px 28px rgba(13, 43, 40, 0.08);
+          border-bottom: 1px solid rgba(14, 122, 112, 0.08);
         }
 
         .nav-shell {
           max-width: 1200px;
-          height: 68px;
+          height: 88px;
           margin: 0 auto;
           padding: 0 20px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: 18px;
+          transition: height 0.3s ease, padding 0.3s ease;
+        }
+
+        .site-header.scrolled .nav-shell {
+          height: 68px;
         }
 
         .brand-link {
           display: flex;
           align-items: center;
+          min-width: max-content;
           text-decoration: none;
           color: #111;
-          transition: all 0.3s ease;
+          transition: transform 0.3s ease;
+          flex-shrink: 0;
         }
 
         .brand-logo {
           border-radius: 50%;
           object-fit: cover;
-          transition: width 0.3s ease, height 0.3s ease;
+          width: 72px;
+          height: 72px;
+          transition:
+            width 0.3s ease,
+            height 0.3s ease,
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
+          box-shadow: 0 10px 24px rgba(13, 43, 40, 0.12);
+        }
+
+        .site-header.scrolled .brand-logo {
+          width: 48px;
+          height: 48px;
+          box-shadow: 0 6px 16px rgba(13, 43, 40, 0.08);
         }
 
         .brand-name {
-          margin-left: 10px;
+          margin-left: 12px;
           font-weight: 700;
-          font-size: 18px;
+          font-size: 20px;
           color: #0d2b28;
+          white-space: nowrap;
+          transition: font-size 0.3s ease, margin-left 0.3s ease;
+        }
+
+        .site-header.scrolled .brand-name {
+          font-size: 17px;
+          margin-left: 10px;
+        }
+
+        .desktop-nav {
+          display: flex;
+          align-items: center;
+          gap: 18px;
+        }
+
+        .desktop-link {
+          text-decoration: none;
+          font-weight: 500;
+          color: #333;
+          transition: color 0.25s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.9rem;
           white-space: nowrap;
         }
 
-        /* Desktop Logo Sizes */
-        @media (min-width: 901px) {
+        .desktop-link.active,
+        .desktop-link:hover {
+          color: #2e7d32;
+          font-weight: 700;
+        }
+
+        .chevron {
+          font-size: 10px;
+          transform: translateY(1px);
+        }
+
+        .desktop-dropdown {
+          position: relative;
+          padding: 24px 0;
+          margin: -24px 0;
+        }
+
+        .jobs-menu {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          margin-top: 14px;
+          background: #fff;
+          min-width: 210px;
+          box-shadow: 0 14px 34px rgba(0, 0, 0, 0.12);
+          border-radius: 12px;
+          padding: 8px 0;
+          z-index: 200;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          overflow: hidden;
+        }
+
+        .jobs-menu-link {
+          display: block;
+          padding: 11px 16px;
+          text-decoration: none;
+          color: #333;
+          font-weight: 500;
+          font-size: 14px;
+          transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .jobs-menu-link.hovered,
+        .jobs-menu-link:hover {
+          color: #2e7d32;
+          background: rgba(46, 125, 50, 0.08);
+        }
+
+        .desktop-auth {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: max-content;
+        }
+
+        .user-greeting {
+          font-weight: 600;
+          color: #2e7d32;
+          font-size: 0.88rem;
+          max-width: 140px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .mobile-menu-btn {
+          display: none;
+          width: 42px;
+          height: 42px;
+          border: none;
+          border-radius: 12px;
+          background: rgba(14, 122, 112, 0.08);
+          cursor: pointer;
+          padding: 0;
+          position: relative;
+          flex-shrink: 0;
+        }
+
+        .mobile-menu-btn span {
+          position: absolute;
+          left: 11px;
+          width: 20px;
+          height: 2px;
+          border-radius: 999px;
+          background: #0d2b28;
+          transition: transform 0.25s ease, opacity 0.2s ease, top 0.25s ease;
+        }
+
+        .mobile-menu-btn span:nth-child(1) {
+          top: 13px;
+        }
+
+        .mobile-menu-btn span:nth-child(2) {
+          top: 20px;
+        }
+
+        .mobile-menu-btn span:nth-child(3) {
+          top: 27px;
+        }
+
+        .mobile-menu-btn.open span:nth-child(1) {
+          top: 20px;
+          transform: rotate(45deg);
+        }
+
+        .mobile-menu-btn.open span:nth-child(2) {
+          opacity: 0;
+        }
+
+        .mobile-menu-btn.open span:nth-child(3) {
+          top: 20px;
+          transform: rotate(-45deg);
+        }
+
+        .mobile-overlay {
+          display: none;
+        }
+
+        @media (max-width: 900px) {
+          .nav-shell {
+            height: 86px;
+            padding: 0 16px;
+            display: grid;
+            grid-template-columns: 42px 1fr 42px;
+            align-items: center;
+          }
+
+          .site-header.scrolled .nav-shell {
+            height: 64px;
+          }
+
+          .brand-link {
+            grid-column: 2;
+            justify-self: center;
+          }
+
+          .brand-logo {
+            width: 64px;
+            height: 64px;
+          }
+
+          .site-header.scrolled .brand-logo {
+            width: 42px;
+            height: 42px;
+          }
+
+          .brand-name {
+            display: none;
+          }
+
+          .desktop-nav,
+          .desktop-auth {
+            display: none;
+          }
+
+          .mobile-menu-btn {
+            display: block;
+            grid-column: 3;
+            justify-self: end;
+          }
+
+          .mobile-overlay {
+            display: block;
+            position: fixed;
+            top: 86px;
+            left: 0;
+            right: 0;
+            height: calc(100dvh - 86px);
+            background: rgba(248, 255, 254, 0.98);
+            backdrop-filter: blur(18px);
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-10px);
+            transition:
+              opacity 0.25s ease,
+              transform 0.25s ease,
+              top 0.3s ease,
+              height 0.3s ease;
+            overflow-y: auto;
+            z-index: 999;
+          }
+
+          .site-header.scrolled .mobile-overlay {
+            top: 64px;
+            height: calc(100dvh - 64px);
+          }
+
+          .mobile-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+          }
+
+          .mobile-panel {
+            width: min(100%, 520px);
+            margin: 0 auto;
+            padding: 18px 18px 34px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .mobile-link {
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            padding: 0 16px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #173b36;
+            font-size: 1rem;
+            font-weight: 650;
+            background: rgba(255, 255, 255, 0.58);
+            border: 1px solid rgba(46, 196, 182, 0.12);
+          }
+
+          .mobile-link.active {
+            color: #0e7a70;
+            background: rgba(46, 196, 182, 0.12);
+            border-color: rgba(46, 196, 182, 0.26);
+          }
+
+          .mobile-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          .mobile-jobs-row {
+            display: grid;
+            grid-template-columns: 1fr 50px;
+            gap: 8px;
+          }
+
+          .mobile-jobs-toggle {
+            border: 1px solid rgba(46, 196, 182, 0.18);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.72);
+            color: #0e7a70;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+          }
+
+          .mobile-submenu {
+            display: grid;
+            gap: 6px;
+            padding: 4px 0 4px 14px;
+          }
+
+          .mobile-sub-link {
+            display: block;
+            padding: 11px 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #526762;
+            font-size: 0.94rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.44);
+          }
+
+          .mobile-sub-link.active,
+          .mobile-sub-link:hover {
+            color: #0e7a70;
+            background: rgba(46, 196, 182, 0.1);
+          }
+
+          .mobile-auth {
+            margin-top: 14px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .mobile-login,
+          .mobile-register,
+          .mobile-logout {
+            display: block;
+            width: 100%;
+            text-align: center;
+            padding: 14px 18px;
+            border-radius: 999px;
+            font-weight: 750;
+            font-size: 0.95rem;
+            text-decoration: none;
+          }
+
+          .mobile-login {
+            border: 1.5px solid #0e7a70;
+            color: #0e7a70;
+            background: rgba(255, 255, 255, 0.62);
+          }
+
+          .mobile-register,
+          .mobile-logout {
+            border: none;
+            background: linear-gradient(135deg, #0e7a70, #0d2b28);
+            color: #fff;
+            cursor: pointer;
+          }
+
+          .mobile-user {
+            text-align: center;
+            font-weight: 700;
+            color: #2e7d32;
+            font-size: 0.95rem;
+            padding: 6px 0;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .nav-shell {
+            padding: 0 12px;
+            grid-template-columns: 40px 1fr 40px;
+          }
+
           .brand-logo {
             width: 56px;
             height: 56px;
           }
-          .brand-logo.scrolled {
-            width: 38px;
-            height: 38px;
-          }
-        }
 
-        /* Mobile Logo Behavior */
-        @media (max-width: 900px) {
-          .nav-shell {
-            justify-content: center;
-            position: relative;
+          .site-header.scrolled .brand-logo {
+            width: 40px;
+            height: 40px;
           }
 
-          .brand-link {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+          .mobile-panel {
+            padding-left: 12px;
+            padding-right: 12px;
           }
 
-          .brand-logo {
-            width: 48px;
-            height: 48px;
-          }
-
-          .brand-logo.scrolled {
-            width: 34px;
-            height: 34px;
-          }
-
-          .brand-name {
-            display: none; /* Hide text on mobile to keep it clean */
-          }
-        }
-
-        /* Rest of your existing styles remain unchanged */
-        .desktop-nav { display: flex; align-items: center; gap: 18px; }
-        .desktop-link { text-decoration: none; font-weight: 500; color: #333; transition: color 0.25s ease; font-size: 0.9rem; }
-        .desktop-link.active, .desktop-link:hover { color: #2e7d32; font-weight: 700; }
-
-        .desktop-dropdown { position: relative; padding: 24px 0; margin: -24px 0; }
-        .jobs-menu {
-          position: absolute; top: 100%; left: 0; margin-top: 14px;
-          background: #fff; min-width: 210px; box-shadow: 0 14px 34px rgba(0,0,0,0.12);
-          border-radius: 12px; padding: 8px 0; border: 1px solid rgba(0,0,0,0.06);
-        }
-        .jobs-menu-link { display: block; padding: 11px 16px; color: #333; font-weight: 500; font-size: 14px; }
-        .jobs-menu-link:hover { color: #2e7d32; background: rgba(46,125,50,0.08); }
-
-        .desktop-auth { display: flex; align-items: center; gap: 10px; }
-        .user-greeting { font-weight: 600; color: #2e7d32; font-size: 0.88rem; }
-
-        .mobile-menu-btn { display: none; }
-        @media (max-width: 900px) {
-          .desktop-nav, .desktop-auth { display: none; }
           .mobile-menu-btn {
-            display: block; width: 42px; height: 42px; border: none;
-            border-radius: 12px; background: rgba(14,122,112,0.08);
-            position: absolute; right: 16px;
+            width: 40px;
+            height: 40px;
           }
-          .mobile-menu-btn span {
-            position: absolute; left: 11px; width: 20px; height: 2px;
-            background: #0d2b28; transition: all 0.25s ease;
-          }
-          .mobile-menu-btn span:nth-child(1) { top: 13px; }
-          .mobile-menu-btn span:nth-child(2) { top: 20px; }
-          .mobile-menu-btn span:nth-child(3) { top: 27px; }
-          .mobile-menu-btn.open span:nth-child(1) { top: 20px; transform: rotate(45deg); }
-          .mobile-menu-btn.open span:nth-child(2) { opacity: 0; }
-          .mobile-menu-btn.open span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
 
-          .mobile-overlay {
-            display: block; position: fixed; top: 64px; left: 0; right: 0;
-            height: calc(100dvh - 64px); background: rgba(248,255,254,0.98);
-            backdrop-filter: blur(18px); opacity: 0; pointer-events: none;
-            transform: translateY(-10px); transition: all 0.25s ease;
-            z-index: 999; overflow-y: auto;
+          .mobile-menu-btn span {
+            left: 10px;
+            width: 18px;
           }
-          .mobile-overlay.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-          .mobile-panel { width: min(100%, 520px); margin: 0 auto; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
-          .mobile-link { display: flex; align-items: center; min-height: 50px; padding: 0 16px; border-radius: 14px; text-decoration: none; color: #173b36; font-size: 1rem; font-weight: 650; background: rgba(255,255,255,0.58); border: 1px solid rgba(46,196,182,0.12); }
-          .mobile-link.active { color: #0e7a70; background: rgba(46,196,182,0.12); }
-          /* ... rest of your mobile styles ... */
         }
       `}</style>
     </header>
