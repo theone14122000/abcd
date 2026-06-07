@@ -8,7 +8,7 @@ import type { CSSProperties } from "react";
 
 interface ApplicationItem {
   id: string;
-  jobId: string;
+  jobId: string | null;
   userId: string;
   fullName: string;
   email: string;
@@ -197,6 +197,11 @@ function formatDate(dateString: string) {
   });
 }
 
+/* ── Helper: determine if application came from candidate submission form ── */
+function isCandidateSubmission(application: ApplicationItem): boolean {
+  return !application.jobId || !application.job;
+}
+
 export default function AdminApplicationsPage() {
   const { user } = useAuth();
   const router = useRouter();
@@ -207,6 +212,7 @@ export default function AdminApplicationsPage() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [sourceFilter, setSourceFilter] = useState("ALL");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const fetchApplications = async ({ silent = false } = {}) => {
@@ -290,23 +296,47 @@ export default function AdminApplicationsPage() {
       const company = application.job?.company || "";
       const sector = application.job?.sector || "";
       const status = normalizeStatus(application.status);
+      const source = isCandidateSubmission(application)
+        ? "candidate submission"
+        : "";
 
       const matchesSearch =
         !query ||
-        [applicantName, applicantEmail, jobTitle, company, sector, status].some(
-          (value) => value.toLowerCase().includes(query)
-        );
+        [
+          applicantName,
+          applicantEmail,
+          jobTitle,
+          company,
+          sector,
+          status,
+          source,
+        ].some((value) => value.toLowerCase().includes(query));
 
       const matchesStatus = statusFilter === "ALL" || status === statusFilter;
 
-      return matchesSearch && matchesStatus;
+      const matchesSource =
+        sourceFilter === "ALL" ||
+        (sourceFilter === "JOB_APPLICATION" &&
+          !isCandidateSubmission(application)) ||
+        (sourceFilter === "CANDIDATE_SUBMISSION" &&
+          isCandidateSubmission(application));
+
+      return matchesSearch && matchesStatus && matchesSource;
     });
-  }, [applications, search, statusFilter]);
+  }, [applications, search, statusFilter, sourceFilter]);
 
   const stats = useMemo(() => {
     const getCount = (value: string) =>
       applications.filter((app) => normalizeStatus(app.status) === value)
         .length;
+
+    const candidateSubmissions = applications.filter((app) =>
+      isCandidateSubmission(app)
+    ).length;
+
+    const jobApplications = applications.filter(
+      (app) => !isCandidateSubmission(app)
+    ).length;
 
     return {
       total: applications.length,
@@ -314,6 +344,8 @@ export default function AdminApplicationsPage() {
       reviewed: getCount("REVIEWED"),
       shortlisted: getCount("SHORTLISTED"),
       hired: getCount("HIRED"),
+      candidateSubmissions,
+      jobApplications,
     };
   }, [applications]);
 
@@ -324,8 +356,8 @@ export default function AdminApplicationsPage() {
       <div style={{ marginBottom: "28px" }}>
         <h1 style={headerTitle}>Applications</h1>
         <p style={headerText}>
-          View every application submitted by users, including the job applied
-          for, applicant details, resume, and status.
+          View every application submitted by users — including direct job
+          applications and general candidate submissions from the homepage form.
         </p>
       </div>
 
@@ -368,6 +400,22 @@ export default function AdminApplicationsPage() {
             {stats.hired}
           </h3>
         </div>
+
+        {/* NEW: Candidate Submissions stat */}
+        <div style={{ ...glassCard, padding: "22px" }}>
+          <p style={mutedText}>Candidate Submissions</p>
+          <h3 style={{ fontSize: "2rem", color: "#7c3aed", marginTop: "8px" }}>
+            {stats.candidateSubmissions}
+          </h3>
+        </div>
+
+        {/* NEW: Job Applications stat */}
+        <div style={{ ...glassCard, padding: "22px" }}>
+          <p style={mutedText}>Job Applications</p>
+          <h3 style={{ fontSize: "2rem", color: "#0e7a70", marginTop: "8px" }}>
+            {stats.jobApplications}
+          </h3>
+        </div>
       </div>
 
       {/* FILTER BAR */}
@@ -382,7 +430,7 @@ export default function AdminApplicationsPage() {
           className="filter-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 240px 170px",
+            gridTemplateColumns: "1fr 200px 200px 170px",
             gap: "16px",
             alignItems: "end",
           }}
@@ -395,14 +443,14 @@ export default function AdminApplicationsPage() {
               id="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by applicant name, email, job title, company, or sector"
+              placeholder="Search by name, email, job title, company, sector..."
               style={inputStyle}
             />
           </div>
 
           <div>
             <label htmlFor="statusFilter" style={labelStyle}>
-              Status Filter
+              Status
             </label>
             <select
               id="statusFilter"
@@ -416,6 +464,25 @@ export default function AdminApplicationsPage() {
               <option value="SHORTLISTED">Shortlisted</option>
               <option value="HIRED">Hired</option>
               <option value="REJECTED">Rejected</option>
+            </select>
+          </div>
+
+          {/* NEW: Source Filter */}
+          <div>
+            <label htmlFor="sourceFilter" style={labelStyle}>
+              Source
+            </label>
+            <select
+              id="sourceFilter"
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value)}
+              style={inputStyle}
+            >
+              <option value="ALL">All Sources</option>
+              <option value="JOB_APPLICATION">Job Applications</option>
+              <option value="CANDIDATE_SUBMISSION">
+                Candidate Submissions
+              </option>
             </select>
           </div>
 
@@ -501,7 +568,7 @@ export default function AdminApplicationsPage() {
                 <tr>
                   {[
                     "Applicant",
-                    "Job Applied For",
+                    "Job / Source",
                     "Application Details",
                     "Status",
                     "Resume",
@@ -533,9 +600,11 @@ export default function AdminApplicationsPage() {
                     application.fullName || application.user?.name || "Unknown";
                   const applicantEmail =
                     application.email || application.user?.email || "-";
-                  const jobTitle = application.job?.title || "Job Deleted";
-                  const company = application.job?.company || "-";
-                  const sector = application.job?.sector || "-";
+                  const isFromCandidateForm =
+                    isCandidateSubmission(application);
+                  const jobTitle = application.job?.title || "";
+                  const company = application.job?.company || "";
+                  const sector = application.job?.sector || "";
                   const jobId = application.job?.id;
                   const currentStatus = normalizeStatus(application.status);
                   const isUpdating = updatingId === application.id;
@@ -575,55 +644,152 @@ export default function AdminApplicationsPage() {
                             marginTop: "4px",
                           }}
                         >
-                          User ID: {application.userId}
+                          User ID: {application.userId || "—"}
                         </div>
                       </td>
 
-                      {/* JOB */}
+                      {/* JOB / SOURCE — THE MAIN FIX */}
                       <td
                         style={{
                           padding: "18px 16px",
                           borderBottom: "1px solid rgba(13, 43, 40, 0.06)",
                         }}
                       >
-                        {jobId ? (
-                          <Link
-                            href={`/jobs/${jobId}`}
-                            style={{
-                              color: "#0e7a70",
-                              fontWeight: 700,
-                              textDecoration: "none",
-                              display: "inline-block",
-                              marginBottom: "6px",
-                            }}
-                          >
-                            {jobTitle}
-                          </Link>
-                        ) : (
-                          <div
-                            style={{
-                              color: "#0d2b28",
-                              fontWeight: 700,
-                              marginBottom: "6px",
-                            }}
-                          >
-                            {jobTitle}
+                        {isFromCandidateForm ? (
+                          /* ── Candidate Submission (no specific job) ── */
+                          <div>
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "5px 12px",
+                                borderRadius: "999px",
+                                fontSize: "0.72rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.04em",
+                                textTransform: "uppercase",
+                                background:
+                                  "linear-gradient(135deg, #f3e8ff, #ede9fe)",
+                                color: "#7c3aed",
+                                border: "1px solid #ddd6fe",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: "50%",
+                                  background: "#7c3aed",
+                                  display: "inline-block",
+                                }}
+                              />
+                              Candidate Submission
+                            </span>
+
+                            <div
+                              style={{
+                                color: "#0d2b28",
+                                fontWeight: 600,
+                                fontSize: "0.92rem",
+                                marginBottom: "4px",
+                              }}
+                            >
+                              Applied via Candidate Form
+                            </div>
+
+                            <div
+                              style={{
+                                color: "#6b9e97",
+                                fontSize: "0.82rem",
+                                fontStyle: "italic",
+                              }}
+                            >
+                              General application — no specific job selected
+                            </div>
                           </div>
-                        )}
+                        ) : (
+                          /* ── Direct Job Application ── */
+                          <div>
+                            <span
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                padding: "5px 12px",
+                                borderRadius: "999px",
+                                fontSize: "0.72rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.04em",
+                                textTransform: "uppercase",
+                                background:
+                                  "linear-gradient(135deg, #ecfdf5, #d1fae5)",
+                                color: "#059669",
+                                border: "1px solid #a7f3d0",
+                                marginBottom: "8px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  width: 6,
+                                  height: 6,
+                                  borderRadius: "50%",
+                                  background: "#059669",
+                                  display: "inline-block",
+                                }}
+                              />
+                              Job Application
+                            </span>
 
-                        <div style={{ color: "#6b9e97", fontSize: "0.88rem" }}>
-                          {company} • {sector}
-                        </div>
+                            {jobId ? (
+                              <Link
+                                href={`/jobs/${jobId}`}
+                                style={{
+                                  color: "#0e7a70",
+                                  fontWeight: 700,
+                                  textDecoration: "none",
+                                  display: "block",
+                                  marginBottom: "4px",
+                                  fontSize: "0.95rem",
+                                }}
+                              >
+                                {jobTitle}
+                              </Link>
+                            ) : (
+                              <div
+                                style={{
+                                  color: "#0d2b28",
+                                  fontWeight: 700,
+                                  marginBottom: "4px",
+                                  fontSize: "0.95rem",
+                                }}
+                              >
+                                {jobTitle}
+                              </div>
+                            )}
 
-                        {application.job?.location && (
-                          <div
-                            style={{
-                              color: "#6b9e97",
-                              fontSize: "0.78rem",
-                              marginTop: "4px",
-                            }}
-                          >
-                            {application.job.location}
+                            <div
+                              style={{
+                                color: "#6b9e97",
+                                fontSize: "0.85rem",
+                              }}
+                            >
+                              {company}
+                              {sector && sector !== "-" ? ` • ${sector}` : ""}
+                            </div>
+
+                            {application.job?.location && (
+                              <div
+                                style={{
+                                  color: "#6b9e97",
+                                  fontSize: "0.78rem",
+                                  marginTop: "4px",
+                                }}
+                              >
+                                📍 {application.job.location}
+                              </div>
+                            )}
                           </div>
                         )}
                       </td>
@@ -950,6 +1116,14 @@ export default function AdminApplicationsPage() {
       <style jsx>{`
         .app-row:hover {
           background: rgba(244, 241, 232, 0.55);
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .filter-grid {
+          grid-template-columns: 1fr 200px 200px 170px;
         }
 
         @media (max-width: 1100px) {
