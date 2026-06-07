@@ -35,20 +35,29 @@ model Job {
 
 model Application {
   id                String   @id @default(cuid())
-  jobId             String
-  userId            String
+
+  jobId             String?
+  userId            String?
+
   fullName          String
   email             String
+  phone             String?
+  positionApplied   String?
+
   currentCTC        String?
   expectedCTC       String?
   preferredLocation String?
+  currentLocation   String?
   noticePeriod      String?
-  skills            String?  @db.Text   // Add @db.Text
-  resumeUrl         String?  @db.Text   // Add @db.Text
+  skills            String?  @db.Text
+  resumeUrl         String?  @db.Text
+
   status            String   @default("PENDING")
+  source            String?
+
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  job  Job  @relation(fields: [jobId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  Job?  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
