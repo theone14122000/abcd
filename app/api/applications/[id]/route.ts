@@ -2,6 +2,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+
+    const application = await prisma.application.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      return NextResponse.json(
+        { message: "Application not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(application);
+  } catch (error) {
+    console.error("GET /api/applications/[id] error:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch application" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PATCH(
   req: NextRequest,
@@ -17,46 +46,120 @@ export async function PATCH(
     console.log("New Status:", status);
 
     if (!status) {
-      return NextResponse.json({ message: "Status is required" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Status is required" },
+        { status: 400 }
+      );
     }
 
-    const validStatuses = ["PENDING", "REVIEWED", "SHORTLISTED", "HIRED", "REJECTED"];
+    const validStatuses = [
+      "PENDING",
+      "REVIEWED",
+      "SHORTLISTED",
+      "HIRED",
+      "REJECTED",
+    ];
+
     if (!validStatuses.includes(status)) {
-      return NextResponse.json({ message: "Invalid status" }, { status: 400 });
+      return NextResponse.json(
+        { message: "Invalid status" },
+        { status: 400 }
+      );
     }
 
-    // Get application with job ID
     const application = await prisma.application.findUnique({
       where: { id },
-      select: { id: true, jobId: true, status: true },
+      select: {
+        id: true,
+        jobId: true,
+        status: true,
+      },
     });
 
     if (!application) {
-      return NextResponse.json({ message: "Application not found" }, { status: 404 });
+      return NextResponse.json(
+        { message: "Application not found" },
+        { status: 404 }
+      );
     }
 
-    // Update application status
     const updatedApplication = await prisma.application.update({
       where: { id },
       data: { status },
     });
 
-    // If hired, EXPLICITLY set isClosed to true (boolean, not number/string)
-    if (status === "HIRED") {
+    let updatedJob = null;
+
+    if (status === "HIRED" && application.jobId) {
       console.log("Closing job ID:", application.jobId);
-      const updatedJob = await prisma.job.update({
+
+      updatedJob = await prisma.job.update({
         where: { id: application.jobId },
-        data: { isClosed: true }, // Explicit boolean
+        data: { isClosed: true },
       });
-      console.log("Job closed successfully:", updatedJob.id, "isClosed:", updatedJob.isClosed);
+
+      console.log(
+        "Job closed successfully:",
+        updatedJob.id,
+        "isClosed:",
+        updatedJob.isClosed
+      );
     }
 
-    return NextResponse.json(updatedApplication);
+    return NextResponse.json({
+      success: true,
+      message: "Application updated successfully",
+      application: updatedApplication,
+      job: updatedJob,
+    });
   } catch (error) {
     console.error("=== HIRE FLOW ERROR ===");
     console.error("Error:", error);
+
     return NextResponse.json(
-      { message: "Failed to update application", error: error instanceof Error ? error.message : "Unknown" },
+      {
+        message: "Failed to update application",
+        error: error instanceof Error ? error.message : "Unknown",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+
+    const application = await prisma.application.findUnique({
+      where: { id },
+      select: { id: true },
+    });
+
+    if (!application) {
+      return NextResponse.json(
+        { message: "Application not found" },
+        { status: 404 }
+      );
+    }
+
+    await prisma.application.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: "Application deleted successfully",
+    });
+  } catch (error) {
+    console.error("DELETE /api/applications/[id] error:", error);
+    return NextResponse.json(
+      {
+        message: "Failed to delete application",
+        error: error instanceof Error ? error.message : "Unknown",
+      },
       { status: 500 }
     );
   }

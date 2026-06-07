@@ -3,25 +3,31 @@
 import React, { useState } from "react";
 import CandidateSubmissionForm from "./CandidateSubmissionForm";
 
-export default function JobsHero() {
-  const [searchQuery, setSearchQuery] = useState("");
+interface JobsHeroProps {
+  search?: string;
+  setSearch?: React.Dispatch<React.SetStateAction<string>>;
+}
 
-  const handleSearch = (e: React.FormEvent) => {
+export default function JobsHero({ search, setSearch }: JobsHeroProps) {
+  const [internalSearch, setInternalSearch] = useState("");
+
+  const searchValue = search ?? internalSearch;
+  const updateSearch = setSearch ?? setInternalSearch;
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Your existing search logic here
-    console.log("Searching for:", searchQuery);
+    // Search is already controlled by searchValue/updateSearch.
+    // Existing page filtering will work through setSearch.
   };
 
   return (
     <section className="relative w-full min-h-screen flex items-center overflow-hidden">
-      {/* ===== Background Layer ===== */}
+      {/* Background Layer */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-brand-950">
-        {/* Animated gradient orbs */}
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-brand-600/20 rounded-full blur-[120px] animate-pulse-slow" />
-        <div className="absolute bottom-[-15%] right-[-5%] w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[100px] animate-pulse-slow animation-delay-2000" />
+        <div className="absolute bottom-[-15%] right-[-5%] w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[100px] animate-pulse-slow" />
         <div className="absolute top-[40%] left-[50%] w-[300px] h-[300px] bg-brand-500/10 rounded-full blur-[80px]" />
 
-        {/* Subtle grid pattern overlay */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -31,29 +37,27 @@ export default function JobsHero() {
           }}
         />
 
-        {/* Top edge gradient fade */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
-        {/* Bottom edge gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/30 to-transparent" />
       </div>
 
-      {/* ===== Content Layer ===== */}
+      {/* Content Layer */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20 lg:py-0">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center min-h-[85vh]">
-          {/* ========== LEFT SIDE: Hero Content (60%) ========== */}
+          {/* Left Hero Content */}
           <div className="lg:col-span-7 space-y-8 animate-fade-in-left">
             {/* Badge */}
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide bg-brand-500/15 text-brand-300 border border-brand-500/25 backdrop-blur-md uppercase">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-400"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-400" />
                 </span>
                 Opportunities Await
               </span>
             </div>
 
-            {/* Main Heading */}
+            {/* Heading */}
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.1] tracking-tight">
               Your Next Career{" "}
               <br className="hidden md:block" />
@@ -82,8 +86,8 @@ export default function JobsHero() {
             {/* Description */}
             <p className="text-lg md:text-xl text-white/60 max-w-xl leading-relaxed">
               Discover premium career opportunities across top companies.
-              Your expertise deserves the right platform — connect with
-              leading employers today.
+              Your expertise deserves the right platform — connect with leading
+              employers today.
             </p>
 
             {/* Search Bar */}
@@ -103,14 +107,16 @@ export default function JobsHero() {
                       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                     />
                   </svg>
+
                   <input
                     type="text"
                     placeholder="Search roles, skills, or companies..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchValue}
+                    onChange={(e) => updateSearch(e.target.value)}
                     className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-transparent text-white placeholder-white/40 focus:outline-none focus:ring-0 text-sm md:text-base"
                   />
                 </div>
+
                 <button
                   type="submit"
                   className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-400 text-white font-semibold shadow-lg shadow-brand-500/25 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] text-sm md:text-base whitespace-nowrap"
@@ -120,7 +126,7 @@ export default function JobsHero() {
               </div>
             </form>
 
-            {/* Stats / Trust Indicators */}
+            {/* Stats */}
             <div className="flex flex-wrap items-center gap-6 pt-2">
               <div className="flex items-center gap-3">
                 <div className="flex -space-x-2">
@@ -143,12 +149,16 @@ export default function JobsHero() {
                   <p className="text-white/40 text-xs">Active Candidates</p>
                 </div>
               </div>
+
               <div className="w-px h-10 bg-white/10" />
+
               <div>
                 <p className="text-white font-semibold text-sm">150+</p>
                 <p className="text-white/40 text-xs">Partner Companies</p>
               </div>
+
               <div className="w-px h-10 bg-white/10" />
+
               <div>
                 <p className="text-white font-semibold text-sm">98%</p>
                 <p className="text-white/40 text-xs">Placement Rate</p>
@@ -156,14 +166,14 @@ export default function JobsHero() {
             </div>
           </div>
 
-          {/* ========== RIGHT SIDE: Candidate Submission Form (40%) ========== */}
+          {/* Right Candidate Submission Form */}
           <div className="lg:col-span-5 w-full max-w-md mx-auto lg:max-w-none lg:mx-0">
             <CandidateSubmissionForm />
           </div>
         </div>
       </div>
 
-      {/* ===== Bottom Wave Divider ===== */}
+      {/* Bottom Wave Divider */}
       <div className="absolute bottom-0 left-0 right-0 z-10">
         <svg
           viewBox="0 0 1440 80"
@@ -175,7 +185,7 @@ export default function JobsHero() {
           <path
             d="M0 80L48 69.3C96 58.7 192 37.3 288 29.3C384 21.3 480 26.7 576 34.7C672 42.7 768 53.3 864 53.3C960 53.3 1056 42.7 1152 37.3C1248 32 1344 32 1392 32L1440 32V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z"
             fill="currentColor"
-            className="text-white dark:text-slate-950"
+            className="text-[#f4f1e8]"
           />
         </svg>
       </div>

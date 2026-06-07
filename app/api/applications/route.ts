@@ -102,12 +102,9 @@ export async function POST(req: NextRequest) {
     let resumeUrl: string | null = null;
     let source: string | null = null;
 
-    /**
-     * Handle multipart/form-data
-     * Used by:
-     * - Existing job apply form
-     * - New hero candidate submission form
-     */
+    // ==========================================
+    // 1. PARSE MULTIPART/FORM-DATA
+    // ==========================================
     if (contentType.includes("multipart/form-data")) {
       console.log("Parsing FormData...");
       const formData = await req.formData();
@@ -115,11 +112,7 @@ export async function POST(req: NextRequest) {
       jobId = getNullableString(formData, "jobId");
       userId = getNullableString(formData, "userId");
 
-      // Supports both "fullName" and "name"
-      fullName =
-        getString(formData, "fullName") ||
-        getString(formData, "name");
-
+      fullName = getString(formData, "fullName") || getString(formData, "name");
       email = getString(formData, "email");
 
       phone = getNullableString(formData, "phone");
@@ -128,17 +121,10 @@ export async function POST(req: NextRequest) {
       currentCTC = getNullableString(formData, "currentCTC");
       expectedCTC = getNullableString(formData, "expectedCTC");
 
-      /**
-       * Existing job apply form uses preferredLocation.
-       * New hero form can send currentLocation or location.
-       */
       preferredLocation = getNullableString(formData, "preferredLocation");
+      currentLocation = getNullableString(formData, "currentLocation") || getNullableString(formData, "location");
 
-      currentLocation =
-        getNullableString(formData, "currentLocation") ||
-        getNullableString(formData, "location");
-
-      // Keep compatibility with older admin views that may read preferredLocation
+      // Sync locations for older admin dashboards
       if (!preferredLocation && currentLocation) {
         preferredLocation = currentLocation;
       }
@@ -148,34 +134,14 @@ export async function POST(req: NextRequest) {
       resumeUrl = getNullableString(formData, "resumeUrl");
       source = getNullableString(formData, "source");
 
-      console.log("Extracted values:", {
-        jobId,
-        userId,
-        fullName,
-        email,
-        phone,
-        positionApplied,
-        currentLocation,
-        source,
-      });
-
+      // Handle File Upload
       const resumeFile = formData.get("resume");
-      console.log("Resume file detected:", resumeFile instanceof File);
-
+      
       if (resumeFile instanceof File && resumeFile.size > 0) {
-        console.log("Resume details:", {
-          name: resumeFile.name,
-          size: resumeFile.size,
-          type: resumeFile.type,
-        });
-
         const resumeValidationError = validateResumeFile(resumeFile);
 
         if (resumeValidationError) {
-          return NextResponse.json(
-            { message: resumeValidationError },
-            { status: 400 }
-          );
+          return NextResponse.json({ message: resumeValidationError }, { status: 400 });
         }
 
         try {
@@ -184,36 +150,30 @@ export async function POST(req: NextRequest) {
           console.log("✅ Resume uploaded successfully:", resumeUrl);
         } catch (blobError) {
           console.error("❌ Blob upload failed:", blobError);
-
           return NextResponse.json(
-            {
-              message: "Failed to upload resume",
-              error:
-                blobError instanceof Error
-                  ? blobError.message
-                  : "Unknown error",
-            },
+            { message: "Failed to upload resume", error: blobError instanceof Error ? blobError.message : "Unknown error" },
             { status: 500 }
           );
         }
-      } else {
-        console.warn("⚠️ No resume file provided");
       }
-    } else {
-      /**
-       * JSON fallback
-       * Useful if resumeUrl is already uploaded by an existing flow.
-       */
+    } 
+    // ==========================================
+    // 2. PARSE APPLICATION/JSON FALLBACK
+    // ==========================================
+    else {
       console.log("Parsing JSON body...");
-      const body = (await req.json()) as Record<string, unknown>;
+      let body: Record<string, unknown> = {};
+      
+      try {
+        body = (await req.json()) as Record<string, unknown>;
+      } catch (jsonError) {
+        return NextResponse.json({ message: "Invalid JSON payload format." }, { status: 400 });
+      }
 
       jobId = getNullableBodyString(body, "jobId");
       userId = getNullableBodyString(body, "userId");
 
-      fullName =
-        getBodyString(body, "fullName") ||
-        getBodyString(body, "name");
-
+      fullName = getBodyString(body, "fullName") || getBodyString(body, "name");
       email = getBodyString(body, "email");
 
       phone = getNullableBodyString(body, "phone");
@@ -223,10 +183,7 @@ export async function POST(req: NextRequest) {
       expectedCTC = getNullableBodyString(body, "expectedCTC");
 
       preferredLocation = getNullableBodyString(body, "preferredLocation");
-
-      currentLocation =
-        getNullableBodyString(body, "currentLocation") ||
-        getNullableBodyString(body, "location");
+      currentLocation = getNullableBodyString(body, "currentLocation") || getNullableBodyString(body, "location");
 
       if (!preferredLocation && currentLocation) {
         preferredLocation = currentLocation;
@@ -238,16 +195,10 @@ export async function POST(req: NextRequest) {
       source = getNullableBodyString(body, "source");
     }
 
-    /**
-     * Source detection:
-     * - Existing job applications: JOB_APPLY
-     * - Hero form/direct candidate submission: HERO_FORM
-     */
-    const normalizedSource = (
-      source ||
-      (jobId ? "JOB_APPLY" : "HERO_FORM")
-    ).toUpperCase();
-
+    // ==========================================
+    // 3. VALIDATION
+    // ==========================================
+    const normalizedSource = (source || (jobId ? "JOB_APPLY" : "HERO_FORM")).toUpperCase();
     const isJobApplication = normalizedSource === "JOB_APPLY" || Boolean(jobId);
     const isHeroSubmission = !isJobApplication;
 
@@ -257,23 +208,16 @@ export async function POST(req: NextRequest) {
     if (!email) missingFields.push("email");
 
     if (email && !isValidEmail(email)) {
-      return NextResponse.json(
-        { message: "Please provide a valid email address." },
-        { status: 400 }
-      );
+      return NextResponse.json({ message: "Please provide a valid email address." }, { status: 400 });
     }
 
-    /**
-     * Existing job apply form validation
-     */
+    // Job Flow Validation
     if (isJobApplication) {
       if (!jobId) missingFields.push("jobId");
       if (!userId) missingFields.push("userId");
     }
 
-    /**
-     * New hero candidate submission validation
-     */
+    // Hero Form Validation
     if (isHeroSubmission) {
       if (!phone) missingFields.push("phone");
       if (!positionApplied) missingFields.push("positionApplied");
@@ -285,70 +229,36 @@ export async function POST(req: NextRequest) {
 
     if (missingFields.length > 0) {
       return NextResponse.json(
-        {
-          message: "Required fields are missing.",
-          missingFields,
-        },
+        { message: "Required fields are missing.", missingFields },
         { status: 400 }
       );
     }
 
-    /**
-     * Validate job only when this is a job-specific application
-     */
+    // ==========================================
+    // 4. DATABASE CHECKS
+    // ==========================================
     if (jobId) {
       const job = await prisma.job.findUnique({
         where: { id: jobId },
-        select: {
-          id: true,
-          isClosed: true,
-        },
+        select: { id: true, isClosed: true },
       });
 
-      if (!job) {
-        return NextResponse.json(
-          { message: "Job not found" },
-          { status: 404 }
-        );
-      }
-
-      if (job.isClosed) {
-        return NextResponse.json(
-          { message: "This job is closed" },
-          { status: 400 }
-        );
-      }
+      if (!job) return NextResponse.json({ message: "Job not found" }, { status: 404 });
+      if (job.isClosed) return NextResponse.json({ message: "This job is closed" }, { status: 400 });
     }
 
-    /**
-     * Validate user only when userId is provided/required.
-     * Hero form can work without logged-in user.
-     */
     if (userId) {
       const user = await prisma.user.findUnique({
         where: { id: userId },
         select: { id: true },
       });
 
-      if (!user) {
-        return NextResponse.json(
-          { message: "User not found" },
-          { status: 404 }
-        );
-      }
+      if (!user) return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    /**
-     * Create application record
-     *
-     * Requires Application model to have:
-     * - jobId String?
-     * - userId String?
-     * - phone String?
-     * - positionApplied String?
-     * - currentLocation String?
-     * - source String?
-     */
+    // ==========================================
+    // 5. SAVE TO PRISMA
+    // ==========================================
     const application = await prisma.application.create({
       data: {
         jobId,
@@ -370,7 +280,6 @@ export async function POST(req: NextRequest) {
     });
 
     console.log("✅ Application created:", application.id);
-    console.log("Resume URL saved:", resumeUrl);
 
     return NextResponse.json(
       {
