@@ -23,12 +23,44 @@ const initialValues: CandidateSubmissionValues = {
   expectedCTC: "",
 };
 
-const MAX_RESUME_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_RESUME_SIZE = 5 * 1024 * 1024;
 const ALLOWED_RESUME_TYPES = new Set([
   "application/pdf",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
+
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "11px 14px",
+  borderRadius: 12,
+  border: "1.5px solid rgba(13,43,40,0.15)",
+  background: "rgba(255,255,255,0.75)",
+  backdropFilter: "blur(8px)",
+  outline: "none",
+  fontSize: "0.875rem",
+  color: "#0d2b28",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  transition: "border-color 0.2s, box-shadow 0.2s",
+  boxSizing: "border-box",
+};
+
+const labelStyle: React.CSSProperties = {
+  display: "block",
+  marginBottom: 5,
+  fontSize: "0.78rem",
+  fontWeight: 700,
+  color: "#0d2b28",
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+  letterSpacing: "0.02em",
+};
+
+const errorStyle: React.CSSProperties = {
+  color: "#b91c1c",
+  fontSize: "0.72rem",
+  marginTop: 4,
+  fontFamily: "'Plus Jakarta Sans', sans-serif",
+};
 
 export default function CandidateSubmissionForm() {
   const [formData, setFormData] = useState<CandidateSubmissionValues>(initialValues);
@@ -41,19 +73,15 @@ export default function CandidateSubmissionForm() {
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {};
-
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim()))
       newErrors.email = "Valid email required";
-    }
-    if (!/^\+?[0-9]{10,15}$/.test(formData.phone.trim())) {
+    if (!/^\+?[0-9]{10,15}$/.test(formData.phone.trim()))
       newErrors.phone = "Valid phone number required";
-    }
     if (!formData.positionApplied.trim()) newErrors.positionApplied = "Position is required";
     if (!formData.location.trim()) newErrors.location = "Location is required";
     if (!formData.currentCTC.trim()) newErrors.currentCTC = "Current CTC is required";
     if (!formData.expectedCTC.trim()) newErrors.expectedCTC = "Expected CTC is required";
-
     if (!resumeFile) {
       newErrors.resume = "Resume upload is required";
     } else if (resumeFile.size > MAX_RESUME_SIZE) {
@@ -61,7 +89,6 @@ export default function CandidateSubmissionForm() {
     } else if (!ALLOWED_RESUME_TYPES.has(resumeFile.type)) {
       newErrors.resume = "Only PDF, DOC, and DOCX files are allowed";
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -69,21 +96,18 @@ export default function CandidateSubmissionForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     if (file.size > MAX_RESUME_SIZE) {
       setResumeFile(null);
       setErrors((prev) => ({ ...prev, resume: "Resume size must be less than 5MB" }));
       e.target.value = "";
       return;
     }
-
     if (!ALLOWED_RESUME_TYPES.has(file.type)) {
       setResumeFile(null);
       setErrors((prev) => ({ ...prev, resume: "Only PDF, DOC, and DOCX files are allowed" }));
       e.target.value = "";
       return;
     }
-
     setResumeFile(file);
     setErrors((prev) => ({ ...prev, resume: "" }));
   };
@@ -93,21 +117,19 @@ export default function CandidateSubmissionForm() {
     setResumeFile(null);
     setErrors({});
     setSubmitStatus("idle");
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
+
+  const set = (key: keyof CandidateSubmissionValues) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      setFormData((prev) => ({ ...prev, [key]: e.target.value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus("idle");
-
     if (!validate()) return;
-
     try {
       setIsSubmitting(true);
-
       const payload = new FormData();
       payload.append("source", "HERO_FORM");
       payload.append("fullName", formData.fullName.trim());
@@ -115,19 +137,12 @@ export default function CandidateSubmissionForm() {
       payload.append("phone", formData.phone.trim());
       payload.append("positionApplied", formData.positionApplied.trim());
       payload.append("currentLocation", formData.location.trim());
-      payload.append("preferredLocation", formData.location.trim()); // backward compatibility
+      payload.append("preferredLocation", formData.location.trim());
       payload.append("currentCTC", formData.currentCTC.trim());
       payload.append("expectedCTC", formData.expectedCTC.trim());
+      if (resumeFile) payload.append("resume", resumeFile);
 
-      if (resumeFile) {
-        payload.append("resume", resumeFile);
-      }
-
-      const res = await fetch("/api/applications", {
-        method: "POST",
-        body: payload,
-      });
-
+      const res = await fetch("/api/applications", { method: "POST", body: payload });
       const data: SubmissionResponse & { missingFields?: string[] } = await res.json();
 
       if (!res.ok) {
@@ -138,10 +153,8 @@ export default function CandidateSubmissionForm() {
           });
           setErrors((prev) => ({ ...prev, ...serverErrors }));
         }
-
         throw new Error(data.message || "Submission failed");
       }
-
       setSubmitStatus("success");
       resetForm();
     } catch (err) {
@@ -152,227 +165,386 @@ export default function CandidateSubmissionForm() {
     }
   };
 
-  const inputBase =
-    "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-transparent transition-all duration-300 backdrop-blur-sm";
-  const labelBase = "block text-sm font-medium text-white/80 mb-1.5";
-
+  /* ── Success state ── */
   if (submitStatus === "success") {
     return (
-      <div className="relative p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-brand-900/20 text-center animate-fade-in">
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 pointer-events-none" />
-        <div className="relative">
-          <div className="text-4xl mb-4">🎉</div>
-          <h3 className="text-xl font-bold text-white mb-2">Application Submitted!</h3>
-          <p className="text-white/70 mb-6">
-            Our recruitment team will review your profile and contact you shortly.
-          </p>
-          <button
-            type="button"
-            onClick={resetForm}
-            className="px-6 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium transition-all"
-          >
-            Submit Another
-          </button>
-        </div>
+      <div
+        style={{
+          padding: "48px 36px",
+          borderRadius: 24,
+          background: "rgba(255,255,255,0.72)",
+          backdropFilter: "blur(20px)",
+          border: "1.5px solid rgba(46,196,182,0.25)",
+          boxShadow: "0 24px 64px rgba(13,43,40,0.1)",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ fontSize: "2.5rem", marginBottom: 16 }}>🎉</div>
+        <h3
+          style={{
+            fontFamily: "'Clash Display', sans-serif",
+            fontWeight: 700,
+            fontSize: "1.25rem",
+            color: "#0d2b28",
+            marginBottom: 8,
+          }}
+        >
+          Application Submitted!
+        </h3>
+        <p
+          style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            color: "#2d5c55",
+            fontSize: "0.9rem",
+            lineHeight: 1.7,
+            marginBottom: 24,
+          }}
+        >
+          Our recruitment team will review your profile and contact you shortly.
+        </p>
+        <button
+          type="button"
+          onClick={resetForm}
+          style={{
+            padding: "10px 28px",
+            borderRadius: 50,
+            border: "1.5px solid rgba(46,196,182,0.4)",
+            background: "rgba(46,196,182,0.08)",
+            color: "#0e7a70",
+            fontWeight: 700,
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: "0.85rem",
+            cursor: "pointer",
+          }}
+        >
+          Submit Another
+        </button>
       </div>
     );
   }
 
+  /* ── Main form ── */
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="relative p-6 md:p-8 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl shadow-brand-900/20 animate-slide-up overflow-hidden"
-    >
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-500/10 to-purple-500/10 pointer-events-none" />
-
-      <div className="relative">
-        <h3 className="text-xl font-bold text-white mb-1">Quick Apply</h3>
-        <p className="text-sm text-white/60 mb-6">
-          Submit your profile directly to our talent pool
-        </p>
-
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelBase}>Full Name</label>
-              <input
-                className={inputBase}
-                placeholder="John Doe"
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, fullName: e.target.value }))
-                }
-              />
-              {errors.fullName && (
-                <p className="text-red-400 text-xs mt-1">{errors.fullName}</p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelBase}>Email Address</label>
-              <input
-                className={inputBase}
-                type="email"
-                placeholder="john@company.com"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, email: e.target.value }))
-                }
-              />
-              {errors.email && (
-                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelBase}>Phone Number</label>
-              <input
-                className={inputBase}
-                type="tel"
-                placeholder="+91 98765 43210"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, phone: e.target.value }))
-                }
-              />
-              {errors.phone && (
-                <p className="text-red-400 text-xs mt-1">{errors.phone}</p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelBase}>Position Applied For</label>
-              <input
-                className={inputBase}
-                placeholder="e.g. Senior React Developer"
-                value={formData.positionApplied}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, positionApplied: e.target.value }))
-                }
-              />
-              {errors.positionApplied && (
-                <p className="text-red-400 text-xs mt-1">{errors.positionApplied}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className={labelBase}>Current Location</label>
-            <input
-              className={inputBase}
-              placeholder="City, State"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, location: e.target.value }))
-              }
-            />
-            {errors.location && (
-              <p className="text-red-400 text-xs mt-1">{errors.location}</p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className={labelBase}>Current CTC</label>
-              <input
-                className={inputBase}
-                placeholder="e.g. 12 LPA"
-                value={formData.currentCTC}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, currentCTC: e.target.value }))
-                }
-              />
-              {errors.currentCTC && (
-                <p className="text-red-400 text-xs mt-1">{errors.currentCTC}</p>
-              )}
-            </div>
-
-            <div>
-              <label className={labelBase}>Expected CTC</label>
-              <input
-                className={inputBase}
-                placeholder="e.g. 18 LPA"
-                value={formData.expectedCTC}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, expectedCTC: e.target.value }))
-                }
-              />
-              {errors.expectedCTC && (
-                <p className="text-red-400 text-xs mt-1">{errors.expectedCTC}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className={labelBase}>Resume Upload</label>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".pdf,.doc,.docx"
-              onChange={handleFileChange}
-              className="hidden"
-              id="resume-upload"
-            />
-            <label
-              htmlFor="resume-upload"
-              className="flex items-center justify-center w-full px-4 py-3 rounded-xl border-2 border-dashed border-white/20 hover:border-brand-400/50 bg-white/5 hover:bg-white/10 cursor-pointer transition-all duration-300 text-white/70 hover:text-white"
-            >
-              {resumeFile ? (
-                <span className="flex items-center gap-2 text-emerald-400">
-                  ✅ {resumeFile.name}
-                </span>
-              ) : (
-                <span>📄 Click to upload PDF/DOCX (Max 5MB)</span>
-              )}
-            </label>
-            {errors.resume && (
-              <p className="text-red-400 text-xs mt-1">{errors.resume}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-brand-600 to-purple-600 hover:from-brand-500 hover:to-purple-500 text-white font-semibold shadow-lg shadow-brand-500/25 disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98]"
+    <>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          padding: "clamp(24px, 4vw, 36px) clamp(20px, 4vw, 32px)",
+          borderRadius: 24,
+          background: "rgba(255,255,255,0.55)",
+          backdropFilter: "blur(20px)",
+          border: "1.5px solid rgba(46,196,182,0.22)",
+          boxShadow: "0 24px 64px rgba(13,43,40,0.1)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+        }}
+      >
+        {/* Header */}
+        <div style={{ marginBottom: 20 }}>
+          <h3
+            style={{
+              fontFamily: "'Clash Display', sans-serif",
+              fontWeight: 700,
+              fontSize: "clamp(1.1rem, 2.5vw, 1.3rem)",
+              color: "#0d2b28",
+              marginBottom: 4,
+            }}
           >
-            {isSubmitting ? (
-              <span className="flex items-center justify-center gap-2">
-                <svg
-                  className="animate-spin h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Submitting Application...
-              </span>
-            ) : (
-              "Submit Application"
-            )}
-          </button>
-
-          {submitStatus === "error" && (
-            <p className="text-red-400 text-sm text-center mt-2 animate-pulse">
-              Something went wrong. Please try again.
-            </p>
-          )}
+            Quick Apply
+          </h3>
+          <p
+            style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "0.8rem",
+              color: "#6b9e97",
+            }}
+          >
+            Submit your profile directly to our talent pool
+          </p>
         </div>
-      </div>
-    </form>
+
+        {/* Row 1 — Full Name + Email */}
+        <div className="csf-row" style={{ marginBottom: 14 }}>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Full Name</label>
+            <input
+              style={inputStyle}
+              placeholder="John Doe"
+              value={formData.fullName}
+              onChange={set("fullName")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.fullName && <p style={errorStyle}>{errors.fullName}</p>}
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Email Address</label>
+            <input
+              style={inputStyle}
+              type="email"
+              placeholder="john@company.com"
+              value={formData.email}
+              onChange={set("email")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.email && <p style={errorStyle}>{errors.email}</p>}
+          </div>
+        </div>
+
+        {/* Row 2 — Phone + Position */}
+        <div className="csf-row" style={{ marginBottom: 14 }}>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Phone Number</label>
+            <input
+              style={inputStyle}
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={formData.phone}
+              onChange={set("phone")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.phone && <p style={errorStyle}>{errors.phone}</p>}
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Position Applied For</label>
+            <input
+              style={inputStyle}
+              placeholder="e.g. Senior React Developer"
+              value={formData.positionApplied}
+              onChange={set("positionApplied")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.positionApplied && <p style={errorStyle}>{errors.positionApplied}</p>}
+          </div>
+        </div>
+
+        {/* Row 3 — Location (full width) */}
+        <div style={{ marginBottom: 14 }}>
+          <label style={labelStyle}>Current Location</label>
+          <input
+            style={inputStyle}
+            placeholder="City, State"
+            value={formData.location}
+            onChange={set("location")}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "#2ec4b6";
+              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          />
+          {errors.location && <p style={errorStyle}>{errors.location}</p>}
+        </div>
+
+        {/* Row 4 — Current CTC + Expected CTC */}
+        <div className="csf-row" style={{ marginBottom: 14 }}>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Current CTC</label>
+            <input
+              style={inputStyle}
+              placeholder="e.g. 12 LPA"
+              value={formData.currentCTC}
+              onChange={set("currentCTC")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.currentCTC && <p style={errorStyle}>{errors.currentCTC}</p>}
+          </div>
+          <div style={{ flex: 1 }}>
+            <label style={labelStyle}>Expected CTC</label>
+            <input
+              style={inputStyle}
+              placeholder="e.g. 18 LPA"
+              value={formData.expectedCTC}
+              onChange={set("expectedCTC")}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "#2ec4b6";
+                e.currentTarget.style.boxShadow = "0 0 0 3px rgba(46,196,182,0.12)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = "rgba(13,43,40,0.15)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            />
+            {errors.expectedCTC && <p style={errorStyle}>{errors.expectedCTC}</p>}
+          </div>
+        </div>
+
+        {/* Resume Upload */}
+        <div style={{ marginBottom: 20 }}>
+          <label style={labelStyle}>Resume Upload</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileChange}
+            style={{ display: "none" }}
+            id="resume-upload"
+          />
+          <label
+            htmlFor="resume-upload"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              width: "100%",
+              padding: "11px 14px",
+              borderRadius: 12,
+              border: resumeFile
+                ? "1.5px solid rgba(14,122,112,0.5)"
+                : "1.5px dashed rgba(46,196,182,0.4)",
+              background: resumeFile
+                ? "rgba(14,122,112,0.06)"
+                : "rgba(255,255,255,0.6)",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "0.83rem",
+              color: resumeFile ? "#0e7a70" : "#6b9e97",
+              fontWeight: resumeFile ? 600 : 400,
+              boxSizing: "border-box",
+            }}
+          >
+            {resumeFile ? (
+              <>✅ {resumeFile.name}</>
+            ) : (
+              <>📄 Click to upload PDF / DOC / DOCX &nbsp;·&nbsp; Max 5MB</>
+            )}
+          </label>
+          {errors.resume && <p style={errorStyle}>{errors.resume}</p>}
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          style={{
+            width: "100%",
+            padding: "13px 24px",
+            borderRadius: 14,
+            border: "none",
+            background: isSubmitting
+              ? "#94a3b8"
+              : "linear-gradient(135deg, #2ec4b6, #0e7a70)",
+            color: "#fff",
+            fontWeight: 700,
+            fontSize: "0.95rem",
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            cursor: isSubmitting ? "not-allowed" : "pointer",
+            boxShadow: isSubmitting ? "none" : "0 6px 20px rgba(46,196,182,0.35)",
+            transition: "all 0.25s ease",
+            transform: isSubmitting ? "scale(0.98)" : "scale(1)",
+          }}
+          onMouseEnter={(e) => {
+            if (!isSubmitting) {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 10px 28px rgba(46,196,182,0.45)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.boxShadow = isSubmitting
+              ? "none"
+              : "0 6px 20px rgba(46,196,182,0.35)";
+          }}
+        >
+          {isSubmitting ? (
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <span
+                style={{
+                  width: 18,
+                  height: 18,
+                  border: "2px solid white",
+                  borderTopColor: "transparent",
+                  borderRadius: "50%",
+                  animation: "csf-spin 0.7s linear infinite",
+                  display: "inline-block",
+                }}
+              />
+              Submitting…
+            </span>
+          ) : (
+            "Submit Application"
+          )}
+        </button>
+
+        {submitStatus === "error" && (
+          <p
+            style={{
+              color: "#b91c1c",
+              fontSize: "0.82rem",
+              textAlign: "center",
+              marginTop: 10,
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+            }}
+          >
+            Something went wrong. Please try again.
+          </p>
+        )}
+      </form>
+
+      <style>{`
+        .csf-row {
+          display: flex;
+          gap: 12px;
+        }
+        @media (max-width: 480px) {
+          .csf-row {
+            flex-direction: column;
+            gap: 14px;
+          }
+        }
+        @keyframes csf-spin {
+          to { transform: rotate(360deg); }
+        }
+        input::placeholder {
+          color: #9db8b4;
+        }
+      `}</style>
+    </>
   );
 }
