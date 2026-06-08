@@ -2,12 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const stats = [
-  { value: "4+", label: "Years Experience" },
-  { value: "6k+", label: "Successful Placements" },
-  { value: "89%", label: "Client Retention" },
-];
-
 export default function Story() {
   const ref = useRef<HTMLElement>(null);
   const [vis, setVis] = useState(false);
@@ -41,68 +35,6 @@ export default function Story() {
           "radial-gradient(circle at 14% 18%, rgba(245,230,66,0.2) 0%, transparent 30%), radial-gradient(circle at 88% 72%, rgba(46,196,182,0.18) 0%, transparent 32%), linear-gradient(135deg, #f8fffe 0%, #ecfff2 48%, #fff9c9 100%)",
       }}
     >
-      {/* STATS STRIP */}
-      <div
-        style={{
-          width: "100%",
-          background:
-            "linear-gradient(135deg, #0d2b28 0%, #123d36 52%, #0e7a70 100%)",
-          borderTop: "1px solid rgba(46,196,182,0.2)",
-          borderBottom: "1px solid rgba(46,196,182,0.2)",
-        }}
-      >
-        <div
-          style={{
-            width: "100%",
-            maxWidth: 1280,
-            margin: "0 auto",
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-          }}
-        >
-          {stats.map((stat, index) => (
-            <div
-              key={stat.label}
-              style={{
-                padding: "40px 24px",
-                textAlign: "center",
-                borderRight:
-                  index < 2 ? "1px solid rgba(168,230,225,0.16)" : "none",
-                opacity: vis ? 1 : 0,
-                transform: vis ? "translateY(0)" : "translateY(24px)",
-                transition: `all 0.65s ease ${index * 0.13}s`,
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "'Clash Display', sans-serif",
-                  fontSize: "clamp(2rem, 4vw, 3.2rem)",
-                  fontWeight: 700,
-                  color: "#f5e642",
-                  lineHeight: 1,
-                  marginBottom: 10,
-                  letterSpacing: "-0.03em",
-                }}
-              >
-                {stat.value}
-              </div>
-
-              <div
-                style={{
-                  fontFamily: "'Plus Jakarta Sans', sans-serif",
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  color: "rgba(224,247,245,0.78)",
-                  letterSpacing: "0.12em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* STORY CONTENT */}
       <div
