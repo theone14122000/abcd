@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 
 const leaders = [
   {
-    name: "Anirudh Savita",
-    role: "Founder",
+    name: "Ajay",
+    role: "Founder & CEO",
     quote:
       "“Driven by over 4 years of specialized recruitment experience, he brings clarity, consistency, and a people-first vision to every hiring journey.”",
     accent: "linear-gradient(135deg, #2ec4b6 0%, #0e7a70 100%)",
@@ -13,7 +13,7 @@ const leaders = [
   },
   {
     name: "Himanshu Singh",
-    role: "Co-Founder",
+    role: "Director of Client Experience",
     quote:
       "“Focused on building sustainable talent pipelines, he believes meaningful hiring begins with strategy, trust, and long-term thinking.”",
     accent: "linear-gradient(135deg, #0d2b28 0%, #1a9e92 100%)",
@@ -21,7 +21,7 @@ const leaders = [
   },
   {
     name: "Saurabh Dingra",
-    role: "Co-Founder",
+    role: "ead of Talent Strategy",
     quote:
       "“With a sharp eye on operations and partnerships, he transforms collaboration into growth across industries and evolving talent landscapes.”",
     accent: "linear-gradient(135deg, #f5e642 0%, #9bb60a 100%)",
