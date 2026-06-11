@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const contactRows = [
-  ["Location", "Connaught Place E-42, 43 Inner Circle, Connaught Place, New Delhi"],
+  ["Location", "A block, Defence Colony, New Delhi - 110024"],
   ["Phone", "8826562195"],
   ["Email", "E.choicescareersolution@gmail.com"],
 ];
