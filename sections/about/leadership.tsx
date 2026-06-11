@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 const leaders = [
   {
-    name: "Ajay",
+    name: "Anirudh Savita",
     title: "Founder & CEO",
     quote:
       "“Great recruitment is not about filling positions — it is about shaping futures, building trust, and creating lasting impact.”",
@@ -12,7 +12,7 @@ const leaders = [
     glow: "rgba(46,196,182,0.22)",
   },
   {
-    name: "Saurabh",
+    name: "Saurabh Dhingra",
     title: "Head of Talent Strategy",
     quote:
       "“The strongest teams are built where insight meets empathy, and where strategy is guided by a deep understanding of people.”",
@@ -20,7 +20,7 @@ const leaders = [
     glow: "rgba(14,122,112,0.18)",
   },
   {
-    name: "Himanshu",
+    name: "Himanshu Singh",
     title: "Director of Client Experience",
     quote:
       "“Exceptional hiring experiences begin with listening carefully, acting thoughtfully, and delivering with consistency and care.”",
