@@ -5,32 +5,32 @@ import { useEffect, useRef, useState } from "react";
 const industries = [
   {
     label: "IT & Technologies",
-    image: "/industries/it.png",
+    image: "/industries/it.webp",
     icon: "💻",
   },
   {
     label: "BPO",
-    image: "/industries/bpo.jpeg",
+    image: "/industries/bpo.webp",
     icon: "📞",
   },
   {
     label: "Finance",
-    image: "/industries/banking.jpg",
+    image: "/industries/banking.jpeg",
     icon: "🏦",
   },
   {
     label: "Sales",
-    image: "/industries/marketing.jpg",
+    image: "/industries/marketing.png",
     icon: "📈",
   },
   {
     label: "Health",
-    image: "/industries/healthcare.jfif",
+    image: "/industries/healthcare.jpeg",
     icon: "🏥",
   },
   {
     label: "Manufacturing",
-    image: "/industries/manufacturing.jpg",
+    image: "/industries/manufacturing.png",
     icon: "🏭",
   },
 ];
