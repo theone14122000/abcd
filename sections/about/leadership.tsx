@@ -12,6 +12,14 @@ const leaders = [
     glow: "rgba(46,196,182,0.22)",
   },
   {
+    name: "Himanshu Singh",
+    title: "Co-founder & COO",
+    quote:
+      "“Exceptional hiring experiences begin with listening carefully, acting thoughtfully, and delivering with consistency and care.”",
+    accent: "linear-gradient(135deg, #f5e642 0%, #9bb60a 100%)",
+    glow: "rgba(245,230,66,0.22)",
+  },
+  {
     name: "Saurabh Dhingra",
     title: "Head of Talent Strategy",
     quote:
@@ -19,14 +27,7 @@ const leaders = [
     accent: "linear-gradient(135deg, #0d2b28 0%, #1a9e92 100%)",
     glow: "rgba(14,122,112,0.18)",
   },
-  {
-    name: "Himanshu Singh",
-    title: "Director of Client Experience",
-    quote:
-      "“Exceptional hiring experiences begin with listening carefully, acting thoughtfully, and delivering with consistency and care.”",
-    accent: "linear-gradient(135deg, #f5e642 0%, #9bb60a 100%)",
-    glow: "rgba(245,230,66,0.22)",
-  },
+  
 ];
 
 export default function Leadership() {
