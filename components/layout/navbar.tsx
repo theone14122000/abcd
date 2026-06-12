@@ -98,7 +98,10 @@ export default function Navbar() {
             className="brand-logo"
             priority
           />
-          <span className="brand-name">E Choices</span>
+          <span className="brand-name" style={{ color: "black" }}>
+            E Choices
+          </span>
+
         </Link>
 
         <nav className="desktop-nav" aria-label="Main navigation">
