@@ -98,7 +98,15 @@ export default function Navbar() {
             className="brand-logo"
             priority
           />
-          <span className="brand-name" style={{ color: "black" }}>
+          <span
+            className="brand-name"
+            style={{
+              color: "black",
+              fontFamily: "'Clash Display', 'Plus Jakarta Sans', sans-serif",
+              fontWeight: 800,
+              letterSpacing: "0.02em",
+            }}
+          >
             E Choices
           </span>
 
