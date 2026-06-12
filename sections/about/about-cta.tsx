@@ -87,7 +87,7 @@ export default function AboutCTA() {
             color: "transparent",
             WebkitTextFillColor: "transparent",
             fontStyle: "italic"
-          }}>next choice?</span>
+          }}>right choice?</span>
         </h2>
 
         <p

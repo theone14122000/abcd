@@ -93,7 +93,7 @@ const industries: Industry[] = [
     ],
     tags: ["Plant Managers", "Quality Control", "Logistics Directors"],
     imageBg: "linear-gradient(135deg, #1a2a3a 0%, #2a4a5a 100%)",
-    imageUrl: "/images/industries/manufacturing.webp",
+    imageUrl: "/images/industries/manufacturing.jpeg",
     imageAlt: "Manufacturing",
     reverse: true,
     bg: "radial-gradient(circle at 12% 18%, rgba(46,196,182,0.16) 0%, transparent 30%), radial-gradient(circle at 88% 12%, rgba(245,230,66,0.36) 0%, transparent 32%), linear-gradient(135deg, #eaffea 0%, #f3ffd8 45%, #fff9b8 100%)",

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CandidateSubmissionForm from "./CandidateSubmissionForm";
 
 interface JobsHeroProps {
@@ -10,24 +10,34 @@ interface JobsHeroProps {
 
 const stats = [
   { value: "2,500+", label: "Active Candidates" },
-  { value: "150+",   label: "Partner Companies"  },
-  { value: "98%",    label: "Placement Rate"      },
+  { value: "150+", label: "Partner Companies" },
+  { value: "98%", label: "Placement Rate" },
 ];
 
-export default function JobsHero({ search, setSearch }: JobsHeroProps) {
-  const [internalSearch, setInternalSearch] = useState("");
-  const [ready, setReady]                   = useState(false);
+const popups = [
+  {
+    icon: "⚡",
+    title: "Fast Profile Review",
+    text: "Our team reviews your profile and skills quickly.",
+  },
+  {
+    icon: "🎯",
+    title: "Smart Job Matching",
+    text: "Get matched with relevant opportunities.",
+  },
+  {
+    icon: "🤝",
+    title: "Recruiter Support",
+    text: "Guidance from application to interview.",
+  },
+];
 
-  const searchValue  = search   ?? internalSearch;
-  const updateSearch = setSearch ?? setInternalSearch;
+export default function JobsHero(_props: JobsHeroProps) {
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setReady(true);
   }, []);
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-  };
 
   return (
     <section
@@ -60,6 +70,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
           pointerEvents: "none",
         }}
       />
+
       <div
         className="blob-drift"
         style={{
@@ -75,6 +86,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
           animationDelay: "-3s",
         }}
       />
+
       <div
         className="blob-drift"
         style={{
@@ -105,6 +117,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
           pointerEvents: "none",
         }}
       />
+
       <div
         className="spin-slow"
         style={{
@@ -133,7 +146,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
         }}
       >
         <div className="jobs-hero-grid">
-          {/* ── LEFT: Text + search ── */}
+          {/* LEFT */}
           <div
             style={{
               opacity: ready ? 1 : 0,
@@ -165,6 +178,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
                   display: "inline-block",
                 }}
               />
+
               <span
                 style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -198,6 +212,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
             >
               Your Next Career
               <br />
+
               <span
                 style={{
                   fontStyle: "italic",
@@ -244,101 +259,70 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
                 fontSize: "clamp(0.9rem, 1.8vw, 1.05rem)",
                 lineHeight: 1.85,
                 maxWidth: 500,
-                marginBottom: "clamp(24px, 4vw, 40px)",
+                marginBottom: "clamp(24px, 4vw, 34px)",
               }}
             >
-              Discover premium career opportunities across top companies.
-              Your expertise deserves the right platform — connect with
-              leading employers and take the next step today.
+              Discover premium career opportunities across top companies. Your
+              expertise deserves the right platform — submit your profile and
+              let our recruiters connect you with the right employers.
             </p>
 
-            {/* Search bar */}
-            <form onSubmit={handleSearch} style={{ maxWidth: 520, marginBottom: "clamp(28px, 4vw, 44px)" }}>
+            {/* Animated popup section instead of search bar */}
+            <div className="career-popup-area" aria-label="Career matching highlights">
               <div
+                className={`popup-shell popup-main-shell ${
+                  ready ? "show" : ""
+                }`}
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  gap: 10,
-                  padding: 8,
-                  borderRadius: 18,
-                  background: "rgba(255,255,255,0.65)",
-                  border: "1.5px solid rgba(46,196,182,0.22)",
-                  backdropFilter: "blur(16px)",
-                  boxShadow: "0 16px 48px rgba(13,43,40,0.08)",
+                  animationDelay: ready ? "0.12s, 1s" : undefined,
                 }}
               >
-                <div style={{ position: "relative", flex: 1 }}>
-                  <svg
-                    style={{
-                      position: "absolute",
-                      left: 14,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      width: 18,
-                      height: 18,
-                      color: "#6b9e97",
-                    }}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Search roles, skills, companies..."
-                    value={searchValue}
-                    onChange={(e) => updateSearch(e.target.value)}
-                    style={{
-                      width: "100%",
-                      paddingLeft: 42,
-                      paddingRight: 14,
-                      paddingTop: 13,
-                      paddingBottom: 13,
-                      borderRadius: 12,
-                      border: "none",
-                      background: "transparent",
-                      outline: "none",
-                      fontSize: "clamp(0.82rem, 1.5vw, 0.92rem)",
-                      color: "#0d2b28",
-                      fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    }}
-                  />
+                <div className="popup-card popup-main-card">
+                  <div className="popup-glow" />
+
+                  <div className="popup-topline">
+                    <span className="popup-live-dot" />
+                    <span>Profile Match Assist</span>
+                  </div>
+
+                  <h3>Skip the search. Get matched smarter.</h3>
+
+                  <p>
+                    Submit your details and our recruitment team will align your
+                    skills, experience, and preferences with active openings.
+                  </p>
+
+                  <a href="#candidate-submission" className="popup-cta">
+                    Submit Profile
+                    <span>→</span>
+                  </a>
                 </div>
-                <button
-                  type="submit"
-                  style={{
-                    padding: "13px clamp(16px, 3vw, 28px)",
-                    borderRadius: 12,
-                    border: "none",
-                    background: "linear-gradient(135deg, #2ec4b6, #0e7a70)",
-                    color: "#fff",
-                    fontWeight: 700,
-                    fontSize: "clamp(0.8rem, 1.5vw, 0.88rem)",
-                    fontFamily: "'Plus Jakarta Sans', sans-serif",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    boxShadow: "0 6px 20px rgba(46,196,182,0.35)",
-                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-2px)";
-                    e.currentTarget.style.boxShadow = "0 10px 28px rgba(46,196,182,0.45)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(46,196,182,0.35)";
-                  }}
-                >
-                  Search Jobs
-                </button>
               </div>
-            </form>
+
+              <div className="popup-mini-grid">
+                {popups.map((popup, index) => (
+                  <div
+                    key={popup.title}
+                    className={`popup-shell popup-mini-shell ${
+                      ready ? "show" : ""
+                    }`}
+                    style={{
+                      animationDelay: ready
+                        ? `${0.26 + index * 0.14}s, ${1.2 + index * 0.35}s`
+                        : undefined,
+                    }}
+                  >
+                    <div className="popup-card popup-mini-card">
+                      <div className="mini-icon">{popup.icon}</div>
+                      <div>
+                        <h4>{popup.title}</h4>
+                        <p>{popup.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Stats */}
             <div
@@ -347,12 +331,14 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
                 flexWrap: "wrap",
                 alignItems: "center",
                 gap: "clamp(14px, 3vw, 28px)",
+                marginTop: "clamp(28px, 4vw, 42px)",
               }}
             >
               {stats.map((s, i) => (
                 <React.Fragment key={s.label}>
                   {i > 0 && (
                     <div
+                      className="stat-divider"
                       style={{
                         width: 1,
                         height: 36,
@@ -360,6 +346,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
                       }}
                     />
                   )}
+
                   <div>
                     <p
                       style={{
@@ -388,7 +375,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
             </div>
           </div>
 
-          {/* ── RIGHT: Candidate form in themed card ── */}
+          {/* RIGHT: Candidate form */}
           <div
             style={{
               opacity: ready ? 1 : 0,
@@ -396,15 +383,23 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
               transition: "opacity 0.85s ease 0.2s, transform 0.85s ease 0.2s",
             }}
           >
-            <div className="jobs-form-card">
+            <div id="candidate-submission" className="jobs-form-card">
               <CandidateSubmissionForm />
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom wave — same colour as AboutHero page bg */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 10 }}>
+      {/* Bottom wave */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 10,
+        }}
+      >
         <svg
           viewBox="0 0 1440 80"
           fill="none"
@@ -420,7 +415,7 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
       </div>
 
       <style>{`
-        /* ── Grid ── */
+        /* Grid */
         .jobs-hero-grid {
           display: grid;
           grid-template-columns: 1fr;
@@ -428,13 +423,14 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
           align-items: center;
           min-height: 85vh;
         }
+
         @media (min-width: 1024px) {
           .jobs-hero-grid {
             grid-template-columns: 1fr 1fr;
           }
         }
 
-        /* ── Form card — matches AboutHero animated gradient ── */
+        /* Form card */
         .jobs-form-card {
           border-radius: 34px;
           padding: clamp(20px, 4vw, 36px);
@@ -445,44 +441,311 @@ export default function JobsHero({ search, setSearch }: JobsHeroProps) {
             linear-gradient(120deg, #9dd4cc, #88f588, #f7eb6c, #a4eba4, #9df7e9);
           background-size: 180% 180%;
           animation: jobsColorFlow 8s ease-in-out infinite;
+          scroll-margin-top: 110px;
         }
 
         @keyframes jobsColorFlow {
-          0%   { background-position: 0% 50%; }
-          50%  { background-position: 100% 50%; }
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
           100% { background-position: 0% 50%; }
         }
 
-        /* ── Shared animations (same as AboutHero) ── */
-        @keyframes blob-drift {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33%       { transform: translate(20px, -28px) scale(1.05); }
-          66%       { transform: translate(-14px, 18px) scale(0.96); }
+        /* Animated popup area */
+        .career-popup-area {
+          width: 100%;
+          max-width: 560px;
+          position: relative;
         }
+
+        .popup-shell {
+          opacity: 0;
+          transform: translateY(22px) scale(0.96);
+        }
+
+        .popup-shell.show {
+          animation-name: popupIn, gentleFloat;
+          animation-duration: 0.72s, 4.8s;
+          animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1), ease-in-out;
+          animation-fill-mode: forwards, both;
+          animation-iteration-count: 1, infinite;
+        }
+
+        .popup-card {
+          position: relative;
+          overflow: hidden;
+          border: 1px solid rgba(46,196,182,0.22);
+          background: rgba(255,255,255,0.7);
+          backdrop-filter: blur(18px);
+          -webkit-backdrop-filter: blur(18px);
+          box-shadow: 0 18px 48px rgba(13,43,40,0.09);
+          transition:
+            transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+            box-shadow 0.35s ease,
+            border-color 0.35s ease;
+        }
+
+        .popup-card::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            110deg,
+            transparent 0%,
+            rgba(255,255,255,0.5) 45%,
+            transparent 65%
+          );
+          transform: translateX(-120%) skewX(-18deg);
+          transition: transform 0.8s ease;
+          pointer-events: none;
+        }
+
+        .popup-card:hover::before {
+          transform: translateX(140%) skewX(-18deg);
+        }
+
+        .popup-card:hover {
+          transform: translateY(-6px) scale(1.015);
+          box-shadow: 0 26px 70px rgba(13,43,40,0.15);
+          border-color: rgba(46,196,182,0.38);
+        }
+
+        .popup-main-card {
+          border-radius: 26px;
+          padding: clamp(20px, 4vw, 28px);
+        }
+
+        .popup-glow {
+          position: absolute;
+          right: -50px;
+          top: -50px;
+          width: 150px;
+          height: 150px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(46,196,182,0.22), transparent 70%);
+          filter: blur(8px);
+          pointer-events: none;
+        }
+
+        .popup-topline {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 12px;
+          border-radius: 999px;
+          background: rgba(46,196,182,0.12);
+          border: 1px solid rgba(46,196,182,0.2);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 0.68rem;
+          font-weight: 800;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #0e7a70;
+          margin-bottom: 14px;
+        }
+
+        .popup-live-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #2ec4b6;
+          box-shadow: 0 0 0 5px rgba(46,196,182,0.14);
+          animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        .popup-main-card h3 {
+          margin: 0 0 10px;
+          font-family: 'Clash Display', sans-serif;
+          font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+          line-height: 1.2;
+          color: #0d2b28;
+        }
+
+        .popup-main-card p {
+          margin: 0 0 18px;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: clamp(0.82rem, 1.7vw, 0.92rem);
+          line-height: 1.7;
+          color: #2d5c55;
+          max-width: 450px;
+        }
+
+        .popup-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 18px;
+          border-radius: 999px;
+          text-decoration: none;
+          color: white;
+          background: linear-gradient(135deg, #2ec4b6, #0e7a70);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 0.86rem;
+          font-weight: 800;
+          box-shadow: 0 10px 24px rgba(46,196,182,0.3);
+          transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease,
+            gap 0.25s ease;
+        }
+
+        .popup-cta:hover {
+          gap: 12px;
+          transform: translateY(-2px);
+          box-shadow: 0 16px 34px rgba(46,196,182,0.42);
+        }
+
+        .popup-mini-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 12px;
+          margin-top: 14px;
+        }
+
+        .popup-mini-card {
+          min-height: 132px;
+          border-radius: 22px;
+          padding: 16px;
+        }
+
+        .mini-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 14px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.78);
+          border: 1px solid rgba(46,196,182,0.18);
+          box-shadow: 0 10px 20px rgba(13,43,40,0.06);
+          font-size: 1.2rem;
+          margin-bottom: 12px;
+        }
+
+        .popup-mini-card h4 {
+          margin: 0 0 6px;
+          font-family: 'Clash Display', sans-serif;
+          font-size: 0.92rem;
+          color: #0d2b28;
+          line-height: 1.2;
+        }
+
+        .popup-mini-card p {
+          margin: 0;
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 0.72rem;
+          line-height: 1.55;
+          color: #5d8a84;
+        }
+
+        @keyframes popupIn {
+          from {
+            opacity: 0;
+            transform: translateY(22px) scale(0.96);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes gentleFloat {
+          0%, 100% {
+            transform: translateY(0) scale(1);
+          }
+          50% {
+            transform: translateY(-7px) scale(1.005);
+          }
+        }
+
+        /* Shared animations */
+        @keyframes blob-drift {
+          0%, 100% {
+            transform: translate(0, 0) scale(1);
+          }
+          33% {
+            transform: translate(20px, -28px) scale(1.05);
+          }
+          66% {
+            transform: translate(-14px, 18px) scale(0.96);
+          }
+        }
+
         .blob-drift {
           animation: blob-drift 9s ease-in-out infinite;
         }
 
         @keyframes spin-slow {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
         }
+
         .spin-slow {
           animation: spin-slow 28s linear infinite;
         }
 
         @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%       { opacity: 0.5; transform: scale(1.25); }
+          0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+          50% {
+            opacity: 0.5;
+            transform: scale(1.25);
+          }
         }
+
         .pulse-dot {
           animation: pulse-dot 2s ease-in-out infinite;
         }
 
-        /* ── Mobile search bar stacks ── */
+        @media (max-width: 760px) {
+          .popup-mini-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .popup-mini-card {
+            min-height: auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+          }
+
+          .mini-icon {
+            margin-bottom: 0;
+            flex-shrink: 0;
+          }
+        }
+
         @media (max-width: 480px) {
           .jobs-form-card {
             padding: 24px 16px !important;
+          }
+
+          .popup-main-card {
+            padding: 20px !important;
+          }
+
+          .stat-divider {
+            display: none;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .popup-shell.show,
+          .blob-drift,
+          .spin-slow,
+          .pulse-dot,
+          .jobs-form-card {
+            animation: none !important;
+          }
+
+          .popup-shell {
+            opacity: 1;
+            transform: none;
           }
         }
       `}</style>
