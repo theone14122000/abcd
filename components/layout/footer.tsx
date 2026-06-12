@@ -41,6 +41,9 @@ export default function Footer() {
   return (
     <>
       <footer className="site-footer">
+        {/* Subtle top accent line */}
+        <div className="footer-top-accent" />
+
         <div className="footer-inner">
           {/* Top Grid */}
           <div className="footer-grid">
@@ -52,7 +55,7 @@ export default function Footer() {
                   alt="E Choices logo"
                   width={200}
                   height={200}
-                  sizes="44px"
+                  sizes="50px"
                   quality={100}
                   priority
                   className="footer-logo-img"
@@ -123,6 +126,7 @@ export default function Footer() {
                     <span className="reach-label wa-label">WhatsApp</span>
                     <span className="reach-val">Chat with us</span>
                   </div>
+                  <span className="reach-arrow">→</span>
                 </a>
 
                 <a href={emailLink} className="reach-card em" aria-label="Email">
@@ -136,6 +140,7 @@ export default function Footer() {
                     <span className="reach-label em-label">Email</span>
                     <span className="reach-val reach-email-val">{EMAIL_ADDRESS}</span>
                   </div>
+                  <span className="reach-arrow">→</span>
                 </a>
               </div>
             </div>
@@ -175,9 +180,18 @@ export default function Footer() {
       <style>{`
         .site-footer {
           width: 100%;
-          background: #080f0d;
+          background: linear-gradient(180deg, #0a1310 0%, #060c0a 100%);
           color: #c8cfd5;
           font-family: 'Plus Jakarta Sans', sans-serif;
+          position: relative;
+        }
+
+        /* Top accent gradient line */
+        .footer-top-accent {
+          height: 3px;
+          width: 100%;
+          background: linear-gradient(90deg, transparent, #2ec4b6 20%, #6ee7b7 50%, #2ec4b6 80%, transparent);
+          opacity: 0.6;
         }
 
         .footer-inner {
@@ -206,28 +220,33 @@ export default function Footer() {
         }
 
         .footer-logo-img {
-          width: 44px !important;
-          height: 44px !important;
+          width: 50px !important;
+          height: 50px !important;
           border-radius: 50%;
           object-fit: contain;
-          background: #fff;
           flex-shrink: 0;
+          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .footer-brand-top:hover .footer-logo-img {
+          transform: scale(1.08) rotate(-3deg);
         }
 
         .footer-brand-title {
           font-family: 'Clash Display', sans-serif;
           font-weight: 800;
-          font-size: 1.2rem;
+          font-size: 1.25rem;
           color: #fff;
+          letter-spacing: -0.01em;
         }
 
         .footer-brand-subtitle {
           font-size: 0.62rem;
           color: #6ee7b7;
-          letter-spacing: 0.14em;
+          letter-spacing: 0.16em;
           font-weight: 700;
           text-transform: uppercase;
-          margin-top: 1px;
+          margin-top: 2px;
         }
 
         .footer-brand-tagline {
@@ -235,7 +254,7 @@ export default function Footer() {
           font-size: 0.88rem;
           line-height: 1.8;
           max-width: 280px;
-          margin: 0 0 20px;
+          margin: 0 0 22px;
         }
 
         /* ─── SOCIAL ─── */
@@ -245,24 +264,25 @@ export default function Footer() {
         }
 
         .footer-social-btn {
-          width: 36px;
-          height: 36px;
-          border-radius: 10px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.07);
+          width: 38px;
+          height: 38px;
+          border-radius: 11px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
           display: flex;
           align-items: center;
           justify-content: center;
           color: #8b9da6;
           text-decoration: none;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .footer-social-btn:hover {
           background: rgba(46,196,182,0.15);
-          border-color: rgba(46,196,182,0.35);
+          border-color: rgba(46,196,182,0.4);
           color: #6ee7b7;
-          transform: translateY(-2px);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba(46,196,182,0.18);
         }
 
         /* ─── LINK COLUMNS ─── */
@@ -288,12 +308,29 @@ export default function Footer() {
           color: #8b9da6;
           font-size: 0.85rem;
           text-decoration: none;
-          transition: all 0.2s ease;
+          transition: all 0.22s ease;
+          position: relative;
+          display: inline-block;
+        }
+
+        .footer-link::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          bottom: -2px;
+          width: 0;
+          height: 1px;
+          background: #6ee7b7;
+          transition: width 0.3s ease;
         }
 
         .footer-link:hover {
           color: #d1fae5;
-          padding-left: 4px;
+          transform: translateX(4px);
+        }
+
+        .footer-link:hover::before {
+          width: 100%;
         }
 
         /* ─── REACH US ─── */
@@ -312,46 +349,68 @@ export default function Footer() {
           border: 1px solid rgba(255,255,255,0.07);
           border-radius: 14px;
           text-decoration: none;
-          transition: all 0.3s ease;
+          transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .reach-card::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+          transition: left 0.6s ease;
+        }
+
+        .reach-card:hover::after {
+          left: 100%;
         }
 
         .reach-card.wa:hover {
           background: rgba(37,211,102,0.1);
-          border-color: rgba(37,211,102,0.35);
-          transform: translateY(-2px);
+          border-color: rgba(37,211,102,0.4);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 28px rgba(37,211,102,0.15);
         }
 
         .reach-card.em:hover {
           background: rgba(56,189,248,0.08);
-          border-color: rgba(56,189,248,0.3);
-          transform: translateY(-2px);
+          border-color: rgba(56,189,248,0.35);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 28px rgba(56,189,248,0.12);
         }
 
         .reach-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 11px;
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: #fff;
           flex-shrink: 0;
-          transition: transform 0.3s ease;
+          transition: transform 0.35s ease;
         }
 
         .wa-icon {
           background: linear-gradient(135deg, #25d366, #128c7e);
+          box-shadow: 0 6px 16px rgba(37,211,102,0.3);
         }
 
         .em-icon {
           background: linear-gradient(135deg, #38bdf8, #0e7490);
+          box-shadow: 0 6px 16px rgba(56,189,248,0.25);
         }
 
         .reach-card:hover .reach-icon {
-          transform: scale(1.08) rotate(-4deg);
+          transform: scale(1.1) rotate(-5deg);
         }
 
         .reach-info {
+          flex: 1;
           display: flex;
           flex-direction: column;
           gap: 1px;
@@ -383,6 +442,18 @@ export default function Footer() {
           white-space: nowrap;
         }
 
+        .reach-arrow {
+          color: #5b6b6f;
+          font-size: 1.1rem;
+          flex-shrink: 0;
+          transition: all 0.3s ease;
+        }
+
+        .reach-card:hover .reach-arrow {
+          color: #fff;
+          transform: translateX(4px);
+        }
+
         /* ─── BOTTOM ─── */
         .footer-bottom {
           display: flex;
@@ -394,7 +465,7 @@ export default function Footer() {
 
         .footer-copy {
           font-size: 0.82rem;
-          color: #4b5563;
+          color: #5b6b6f;
           margin: 0;
         }
 
@@ -405,15 +476,15 @@ export default function Footer() {
 
         .footer-bottom-links {
           display: flex;
-          gap: 20px;
+          gap: 22px;
           flex-wrap: wrap;
         }
 
         .footer-bl {
           font-size: 0.82rem;
-          color: #4b5563;
+          color: #5b6b6f;
           text-decoration: none;
-          transition: color 0.2s ease;
+          transition: color 0.22s ease;
         }
 
         .footer-bl:hover { color: #6ee7b7; }
@@ -434,12 +505,16 @@ export default function Footer() {
           box-shadow: 0 8px 26px rgba(37,211,102,0.4);
           z-index: 10000;
           text-decoration: none;
-          transition: all 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
         .wa-fab:hover {
-          transform: translateY(-3px) scale(1.06);
-          box-shadow: 0 14px 36px rgba(37,211,102,0.55);
+          transform: translateY(-4px) scale(1.07);
+          box-shadow: 0 14px 38px rgba(37,211,102,0.55);
+        }
+
+        .wa-fab:active {
+          transform: translateY(-2px) scale(1.02);
         }
 
         .wa-fab-pulse {
