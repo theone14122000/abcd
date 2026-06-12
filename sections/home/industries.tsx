@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const industries = [
   {
     label: "IT & Technologies",
     image: "/industries/it.webp",
-    icon: "💻",
     color: "#2ec4b6",
     sub: "Software · Cloud · AI",
     href: "/jobs/it-technologies",
@@ -15,7 +14,6 @@ const industries = [
   {
     label: "BPO",
     image: "/industries/bpo.webp",
-    icon: "🎧",
     color: "#e7ad3c",
     sub: "Support · Operations · CX",
     href: "/jobs/bpo",
@@ -23,7 +21,6 @@ const industries = [
   {
     label: "Finance",
     image: "/industries/banking.jpeg",
-    icon: "💼",
     color: "#0e7a70",
     sub: "Banking · Fintech · Risk",
     href: "/jobs/finance",
@@ -31,7 +28,6 @@ const industries = [
   {
     label: "Sales",
     image: "/industries/marketing.png",
-    icon: "📣",
     color: "#d4a017",
     sub: "Marketing · Growth · Brand",
     href: "/jobs/sale",
@@ -39,7 +35,6 @@ const industries = [
   {
     label: "Health",
     image: "/industries/healthcare.jpeg",
-    icon: "⚕️",
     color: "#ef4444",
     sub: "Clinical · Pharma · Admin",
     href: "/jobs/health",
@@ -47,7 +42,6 @@ const industries = [
   {
     label: "Manufacturing",
     image: "/industries/manufacturing.jpeg",
-    icon: "🏭",
     color: "#3b82f6",
     sub: "Engineering · Ops · QA",
     href: "/jobs/manufacturing",
@@ -198,31 +192,34 @@ export default function Industries() {
 
         <div className="industries-grid">
           {industries.map((ind, i) => (
-            <div
+            <button
               key={ind.label}
+              type="button"
               className="circle-card-wrap"
               onClick={() => router.push(ind.href)}
-              style={{
-                opacity: vis ? 1 : 0,
-                transform: vis
-                  ? "translateY(0) scale(1)"
-                  : "translateY(40px) scale(0.92)",
-                transition: `opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${
-                  0.08 + i * 0.08
-                }s, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${
-                  0.08 + i * 0.08
-                }s`,
-              }}
+              aria-label={`Explore ${ind.label} jobs`}
+              style={
+                {
+                  opacity: vis ? 1 : 0,
+                  transform: vis
+                    ? "translateY(0) scale(1)"
+                    : "translateY(40px) scale(0.92)",
+                  transition: `opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${
+                    0.08 + i * 0.08
+                  }s, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) ${
+                    0.08 + i * 0.08
+                  }s`,
+                  "--accent": ind.color,
+                } as CSSProperties
+              }
             >
               <div
                 className="circle-card"
                 style={{
                   width: "clamp(126px, 34vw, 210px)",
                   height: "clamp(126px, 34vw, 210px)",
-                  ["--accent" as string]: ind.color,
                 }}
               >
-                {/* Rotating gradient ring */}
                 <div className="ring-glow" />
 
                 <div
@@ -240,13 +237,10 @@ export default function Industries() {
                     background: `linear-gradient(180deg, transparent 30%, ${ind.color}cc 100%)`,
                   }}
                 />
-
-                <div className="circle-icon">{ind.icon}</div>
               </div>
 
               <div className="circle-label">
                 <h3 className="circle-title">{ind.label}</h3>
-
                 <p className="circle-sub">{ind.sub}</p>
 
                 <span className="explore-link" style={{ color: ind.color }}>
@@ -267,7 +261,7 @@ export default function Industries() {
                   </svg>
                 </span>
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
@@ -279,7 +273,11 @@ export default function Industries() {
             transition: "opacity 0.8s ease 0.6s",
           }}
         >
-          <a href="/jobs" className="industries-cta">
+          <button
+            type="button"
+            onClick={() => router.push("/jobs")}
+            className="industries-cta"
+          >
             View Jobs in All Industries
             <svg
               className="cta-arrow"
@@ -295,7 +293,7 @@ export default function Industries() {
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
-          </a>
+          </button>
         </div>
       </div>
 
@@ -307,16 +305,26 @@ export default function Industries() {
           justify-items: center;
         }
 
-        /* ─── CARD WRAPPER ─── */
         .circle-card-wrap {
+          border: 0;
+          padding: 0;
+          background: transparent;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 22px;
           cursor: pointer;
+          text-align: center;
+          font: inherit;
+          width: 100%;
         }
 
-        /* ─── CIRCLE ─── */
+        .circle-card-wrap:focus-visible {
+          outline: 3px solid rgba(14, 122, 112, 0.35);
+          outline-offset: 8px;
+          border-radius: 28px;
+        }
+
         .circle-card {
           position: relative;
           border-radius: 50%;
@@ -326,12 +334,12 @@ export default function Industries() {
           box-shadow:
             0 10px 30px rgba(13,43,40,0.1),
             0 2px 8px rgba(13,43,40,0.06);
-          transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-                      box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+          transition:
+            transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
           will-change: transform;
         }
 
-        /* Subtle gradient ring that appears on hover */
         .ring-glow {
           position: absolute;
           inset: -3px;
@@ -357,7 +365,9 @@ export default function Industries() {
         }
 
         @keyframes ringSpin {
-          to { transform: rotate(360deg); }
+          to {
+            transform: rotate(360deg);
+          }
         }
 
         .circle-bg {
@@ -372,7 +382,11 @@ export default function Industries() {
         .base-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(13,43,40,0.05) 0%, rgba(13,43,40,0.45) 100%);
+          background: linear-gradient(
+            180deg,
+            rgba(13,43,40,0.05) 0%,
+            rgba(13,43,40,0.45) 100%
+          );
           transition: opacity 0.5s ease;
           z-index: 1;
         }
@@ -385,19 +399,6 @@ export default function Industries() {
           z-index: 2;
         }
 
-        .circle-icon {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: clamp(1.7rem, 4vw, 2.6rem);
-          filter: drop-shadow(0 3px 10px rgba(0,0,0,0.35));
-          transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-          z-index: 3;
-        }
-
-        /* ─── LABEL ─── */
         .circle-label {
           text-align: center;
           max-width: 210px;
@@ -423,13 +424,16 @@ export default function Industries() {
         .explore-link {
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 6px;
           font-size: 0.78rem;
           font-weight: 700;
           text-decoration: none;
           opacity: 0;
           transform: translateY(8px);
-          transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+          transition:
+            opacity 0.4s ease,
+            transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
           font-family: 'Plus Jakarta Sans', sans-serif;
         }
 
@@ -437,11 +441,10 @@ export default function Industries() {
           transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* ─── HOVER STATES (PROFESSIONAL) ─── */
         .circle-card-wrap:hover .circle-card {
           transform: translateY(-10px);
           box-shadow:
-            0 24px 48px var(--accent, rgba(46,196,182,0.3)),
+            0 24px 48px color-mix(in srgb, var(--accent) 34%, transparent),
             0 8px 20px rgba(13,43,40,0.15);
         }
 
@@ -461,10 +464,6 @@ export default function Industries() {
           opacity: 1;
         }
 
-        .circle-card-wrap:hover .circle-icon {
-          transform: scale(1.15) translateY(-2px);
-        }
-
         .circle-card-wrap:hover .circle-title {
           color: #0e7a70;
         }
@@ -478,8 +477,9 @@ export default function Industries() {
           transform: translateX(3px);
         }
 
-        /* ─── CTA BUTTON ─── */
         .industries-cta {
+          border: 0;
+          cursor: pointer;
           display: inline-flex;
           align-items: center;
           gap: 10px;
@@ -491,16 +491,17 @@ export default function Industries() {
           font-weight: 700;
           font-size: 0.92rem;
           box-shadow: 0 10px 28px rgba(13,43,40,0.18);
-          transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-                      box-shadow 0.4s ease,
-                      background 0.4s ease;
+          transition:
+            transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.4s ease,
+            background 0.4s ease;
           font-family: 'Plus Jakarta Sans', sans-serif;
           position: relative;
           overflow: hidden;
         }
 
         .industries-cta::before {
-          content: '';
+          content: "";
           position: absolute;
           inset: 0;
           background: linear-gradient(135deg, #2ec4b6, #0e7a70);
@@ -531,7 +532,6 @@ export default function Industries() {
           transform: translateX(4px);
         }
 
-        /* ─── RESPONSIVE ─── */
         @media (min-width: 768px) {
           .industries-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -550,8 +550,21 @@ export default function Industries() {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .ring-glow { animation: none; }
-          .circle-card-wrap:hover .circle-card { transform: none; }
+          .ring-glow {
+            animation: none;
+          }
+
+          .circle-card,
+          .circle-bg,
+          .color-tint,
+          .explore-link,
+          .industries-cta {
+            transition: none;
+          }
+
+          .circle-card-wrap:hover .circle-card {
+            transform: none;
+          }
         }
       `}</style>
     </section>
