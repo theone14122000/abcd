@@ -8,12 +8,6 @@ interface JobsHeroProps {
   setSearch?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const stats = [
-  { value: "2,500+", label: "Active Candidates" },
-  { value: "150+", label: "Partner Companies" },
-  { value: "98%", label: "Placement Rate" },
-];
-
 const popups = [
   {
     icon: "⚡",
@@ -30,6 +24,13 @@ const popups = [
     title: "Recruiter Support",
     text: "Guidance from application to interview.",
   },
+];
+
+// New highlights to replace stats section
+const highlights = [
+  { icon: "✨", text: "Verified Companies" },
+  { icon: "🔒", text: "100% Confidential" },
+  { icon: "🚀", text: "Quick Response" },
 ];
 
 export default function JobsHero(_props: JobsHeroProps) {
@@ -267,15 +268,11 @@ export default function JobsHero(_props: JobsHeroProps) {
               let our recruiters connect you with the right employers.
             </p>
 
-            {/* Animated popup section instead of search bar */}
+            {/* Animated popup section */}
             <div className="career-popup-area" aria-label="Career matching highlights">
               <div
-                className={`popup-shell popup-main-shell ${
-                  ready ? "show" : ""
-                }`}
-                style={{
-                  animationDelay: ready ? "0.12s, 1s" : undefined,
-                }}
+                className={`popup-shell popup-main-shell ${ready ? "show" : ""}`}
+                style={{ animationDelay: ready ? "0.12s, 1s" : undefined }}
               >
                 <div className="popup-card popup-main-card">
                   <div className="popup-glow" />
@@ -292,9 +289,25 @@ export default function JobsHero(_props: JobsHeroProps) {
                     skills, experience, and preferences with active openings.
                   </p>
 
-                  <a href="#candidate-submission" className="popup-cta">
-                    Submit Profile
-                    <span>→</span>
+                  {/* Animated arrow CTA */}
+                  <a href="#candidate-submission" className="popup-arrow-cta">
+                    <span className="cta-text">Submit Profile</span>
+                    <span className="cta-arrow-wrap">
+                      <svg
+                        className="cta-arrow"
+                        width="22"
+                        height="22"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </span>
                   </a>
                 </div>
               </div>
@@ -303,9 +316,7 @@ export default function JobsHero(_props: JobsHeroProps) {
                 {popups.map((popup, index) => (
                   <div
                     key={popup.title}
-                    className={`popup-shell popup-mini-shell ${
-                      ready ? "show" : ""
-                    }`}
+                    className={`popup-shell popup-mini-shell ${ready ? "show" : ""}`}
                     style={{
                       animationDelay: ready
                         ? `${0.26 + index * 0.14}s, ${1.2 + index * 0.35}s`
@@ -324,53 +335,21 @@ export default function JobsHero(_props: JobsHeroProps) {
               </div>
             </div>
 
-            {/* Stats */}
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
-                gap: "clamp(14px, 3vw, 28px)",
-                marginTop: "clamp(28px, 4vw, 42px)",
-              }}
-            >
-              {stats.map((s, i) => (
-                <React.Fragment key={s.label}>
-                  {i > 0 && (
-                    <div
-                      className="stat-divider"
-                      style={{
-                        width: 1,
-                        height: 36,
-                        background: "rgba(14,122,112,0.2)",
-                      }}
-                    />
-                  )}
-
-                  <div>
-                    <p
-                      style={{
-                        fontFamily: "'Clash Display', sans-serif",
-                        fontWeight: 700,
-                        fontSize: "clamp(1rem, 2vw, 1.2rem)",
-                        color: "#0d2b28",
-                        margin: 0,
-                      }}
-                    >
-                      {s.value}
-                    </p>
-                    <p
-                      style={{
-                        fontFamily: "'Plus Jakarta Sans', sans-serif",
-                        fontSize: "0.72rem",
-                        color: "#6b9e97",
-                        margin: 0,
-                      }}
-                    >
-                      {s.label}
-                    </p>
-                  </div>
-                </React.Fragment>
+            {/* Animated Highlights (replaces stats) */}
+            <div className="highlights-row">
+              {highlights.map((item, index) => (
+                <div
+                  key={item.text}
+                  className={`highlight-chip ${ready ? "show" : ""}`}
+                  style={{
+                    animationDelay: ready
+                      ? `${0.6 + index * 0.18}s, ${1.6 + index * 0.4}s`
+                      : undefined,
+                  }}
+                >
+                  <span className="highlight-icon">{item.icon}</span>
+                  <span className="highlight-text">{item.text}</span>
+                </div>
               ))}
             </div>
           </div>
@@ -569,29 +548,83 @@ export default function JobsHero(_props: JobsHeroProps) {
           max-width: 450px;
         }
 
-        .popup-cta {
+        /* ── Animated Arrow CTA (replaces button look) ── */
+        .popup-arrow-cta {
           display: inline-flex;
           align-items: center;
-          gap: 8px;
-          padding: 12px 18px;
-          border-radius: 999px;
+          gap: 10px;
           text-decoration: none;
-          color: white;
-          background: linear-gradient(135deg, #2ec4b6, #0e7a70);
           font-family: 'Plus Jakarta Sans', sans-serif;
-          font-size: 0.86rem;
+          font-size: 1rem;
           font-weight: 800;
-          box-shadow: 0 10px 24px rgba(46,196,182,0.3);
-          transition:
-            transform 0.25s ease,
-            box-shadow 0.25s ease,
-            gap 0.25s ease;
+          color: #0e7a70;
+          position: relative;
+          cursor: pointer;
+          padding: 4px 0;
         }
 
-        .popup-cta:hover {
-          gap: 12px;
-          transform: translateY(-2px);
-          box-shadow: 0 16px 34px rgba(46,196,182,0.42);
+        .cta-text {
+          position: relative;
+          background: linear-gradient(135deg, #0e7a70, #2ec4b6);
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        .cta-text::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: -3px;
+          width: 0;
+          height: 2px;
+          background: linear-gradient(90deg, #2ec4b6, #0e7a70);
+          border-radius: 2px;
+          transition: width 0.35s ease;
+        }
+
+        .popup-arrow-cta:hover .cta-text::after {
+          width: 100%;
+        }
+
+        .cta-arrow-wrap {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #2ec4b6, #0e7a70);
+          color: white;
+          box-shadow: 0 8px 20px rgba(46,196,182,0.35);
+          overflow: hidden;
+          position: relative;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-arrow {
+          animation: arrowNudge 1.6s ease-in-out infinite;
+        }
+
+        .popup-arrow-cta:hover .cta-arrow-wrap {
+          transform: scale(1.1) translateX(2px);
+          box-shadow: 0 12px 28px rgba(46,196,182,0.5);
+        }
+
+        .popup-arrow-cta:hover .cta-arrow {
+          animation: arrowShoot 0.6s ease forwards;
+        }
+
+        @keyframes arrowNudge {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(4px); }
+        }
+
+        @keyframes arrowShoot {
+          0% { transform: translateX(0); opacity: 1; }
+          40% { transform: translateX(26px); opacity: 0; }
+          41% { transform: translateX(-26px); opacity: 0; }
+          100% { transform: translateX(0); opacity: 1; }
         }
 
         .popup-mini-grid {
@@ -637,37 +670,80 @@ export default function JobsHero(_props: JobsHeroProps) {
           color: #5d8a84;
         }
 
+        /* ── Animated Highlights row (replaces stats) ── */
+        .highlights-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: clamp(28px, 4vw, 40px);
+        }
+
+        .highlight-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 18px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.65);
+          border: 1px solid rgba(46,196,182,0.22);
+          backdrop-filter: blur(12px);
+          box-shadow: 0 8px 20px rgba(13,43,40,0.06);
+          opacity: 0;
+          transform: translateY(18px) scale(0.92);
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .highlight-chip.show {
+          animation-name: chipPop, chipFloat;
+          animation-duration: 0.6s, 4s;
+          animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1), ease-in-out;
+          animation-fill-mode: forwards, both;
+          animation-iteration-count: 1, infinite;
+        }
+
+        .highlight-chip:hover {
+          transform: translateY(-4px) scale(1.04);
+          border-color: rgba(46,196,182,0.4);
+          box-shadow: 0 14px 30px rgba(46,196,182,0.18);
+        }
+
+        .highlight-icon {
+          font-size: 1.1rem;
+          display: inline-flex;
+        }
+
+        .highlight-text {
+          font-family: 'Plus Jakarta Sans', sans-serif;
+          font-size: 0.82rem;
+          font-weight: 700;
+          color: #0d2b28;
+        }
+
+        @keyframes chipPop {
+          0% { opacity: 0; transform: translateY(18px) scale(0.92); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes chipFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+
         @keyframes popupIn {
-          from {
-            opacity: 0;
-            transform: translateY(22px) scale(0.96);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
+          from { opacity: 0; transform: translateY(22px) scale(0.96); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         @keyframes gentleFloat {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-          }
-          50% {
-            transform: translateY(-7px) scale(1.005);
-          }
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-7px) scale(1.005); }
         }
 
         /* Shared animations */
         @keyframes blob-drift {
-          0%, 100% {
-            transform: translate(0, 0) scale(1);
-          }
-          33% {
-            transform: translate(20px, -28px) scale(1.05);
-          }
-          66% {
-            transform: translate(-14px, 18px) scale(0.96);
-          }
+          0%, 100% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(20px, -28px) scale(1.05); }
+          66% { transform: translate(-14px, 18px) scale(0.96); }
         }
 
         .blob-drift {
@@ -675,12 +751,8 @@ export default function JobsHero(_props: JobsHeroProps) {
         }
 
         @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
         .spin-slow {
@@ -688,14 +760,8 @@ export default function JobsHero(_props: JobsHeroProps) {
         }
 
         @keyframes pulse-dot {
-          0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-          50% {
-            opacity: 0.5;
-            transform: scale(1.25);
-          }
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.25); }
         }
 
         .pulse-dot {
@@ -728,22 +794,21 @@ export default function JobsHero(_props: JobsHeroProps) {
           .popup-main-card {
             padding: 20px !important;
           }
-
-          .stat-divider {
-            display: none;
-          }
         }
 
         @media (prefers-reduced-motion: reduce) {
           .popup-shell.show,
+          .highlight-chip.show,
           .blob-drift,
           .spin-slow,
           .pulse-dot,
+          .cta-arrow,
           .jobs-form-card {
             animation: none !important;
           }
 
-          .popup-shell {
+          .popup-shell,
+          .highlight-chip {
             opacity: 1;
             transform: none;
           }
