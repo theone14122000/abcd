@@ -188,7 +188,7 @@ export default function ContactHeadquarters() {
             />
 
             <img
-              src="/office.png"
+              src="/office/office.png"
               alt="Echoices Headquarters Office"
               loading="lazy"
               style={{
