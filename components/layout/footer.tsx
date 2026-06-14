@@ -49,7 +49,7 @@ export default function Footer() {
         <div className="footer-inner">
           <div className="footer-grid">
             <div className="footer-brand">
-              <a href="/" className="brand-row">
+              <a href="/" className="footer-brand-row">
                 <Image
                   src="/logo/logo.svg"
                   alt="E'Choices Career Solutions"
@@ -61,9 +61,9 @@ export default function Footer() {
                   className="footer-logo"
                 />
 
-                <div className="brand-text">
-                  <div className="brand-name">E'Choices</div>
-                  <div className="brand-sub">Career Solutions</div>
+                <div className="footer-brand-text">
+                  <div className="footer-brand-name">E&apos;Choices</div>
+                  <div className="footer-brand-sub">Career Solutions</div>
                 </div>
               </a>
 
@@ -166,7 +166,7 @@ export default function Footer() {
           <div className="footer-bottom">
             <p className="copy-text">
               © {new Date().getFullYear()}{" "}
-              <span className="copy-brand">E'Choices Career Solutions</span>.
+              <span className="copy-brand">E&apos;Choices Career Solutions</span>.
               All rights reserved.
             </p>
 
@@ -224,12 +224,14 @@ export default function Footer() {
           border-bottom: 1px solid rgba(255,255,255,0.06);
         }
 
-        .brand-row {
+        .footer-brand-row {
           display: flex;
           align-items: center;
           gap: 16px;
           margin-bottom: 20px;
           text-decoration: none;
+          width: fit-content;
+          max-width: 100%;
         }
 
         .footer-logo {
@@ -240,30 +242,36 @@ export default function Footer() {
           transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        .brand-row:hover .footer-logo {
+        .footer-brand-row:hover .footer-logo {
           transform: scale(1.06) rotate(-3deg);
         }
 
-        .brand-text {
+        .footer-brand-text {
           display: flex;
           flex-direction: column;
           gap: 3px;
+          min-width: 0;
         }
 
-        .brand-name {
-          font-family: 'Clash Display', sans-serif;
+        .footer-brand-name {
+          display: block;
+          font-family: 'Clash Display', 'Plus Jakarta Sans', sans-serif;
           font-weight: 800;
-          font-size: 1.4rem;
-          color: #fff;
-          letter-spacing: -0.01em;
+          font-size: 1.45rem;
+          line-height: 1.05;
+          color: #ffffff;
+          letter-spacing: 0;
+          white-space: nowrap;
         }
 
-        .brand-sub {
+        .footer-brand-sub {
+          display: block;
           font-size: 0.65rem;
           color: #6ee7b7;
           letter-spacing: 0.16em;
           font-weight: 700;
           text-transform: uppercase;
+          white-space: nowrap;
         }
 
         .brand-desc {
@@ -654,9 +662,28 @@ export default function Footer() {
             align-items: flex-start;
           }
 
+          .footer-brand-row {
+            gap: 14px;
+          }
+
           .footer-logo {
-            width: 60px;
-            height: 60px;
+            width: 72px;
+            height: 72px;
+          }
+
+          .footer-brand-name {
+            display: block !important;
+            color: #ffffff !important;
+            font-size: 1.45rem;
+            line-height: 1.08;
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+
+          .footer-brand-sub {
+            display: block !important;
+            font-size: 0.64rem;
+            letter-spacing: 0.12em;
           }
 
           .wa-fab {
