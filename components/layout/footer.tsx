@@ -50,7 +50,7 @@ export default function Footer() {
               <a href="/" className="brand-row">
                 <div className="logo-circle">
                   <Image
-                    src="/logo/logo.webp"
+                    src="/logo/logo.svg"
                     alt="E Choices Career Solutions"
                     width={80}
                     height={80}
