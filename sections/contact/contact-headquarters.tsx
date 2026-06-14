@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 
 const contactRows = [
   ["Location", "A block, Defence Colony, New Delhi - 110024"],
-  ["Phone", "8826562195"],
-  ["Email", "E.choicescareersolution@gmail.com"],
+  ["Phone", "93105 73198"],
+  ["Email", "team@echoicescs.com"],
 ];
 
 export default function ContactHeadquarters() {

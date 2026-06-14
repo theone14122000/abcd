@@ -23,7 +23,7 @@ const candidates = [
   },
   {
     init: "S",
-    name: "Saurabh Singh",
+    name: "Sarthak Singh",
     role: "CTO",
     badge: "REVIEW",
     bbg: "#fef9c3",
