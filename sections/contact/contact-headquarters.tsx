@@ -187,29 +187,23 @@ export default function ContactHeadquarters() {
               }}
             />
 
-            <div
+            <img
+              src="/office.png"
+              alt="Echoices Headquarters Office"
+              loading="lazy"
               style={{
                 position: "absolute",
                 left: "50%",
                 top: "50%",
                 transform: "translate(-50%, -50%)",
-                width: 76,
-                height: 76,
-                borderRadius: "50%",
-                background: "#2f6b37",
-                border: "10px solid rgba(255,255,255,0.7)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                fontFamily: "'Clash Display', sans-serif",
-                fontWeight: 700,
-                fontSize: "2rem",
+                width: "88%",
+                height: "88%",
+                objectFit: "cover",
+                borderRadius: 20,
+                border: "4px solid rgba(255,255,255,0.85)",
                 boxShadow: "0 14px 34px rgba(13,43,40,0.25)",
               }}
-            >
-              E
-            </div>
+            />
           </div>
         </div>
       </div>
