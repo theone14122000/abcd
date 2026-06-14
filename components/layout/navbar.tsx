@@ -107,7 +107,7 @@ export default function Navbar() {
               letterSpacing: "0.02em",
             }}
           >
-            E'Choices
+            E-Choices
           </span>
 
         </Link>

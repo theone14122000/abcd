@@ -52,7 +52,7 @@ export default function Footer() {
               <a href="/" className="footer-brand-row">
                 <Image
                   src="/logo/logo.svg"
-                  alt="E'Choices Career Solutions"
+                  alt="E-Choices Career Solutions"
                   width={80}
                   height={80}
                   sizes="80px"
@@ -62,7 +62,7 @@ export default function Footer() {
                 />
 
                 <div className="footer-brand-text">
-                  <div className="footer-brand-name">E&apos;Choices</div>
+                  <div className="footer-brand-name">E-Choices</div>
                   <div className="footer-brand-sub">Career Solutions</div>
                 </div>
               </a>
@@ -166,7 +166,7 @@ export default function Footer() {
           <div className="footer-bottom">
             <p className="copy-text">
               © {new Date().getFullYear()}{" "}
-              <span className="copy-brand">E&apos;Choices Career Solutions</span>.
+              <span className="copy-brand">E-Choices Career Solutions</span>.
               All rights reserved.
             </p>
 
