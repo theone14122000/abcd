@@ -14,7 +14,7 @@ const testimonials = [
   {
     stars: 5,
     quote: "The level of personalization they offer is incredible. They don't just send resumes — they understand the future leaders your company needs.",
-    name: "Subham",
+    name: "Shubham",
     role: "HR Director, HealthCare Corp",
     initials: "S",
     avatarBg: "#e8e4d0",
